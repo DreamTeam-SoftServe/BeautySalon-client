@@ -1,0 +1,61 @@
+import { THEME } from '../shared/config/theme';
+import { SectionTitle } from '../shared/ui/SectionTitle';
+import { api } from '../shared/api/api';
+import { useState, useEffect } from 'react';
+import { ServiceCard } from '../entities/service/ui/ServiceCard';
+import { Button } from '../shared/ui/Button';
+import type { PageName } from '../shared/api/routes';
+import type { Service } from '../shared/api/api';
+
+interface ServicesSectionProps {
+  onNavigate: (page: PageName) => void; 
+}
+
+export function ServicesSection({ onNavigate }: ServicesSectionProps) {
+const [services, setServices] = useState<Service[]>([]);  const [activeCategory, setActiveCategory] = useState("All");
+
+  useEffect(() => { api.getServices().then(setServices); }, []);
+
+  const categories = ["All", ...new Set(services.map((s) => s.category))];
+  const filtered = activeCategory === "All" ? services : services.filter((s) => s.category === activeCategory);
+
+  return (
+    <section style={{ padding: "120px 5%", background: THEME.colors.offwhite }}>
+      <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
+        <SectionTitle subtitle="What We Offer" title={"Our Services"} />
+
+        {/* Category filter */}
+        <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: "48px" }}>
+          {categories.map((c) => (
+            <button
+              key={c}
+              onClick={() => setActiveCategory(c)}
+              style={{
+                fontFamily: THEME.fonts.sans,
+                fontSize: "0.7rem",
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+                padding: "8px 20px",
+                border: `1px solid ${activeCategory === c ? THEME.colors.charcoal : "#D4C5A0"}`,
+                background: activeCategory === c ? THEME.colors.charcoal : "transparent",
+                color: activeCategory === c ? THEME.colors.cream : THEME.colors.muted,
+                cursor: "pointer",
+                transition: "all 0.2s",
+              }}
+            >
+              {c}
+            </button>
+          ))}
+        </div>
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "2px" }}>
+          {filtered.map((s) => <ServiceCard key={s.id} service={s} />)}
+        </div>
+
+        <div style={{ textAlign: "center", marginTop: "64px" }}>
+          <Button onClick={() => onNavigate("booking")} variant="dark">Book a Service</Button>
+        </div>
+      </div>
+    </section>
+  );
+}

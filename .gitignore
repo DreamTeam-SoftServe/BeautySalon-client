@@ -150,6 +150,8 @@ node_modules
 
 *.sublime*
 
+
+*.zip
 psd
 thumb
 sketch

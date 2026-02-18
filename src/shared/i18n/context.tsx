@@ -1,0 +1,66 @@
+// shared/i18n/context.tsx
+import { createContext, useContext, useState, useEffect, type ReactNode } from 'react'
+import type { Locale, Translations } from './types'
+import { en } from './locales/en'
+import { fr } from './locales/fr'
+import { uk } from './locales/uk'
+
+// ─── Registry ─────────────────────────────────────────────────
+const locales: Record<Locale, Translations> = { en, fr, uk }
+
+const STORAGE_KEY = 'lumiere_locale'
+
+function detectLocale(): Locale {
+  const stored = localStorage.getItem(STORAGE_KEY) as Locale | null
+  if (stored && stored in locales) return stored
+
+  const browser = navigator.language.slice(0, 2) as Locale
+  if (browser in locales) return browser
+
+  return 'en'
+}
+
+// ─── Context ──────────────────────────────────────────────────
+interface I18nContextValue {
+  t: Translations
+  locale: Locale
+  setLocale: (l: Locale) => void
+  availableLocales: Locale[]
+}
+
+const I18nContext = createContext<I18nContextValue | null>(null)
+
+// ─── Provider ─────────────────────────────────────────────────
+export function I18nProvider({ children }: { children: ReactNode }) {
+  const [locale, setLocaleState] = useState<Locale>(detectLocale)
+
+  const setLocale = (l: Locale) => {
+    setLocaleState(l)
+    localStorage.setItem(STORAGE_KEY, l)
+    document.documentElement.lang = l
+    document.documentElement.dir  = locales[l].dir
+  }
+
+  useEffect(() => {
+    document.documentElement.lang = locale
+    document.documentElement.dir  = locales[locale].dir
+  }, [])
+
+  return (
+    <I18nContext.Provider value={{
+      t: locales[locale],
+      locale,
+      setLocale,
+      availableLocales: Object.keys(locales) as Locale[],
+    }}>
+      {children}
+    </I18nContext.Provider>
+  )
+}
+
+// ─── Hook ─────────────────────────────────────────────────────
+export function useI18n(): I18nContextValue {
+  const ctx = useContext(I18nContext)
+  if (!ctx) throw new Error('useI18n must be used inside <I18nProvider>')
+  return ctx
+}
