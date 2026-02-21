@@ -1,15 +1,14 @@
 // features/auth-login/ui/LoginForm.tsx
 import { useState } from 'react'
-import { useI18n } from '../../../../shared/i18n'
-import { useAuth } from '../../../../shared/auth/context';
-import { THEME } from '../../../../shared/config/theme';
-import { ApiError } from '../../../../shared/api/api'
-import { Button } from '../../../../shared/ui/Button'
-import { Input } from '../../../../shared/ui/Input'
-import type { PageId } from '../../../../app/types'
+import { useI18n } from '../../../shared/i18n'
+import { useAuth } from '../../../shared/auth/context';
+import { THEME } from '../../../shared/config/theme';
+import { ApiError } from '../../../shared/api/client'
+import { Button } from '../../../shared/ui/Button'
+import { Input } from '../../../shared/ui/Input'
 
 interface LoginFormProps {
-  onSuccess:        (page: PageId) => void
+  onSuccess: () => void
   onSwitchRegister: () => void
   onGuestContinue:  () => void
 }
@@ -18,12 +17,10 @@ export function LoginForm({ onSuccess, onSwitchRegister, onGuestContinue }: Logi
   const { t } = useI18n()
   const { login } = useAuth()
   const a = t.auth
-
-  const [form, setForm]         = useState({ email: '', password: '' })
-  
-  const [errors, setErrors]     = useState<Record<string, string | undefined>>({})
+  const [form, setForm] = useState({ email: '', password: '' })
+  const [errors, setErrors]  = useState<Record<string, string | undefined>>({})
   const [serverError, setServerError] = useState<string | undefined>()
-  const [submitting, setSubmitting]   = useState(false)
+  const [submitting, setSubmitting] = useState(false)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm(f => ({ ...f, [e.target.name]: e.target.value }))
@@ -33,9 +30,9 @@ export function LoginForm({ onSuccess, onSwitchRegister, onGuestContinue }: Logi
 
   const validate = () => {
     const e: Record<string, string> = {}
-    if (!form.email.trim())                                     e.email    = a.errors.required
+    if (!form.email.trim()) e.email = a.errors.required
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = a.errors.email
-    if (!form.password)                                         e.password = a.errors.required
+    if (!form.password) e.password = a.errors.required
     return e
   }
 
@@ -47,7 +44,7 @@ export function LoginForm({ onSuccess, onSwitchRegister, onGuestContinue }: Logi
     setSubmitting(true)
     try {
       await login({ email: form.email, password: form.password })
-      onSuccess('account')
+      onSuccess()
     } catch (err) {
       if (err instanceof ApiError && err.status === 401) {
         setServerError(a.errors.invalidCredentials)

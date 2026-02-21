@@ -1,22 +1,22 @@
 import { THEME } from '../shared/config/theme';
 import { SectionTitle } from '../shared/ui/SectionTitle';
 import { MastersSection } from '../widgets/MastersSection';
-import type { PageName } from '../shared/api/routes';
+import { useI18n } from '../shared/i18n';
+import { useNavigate } from 'react-router-dom';
 
-interface MastersPageProps {
-  onNavigate: (page: PageName) => void; 
-}
-
-export function MastersPage({ onNavigate }: MastersPageProps) {
+export function MastersPage() {
+  const { t } = useI18n();
+  const navigate = useNavigate();
+  
   return (
     <div style={{ paddingTop: "80px" }}>
       <div style={{ padding: "80px 5% 60px", background: THEME.colors.cream, textAlign: "center" }}>
-        <SectionTitle subtitle="Our Team" title={"The Masters"} align="center" />
+        <SectionTitle subtitle={t.masters.pageEyebrow} title={t.masters.pageTitle} align="center" />
         <p style={{ fontFamily: THEME.fonts.body, fontSize: "1.1rem", color: THEME.colors.muted, maxWidth: "560px", margin: "0 auto" }}>
-          Each master is a trained artisan with a unique perspective. Together, we cover every aspect of hair care and transformation.
+          {t.masters.pageBody}
         </p>
       </div>
-      <MastersSection onNavigate={onNavigate} />
+      <MastersSection onNavigate={navigate} />
     </div>
   );
 }

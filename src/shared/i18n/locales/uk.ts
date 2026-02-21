@@ -98,9 +98,9 @@ export const uk: Translations = {
     pageTitle:       'Контакти',
     sectionEyebrow:  'Де Нас Знайти',
     sectionTitle:    'Відвідайте Ател\'є',
-    address:         '14 Rue de la Beauté, Paris 75008',
-    phone:           '+33 1 42 60 00 00',
-    email:           'bonjour@lumiere-atelier.com',
+    address:         'вулиця Політехнічна, 6, Київ, 02000',
+    phone:           '+380 12 345 6789',
+    email:           'PrestigeStudio@gmail.com',
     hours:           'Пн–Сб: 9:00 – 19:00\nНеділя: Зачинено',
     labels: {
       address: 'Адреса',
@@ -120,7 +120,7 @@ export const uk: Translations = {
     privacy:  'Політика Конфіденційності',
     terms:    'Умови Використання',
     cookies:  'Політика Cookies',
-    copy:     '© 2025 Lumière Hair Atelier. Всі права захищено.',
+    copy:     '© 2025 Prestige Studio. Всі права захищено.',
   },
 
   api: {
@@ -134,7 +134,7 @@ export const uk: Translations = {
     loginTitle:           'Ласкаво Просимо',
     loginSubtitle:        'Увійдіть, щоб керувати своїми записами',
     registerTitle:        'Створити Акаунт',
-    registerSubtitle:     'Приєднайтесь до Lumière та запишіться на перший прийом',
+    registerSubtitle:     'Приєднайтесь до Prestige Studio та запишіться на перший прийом',
     emailLabel:           'Електронна пошта',
     emailPh:              'ваша@пошта.com',
     passwordLabel:        'Пароль',

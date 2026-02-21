@@ -4,15 +4,14 @@ import { api } from '../shared/api/api';
 import { useState, useEffect } from 'react';
 import { ServiceCard } from '../entities/service/ui/ServiceCard';
 import { Button } from '../shared/ui/Button';
-import type { PageName } from '../shared/api/routes';
 import type { Service } from '../shared/api/api';
+import { useI18n } from '../shared/i18n';
+import { useNavigate } from 'react-router-dom';
 
-interface ServicesSectionProps {
-  onNavigate: (page: PageName) => void; 
-}
-
-export function ServicesSection({ onNavigate }: ServicesSectionProps) {
-const [services, setServices] = useState<Service[]>([]);  const [activeCategory, setActiveCategory] = useState("All");
+export function ServicesSection() {
+  const { t } = useI18n();
+  const navigate = useNavigate();
+  const [services, setServices] = useState<Service[]>([]);  const [activeCategory, setActiveCategory] = useState("All");
 
   useEffect(() => { api.getServices().then(setServices); }, []);
 
@@ -22,7 +21,7 @@ const [services, setServices] = useState<Service[]>([]);  const [activeCategory,
   return (
     <section style={{ padding: "120px 5%", background: THEME.colors.offwhite }}>
       <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
-        <SectionTitle subtitle="What We Offer" title={"Our Services"} />
+        <SectionTitle subtitle={t.services.sectionEyebrow} title={t.services.sectionTitle}/>
 
         {/* Category filter */}
         <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: "48px" }}>
@@ -53,7 +52,7 @@ const [services, setServices] = useState<Service[]>([]);  const [activeCategory,
         </div>
 
         <div style={{ textAlign: "center", marginTop: "64px" }}>
-          <Button onClick={() => onNavigate("booking")} variant="dark">Book a Service</Button>
+          <Button onClick={() => navigate("/booking")} variant="dark">{t.services.bookCta}</Button>
         </div>
       </div>
     </section>

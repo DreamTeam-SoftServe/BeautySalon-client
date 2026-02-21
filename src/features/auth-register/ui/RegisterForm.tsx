@@ -1,15 +1,13 @@
-// features/auth-register/ui/RegisterForm.tsx
 import { useState } from 'react'
-import { useI18n } from '../../../../shared/i18n'
-import { useAuth } from '../../../../shared/auth/context';
-import { THEME } from '../../../../shared/config/theme';
-import { ApiError } from '../../../../shared/api/api'
-import { Button } from '../../../../shared/ui/Button'
-import { Input } from '../../../../shared/ui/Input'
-import type { PageId } from '../../../../app/types'
+import { useI18n } from '../../../shared/i18n'
+import { useAuth } from '../../../shared/auth/context';
+import { THEME } from '../../../shared/config/theme';
+import { ApiError } from '../../../shared/api/client'
+import { Button } from '../../../shared/ui/Button'
+import { Input } from '../../../shared/ui/Input'
 
 interface RegisterFormProps {
-  onSuccess:     (page: PageId) => void
+  onSuccess: () => void
   onSwitchLogin: () => void
 }
 
@@ -59,7 +57,7 @@ export function RegisterForm({ onSuccess, onSwitchLogin }: RegisterFormProps) {
         phone:    form.phone,
         password: form.password,
       })
-      onSuccess('account')
+      onSuccess()
     } catch (err) {
       if (err instanceof ApiError && err.status === 409) {
         setServerError(a.errors.emailTaken)
@@ -73,19 +71,17 @@ export function RegisterForm({ onSuccess, onSwitchLogin }: RegisterFormProps) {
 
   const grid2: React.CSSProperties = {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-    gap: '20px',
-  }
+    gridTemplateColumns: '1fr 1fr',
+    gap: '50px',
+  } 
 
   return (
     <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '26px', maxWidth: '500px', margin: '0 auto' }}>
       <div style={grid2}>
         <Input label={a.nameLabel}  name="name"  value={form.name}  onChange={handleChange} error={errors.name}  placeholder={a.namePh} />
         <Input label={a.phoneLabel} name="phone" type="tel" value={form.phone} onChange={handleChange} error={errors.phone} placeholder={a.phonePh} />
-      </div>
-      <Input label={a.emailLabel} name="email" type="email" value={form.email} onChange={handleChange} error={errors.email} placeholder={a.emailPh} />
-      <div style={grid2}>
-        <Input label={a.passwordLabel}        name="password"        type="password" value={form.password}        onChange={handleChange} error={errors.password}        placeholder={a.passwordPh} />
+        <Input label={a.emailLabel} name="email" type="email" value={form.email} onChange={handleChange} error={errors.email} placeholder={a.emailPh} />
+        <Input label={a.passwordLabel} name="password" type="password" value={form.password} onChange={handleChange} error={errors.password} placeholder={a.passwordPh} />
         <Input label={a.confirmPasswordLabel} name="confirmPassword" type="password" value={form.confirmPassword} onChange={handleChange} error={errors.confirmPassword} placeholder={a.confirmPasswordPh} />
       </div>
 

@@ -1,15 +1,3 @@
-// shared/auth/context.tsx
-//
-// AuthProvider wraps the entire app and owns:
-//   • Current user state
-//   • JWT token lifecycle (store → inject → clear)
-//   • login / register / logout actions
-//   • Session restore on page reload (from localStorage)
-//
-// C# backend returns:
-//   { accessToken: string, expiresIn: number, user: User }
-// from POST /api/auth/login and POST /api/auth/register
-
 import {
   createContext,
   useContext,
@@ -22,29 +10,24 @@ import { tokenStore } from '../../shared/api/tokenStore'
 import { authApi, userApi } from '../../entities/user/api'
 import type { User, LoginDto, RegisterDto } from '../../entities/user/model'
 
-// ── Types ──────────────────────────────────────────────────────
 interface AuthContextValue {
-  user:         User | null
-  isLoading:    boolean      // true while restoring session on mount
-  isLoggedIn:   boolean
-  login:        (dto: LoginDto)    => Promise<void>
-  register:     (dto: RegisterDto) => Promise<void>
-  logout:       ()                 => Promise<void>
-  refreshUser:  ()                 => Promise<void>  // re-fetch profile
+  user: User | null
+  isLoading: boolean      
+  isLoggedIn: boolean
+  login: (dto: LoginDto) => Promise<void>
+  register: (dto: RegisterDto) => Promise<void>
+  logout: () => Promise<void>
+  refreshUser: () => Promise<void>  
 }
 
-// ── Storage keys ──────────────────────────────────────────────
-const TOKEN_KEY = 'lumiere_token'
+const TOKEN_KEY = 'prestige_token'
 
-// ── Context ───────────────────────────────────────────────────
 const AuthContext = createContext<AuthContextValue | null>(null)
 
-// ── Provider ──────────────────────────────────────────────────
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser]         = useState<User | null>(null)
   const [isLoading, setLoading] = useState(true)
 
-  // On mount: restore token → fetch /api/account/me
   useEffect(() => {
     const storedToken = localStorage.getItem(TOKEN_KEY)
     if (!storedToken) {
@@ -53,35 +36,40 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     tokenStore.set(storedToken)
     userApi.getMe()
-      .then(setUser)
+      .then(u => {
+        setUser(u)
+      })
       .catch(() => {
-        // Token expired or invalid — clear
         localStorage.removeItem(TOKEN_KEY)
+        localStorage.removeItem('clientId')
         tokenStore.clear()
       })
       .finally(() => setLoading(false))
   }, [])
 
-  const persistToken = (token: string) => {
+  const persistToken = (token: string, userId: string) => {
     tokenStore.set(token)
     localStorage.setItem(TOKEN_KEY, token)
+    localStorage.setItem('clientId', userId)
   }
 
   const clearSession = () => {
     tokenStore.clear()
     localStorage.removeItem(TOKEN_KEY)
+    localStorage.removeItem('clientId')
     setUser(null)
   }
 
   const login = useCallback(async (dto: LoginDto) => {
     const res = await authApi.login(dto)
-    persistToken(res.accessToken)
+    persistToken(res.accessToken, res.user.id)
+    localStorage.setItem('clientId', res.user.id);
     setUser(res.user)
   }, [])
 
   const register = useCallback(async (dto: RegisterDto) => {
     const res = await authApi.register(dto)
-    persistToken(res.accessToken)
+    persistToken(res.accessToken, res.user.id)
     setUser(res.user)
   }, [])
 
@@ -110,7 +98,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   )
 }
 
-// ── Hook ──────────────────────────────────────────────────────
 export function useAuth(): AuthContextValue {
   const ctx = useContext(AuthContext)
   if (!ctx) throw new Error('useAuth must be used inside <AuthProvider>')

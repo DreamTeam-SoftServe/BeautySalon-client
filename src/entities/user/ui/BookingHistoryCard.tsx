@@ -1,9 +1,8 @@
-// entities/user/ui/BookingHistoryCard.tsx
 import { THEME } from '../../../shared/config/theme';
 import type { UserBooking, BookingStatus } from '../model'
 import { useI18n } from '../../../shared/i18n'
 
-const STATUS_COLORS: Record<BookingStatus, { bg: string; text: string; border: string }> = {
+const STATUS_STYLES: Record<string, { bg: string; text: string; border: string }> = {
   pending:   { bg: '#FFF9EC', text: '#B8860B', border: '#F0D080' },
   confirmed: { bg: '#EDF7F0', text: '#2D7A4F', border: '#A8D8B8' },
   completed: { bg: '#F0F0F0', text: '#555555', border: '#CCCCCC' },
@@ -17,42 +16,57 @@ interface BookingHistoryCardProps {
 
 export function BookingHistoryCard({ booking, onCancel }: BookingHistoryCardProps) {
   const { t } = useI18n()
-  const colors = STATUS_COLORS[booking.status]
+  
+  const rawDate = (booking as any).start_date || booking.date;
+  const appointmentDate = new Date(rawDate);
+  const isValidDate = !isNaN(appointmentDate.getTime());
 
-  const formattedDate = new Date(booking.date).toLocaleDateString(t.lang, {
+  const statusKey = (booking.status || 'pending').toLowerCase();
+  const colors = STATUS_STYLES[statusKey] || STATUS_STYLES.pending; 
+
+  const dayNumber = isValidDate ? appointmentDate.getDate() : '--';
+  const monthShort = isValidDate ? appointmentDate.toLocaleDateString(t.lang, { month: 'short' }) : 'INV';
+  
+  const formattedDate = isValidDate ? appointmentDate.toLocaleDateString(t.lang, {
     weekday: 'short',
-    year:    'numeric',
-    month:   'long',
-    day:     'numeric',
-  })
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  }) : 'Invalid Date';
+
+  const displayTime = booking.time || (isValidDate 
+    ? appointmentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) 
+    : '--:--');
 
   return (
     <div style={{
-      padding:      '24px 28px',
-      background:   THEME.colors.white,
-      border:       `1px solid #E8E0D0`,
-      display:      'flex',
-      gap:          '20px',
-      alignItems:   'flex-start',
-      transition:   'box-shadow 0.2s',
+      padding: '24px 28px',
+      background: THEME.colors.white,
+      border: `1px solid #E8E0D0`,
+      display: 'flex',
+      gap: '20px',
+      alignItems: 'flex-start',
+      transition: 'box-shadow 0.2s',
+      marginBottom: '12px'
     }}>
-      {/* Date column */}
+      
+      {}
       <div style={{
-        minWidth:       '80px',
-        textAlign:      'center',
-        paddingRight:   '20px',
-        borderRight:    `1px solid #E8E0D0`,
-        flexShrink:     0,
+        minWidth: '80px',
+        textAlign: 'center',
+        paddingRight: '20px',
+        borderRight: `1px solid #E8E0D0`,
+        flexShrink: 0,
       }}>
         <p style={{
           fontFamily: THEME.fonts.display,
-          fontSize:   '2rem',
+          fontSize: '2rem',
           fontWeight: 400,
-          color:      THEME.colors.charcoal,
-          margin:     0,
+          color: THEME.colors.charcoal,
+          margin: 0,
           lineHeight: 1,
         }}>
-          {new Date(booking.date).getDate()}
+          {dayNumber} {}
         </p>
         <p style={{
           fontFamily:    THEME.fonts.sans,
@@ -62,11 +76,11 @@ export function BookingHistoryCard({ booking, onCancel }: BookingHistoryCardProp
           color:         THEME.colors.muted,
           margin:        '4px 0 0',
         }}>
-          {new Date(booking.date).toLocaleDateString(t.lang, { month: 'short' })}
+          {monthShort}
         </p>
       </div>
 
-      {/* Info */}
+      {}
       <div style={{ flex: 1 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
           <h4 style={{
@@ -76,9 +90,9 @@ export function BookingHistoryCard({ booking, onCancel }: BookingHistoryCardProp
             color:      THEME.colors.charcoal,
             margin:     0,
           }}>
-            {booking.serviceName}
+            {booking.serviceName || 'Service'}
           </h4>
-          {/* Status badge */}
+          
           <span style={{
             fontFamily:    THEME.fonts.sans,
             fontSize:      '0.65rem',
@@ -90,7 +104,7 @@ export function BookingHistoryCard({ booking, onCancel }: BookingHistoryCardProp
             border:        `1px solid ${colors.border}`,
             flexShrink:    0,
           }}>
-            {t.account.status[booking.status]}
+            {t.account.status[statusKey as BookingStatus] || statusKey}
           </span>
         </div>
 
@@ -100,7 +114,7 @@ export function BookingHistoryCard({ booking, onCancel }: BookingHistoryCardProp
           color:      THEME.colors.muted,
           margin:     '0 0 4px',
         }}>
-          {booking.masterName} · {booking.time} · {formattedDate}
+          {booking.masterName || 'Master'} · {displayTime} · {formattedDate}
         </p>
 
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '12px' }}>
@@ -109,10 +123,10 @@ export function BookingHistoryCard({ booking, onCancel }: BookingHistoryCardProp
             fontSize:   '1.1rem',
             color:      THEME.colors.gold,
           }}>
-            ${booking.price}
+            ${booking.price || 0}
           </span>
 
-          {booking.status === 'pending' || booking.status === 'confirmed' ? (
+          {(statusKey === 'pending' || statusKey === 'confirmed') && (
             <button
               onClick={() => onCancel?.(booking.id)}
               style={{
@@ -138,7 +152,7 @@ export function BookingHistoryCard({ booking, onCancel }: BookingHistoryCardProp
             >
               {t.account.cancelBooking}
             </button>
-          ) : null}
+          )}
         </div>
       </div>
     </div>

@@ -1,4 +1,5 @@
-import { useState, type JSX } from 'react';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 import { THEME } from '../shared/config/theme';
 import { Navbar } from '../widgets/Navbar';
 import { Footer } from '../widgets/Footer';
@@ -10,57 +11,60 @@ import { BookingPage } from '../pages/BookingPage';
 import { ContactsPage } from '../pages/ContactsPage';
 import { AuthPage } from '../pages/AuthPage';
 import { AccountPage } from '../pages/AccountPage';
-import { useI18n } from '../shared/i18n';
 import { useAuth } from '../shared/auth/context';
-import type { PageId } from './types'
-
+import { ProtectedRoute } from '../shared/auth/ProtectedRoute';
 
 export function App() {
-  const [page, setPage] = useState<PageId>('home')
-  const { t } = useI18n()
-  const { isLoading } = useAuth()
+  const { isLoading } = useAuth();
+  const location = useLocation();
 
-  const navigate = (p: PageId) => {
-    setPage(p)
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [location.pathname]);
 
   if (isLoading) {
     return (
       <div style={{
-        minHeight:      '100vh',
-        display:        'flex',
-        alignItems:     'center',
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
         justifyContent: 'center',
-        background:     THEME.colors.cream,
-        fontFamily:     THEME.fonts.display,
-        fontSize:       '2rem',
-        color:          THEME.colors.gold,
-        letterSpacing:  '0.3em',
+        background: THEME.colors.cream,
+        fontFamily: THEME.fonts.display,
+        fontSize: '2rem',
+        color: THEME.colors.gold,
+        letterSpacing: '0.3em',
       }}>
-        LUMIÈRE
+        Prestige Studio
       </div>
-    )
+    );
   }
 
-  const pages: Record<PageId, JSX.Element> = {
-    home:     <HomePage     onNavigate={navigate} />,
-    services: <ServicesPage onNavigate={navigate} />,
-    masters:  <MastersPage  onNavigate={navigate} />,
-    booking:  <BookingPage />,
-    contacts: <ContactsPage />,
-    auth:     <AuthPage     onNavigate={navigate} />,
-    account:  <AccountPage  onNavigate={navigate} />,
-  }
+  const activePage = location.pathname.substring(1) || 'home';
 
   return (
     <div style={{ fontFamily: THEME.fonts.body, background: THEME.colors.offwhite, minHeight: '100vh' }}>
+      {}
+      <Navbar activePage={activePage as any} />
+      <main>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/services" element={<ServicesPage />} />
+          <Route path="/masters" element={<MastersPage />} />
+          <Route path="/booking" element={<BookingPage />} />
+          <Route path="/contacts" element={<ContactsPage />} />
+          <Route path="/auth" element={<AuthPage />} />
 
+          <Route element= {<ProtectedRoute />}>
+            <Route path="/account" element={<AccountPage />} />
+            <Route path="/booking" element={<BookingPage />} />
+          </Route>
 
-      <Navbar activePage={page} onNavigate={navigate} />
-      <main>{pages[page]}</main>
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </main>
       <Divider />
-      <Footer onNavigate={navigate} />
+      <Footer />
     </div>
-  )
+  );
 }

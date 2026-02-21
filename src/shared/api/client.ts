@@ -1,7 +1,19 @@
 
 import { ENV } from '../../shared/config/env'
-import { ApiError } from '../api/api'
 import { tokenStore } from '../api/tokenStore'
+
+
+export class ApiError extends Error {
+  public readonly status: number
+  public readonly body: unknown
+
+  constructor(message: string, status: number, body: unknown) {
+    super(message)
+    this.name   = 'ApiError'
+    this.status = status
+    this.body   = body
+  }
+}
 
 type FetchOptions = Omit<RequestInit, 'headers'> & { headers?: Record<string, string> }
 
@@ -25,7 +37,6 @@ export async function apiFetch<T = unknown>(
     response = await fetch(url, {
       ...options,
       headers,
-      // credentials: 'include'  ← uncomment for cookie-based auth
     })
   } catch {
     throw new ApiError(
@@ -51,8 +62,9 @@ export async function apiFetch<T = unknown>(
 }
 
 export const apiClient = {
-  get:    <T>(path: string)              => apiFetch<T>(path, { method: 'GET' }),
-  post:   <T>(path: string, data: unknown) => apiFetch<T>(path, { method: 'POST',   body: JSON.stringify(data) }),
-  put:    <T>(path: string, data: unknown) => apiFetch<T>(path, { method: 'PUT',    body: JSON.stringify(data) }),
-  delete: <T>(path: string)              => apiFetch<T>(path, { method: 'DELETE' }),
+  get: <T>(path: string) => apiFetch<T>(path, { method: 'GET' }),
+  post: <T>(path: string, data: unknown) => apiFetch<T>(path, { method: 'POST', body: JSON.stringify(data) }),
+  put: <T>(path: string, data: unknown) => apiFetch<T>(path, { method: 'PUT', body: JSON.stringify(data) }),
+  delete: <T>(path: string) => apiFetch<T>(path, { method: 'DELETE' }),
+  patch: <T>(path: string, data?: unknown) => apiFetch<T>(path, { method: 'PATCH', body: JSON.stringify(data) }),
 }

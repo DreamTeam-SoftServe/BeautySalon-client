@@ -11,6 +11,8 @@ interface InputProps {
   rows?: number; 
   type?: string;
   style?: React.CSSProperties;
+  readOnly?: boolean;
+  min?: string;
   as?: 'input' | 'textarea';
 }
 

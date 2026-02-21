@@ -4,16 +4,15 @@ import { api } from '../shared/api/api';
 import { SectionTitle } from '../shared/ui/SectionTitle';
 import { ServicesSection } from '../widgets/ServicesSection';
 import { Divider } from '../shared/ui/Divider';
-import type { PageName } from '../shared/api/routes';
 import type { Service } from '../shared/api/api'; 
+import { useI18n } from '../shared/i18n';
 
-interface ServicesPageProps {
-  onNavigate: (page: PageName) => void;
-}
 
-export function ServicesPage({ onNavigate }: ServicesPageProps) {
+
+export function ServicesPage() {
   const [services, setServices] = useState<Service[]>([]);
-  
+  const { t } = useI18n();
+
   useEffect(() => { 
     api.getServices().then(setServices); 
   }, []);
@@ -21,18 +20,17 @@ export function ServicesPage({ onNavigate }: ServicesPageProps) {
   return (
     <div style={{ paddingTop: "80px" }}>
       <div style={{ padding: "80px 5% 60px", background: THEME.colors.cream, textAlign: "center" }}>
-        <SectionTitle subtitle="Our Offerings" title={"Services & Pricing"} align="center" />
+        <SectionTitle subtitle={t.services.sectionEyebrow} title={t.services.sectionTitle} align="center" />
         <p style={{ fontFamily: THEME.fonts.body, fontSize: "1.1rem", color: THEME.colors.muted, maxWidth: "560px", margin: "0 auto" }}>
-          Every service is an experience. We use only premium products and take the time your hair deserves.
+          {t.services.offeringsBody}
         </p>
       </div>
-      
-      <ServicesSection onNavigate={onNavigate} />
+      <ServicesSection/>
       
       {/* Full service table */}
       <section style={{ padding: "80px 5%", background: THEME.colors.white }}>
         <div style={{ maxWidth: "1000px", margin: "0 auto" }}>
-          <SectionTitle subtitle="Complete Menu" title={"Service Details"} />
+          <SectionTitle subtitle={t.services.menuEyebrow} title={t.services.menuTitle} />
           <div style={{ display: "flex", flexDirection: "column" }}>
             {services.map((s, i) => (
               <div key={s.id}>
@@ -48,8 +46,10 @@ export function ServicesPage({ onNavigate }: ServicesPageProps) {
                       {s.description}
                     </p>
                   </div>
-                  <span style={{ fontFamily: THEME.fonts.sans, fontSize: "0.75rem", color: THEME.colors.muted, whiteSpace: "nowrap" }}>{s.duration} min</span>
-                  <span style={{ fontFamily: THEME.fonts.display, fontSize: "1.3rem", color: THEME.colors.gold, whiteSpace: "nowrap" }}>from ${s.price}</span>
+                  {/*<span style={{ fontFamily: THEME.fonts.sans, fontSize: "0.75rem", color: THEME.colors.muted, whiteSpace: "nowrap" }}>{s.duration} {t.services.unit.min}</span>
+                  <span style={{ fontFamily: THEME.fonts.display, fontSize: "1.3rem", color: THEME.colors.gold, whiteSpace: "nowrap" }}>{t.services.unit.from} ${s.price}</span>
+                  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                  */}
                 </div>
                 {i < services.length - 1 && <Divider />}
               </div>

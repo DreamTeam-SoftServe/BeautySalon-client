@@ -4,19 +4,21 @@ import { ServicesSection } from '../widgets/ServicesSection';
 import { MastersSection } from '../widgets/MastersSection';
 import { Divider } from '../shared/ui/Divider';
 import { Button } from '../shared/ui/Button';
-import type { PageName } from '../shared/api/routes';
+import { useI18n } from '../shared/i18n';
+import { useNavigate } from 'react-router-dom';
 
-interface HomePageProps {
-  onNavigate: (page: PageName) => void;
-}
 
-export function HomePage({ onNavigate }: HomePageProps) {
+
+export function HomePage() {
+  const { t } = useI18n();
+  const navigate = useNavigate();
+
   return (
     <>
-      <HeroSection onNavigate={onNavigate} />
-      <Divider />
-      <ServicesSection onNavigate={onNavigate} />
-      <Divider />
+      <HeroSection/>
+      <Divider/>
+      <ServicesSection/>
+      <Divider/>
       {/* Inline promo strip */}
       <section style={{
         padding: "80px 5%",
@@ -24,15 +26,15 @@ export function HomePage({ onNavigate }: HomePageProps) {
         textAlign: "center",
       }}>
         <p style={{ fontFamily: THEME.fonts.sans, fontSize: "0.7rem", letterSpacing: "0.3em", textTransform: "uppercase", color: THEME.colors.gold, marginBottom: "16px" }}>
-          Limited Availability
+          {t.cta.eyebrow}
         </p>
         <h2 style={{ fontFamily: THEME.fonts.display, fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 400, color: THEME.colors.cream, margin: "0 0 24px" }}>
-          Reserve Your Seat at the Atelier
+          {t.cta.heading}
         </h2>
-        <Button onClick={() => onNavigate("booking")} variant="ghost">Book Now — It's Free</Button>
+        <Button onClick={() => navigate("/booking")} variant="ghost">{t.cta.button}</Button>
       </section>
       <Divider />
-      <MastersSection onNavigate={onNavigate} />
+      <MastersSection onNavigate={navigate} />
     </>
   );
 }
