@@ -1,4 +1,5 @@
 import { THEME } from '../../shared/config/theme';
+import { useI18n } from '../i18n';
 
 interface SelectProps {
   label?: string;
@@ -7,9 +8,12 @@ interface SelectProps {
   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   options: { value: string; label: string }[];
   error?: string;
+  disabled?: boolean;
 }
 
 export function Select({ label, name, value, onChange, options, error }: SelectProps) {
+  const { t } = useI18n();
+  
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
       {label && (
@@ -34,7 +38,7 @@ export function Select({ label, name, value, onChange, options, error }: SelectP
           cursor: "pointer",
         }}
       >
-        <option value="">Select an option</option>
+        <option value="">{t.booking.fields.selectPh}</option>
         {options.map((o) => (
           <option key={o.value} value={o.value}>{o.label}</option>
         ))}

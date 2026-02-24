@@ -1,11 +1,10 @@
-// shared/i18n/context.tsx
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react'
 import type { Locale, Translations } from './types'
 import { en } from './locales/en'
 import { fr } from './locales/fr'
 import { uk } from './locales/uk'
 
-// ─── Registry ─────────────────────────────────────────────────
+
 const locales: Record<Locale, Translations> = { en, fr, uk }
 
 const STORAGE_KEY = 'lumiere_locale'
@@ -20,7 +19,6 @@ function detectLocale(): Locale {
   return 'en'
 }
 
-// ─── Context ──────────────────────────────────────────────────
 interface I18nContextValue {
   t: Translations
   locale: Locale
@@ -30,7 +28,6 @@ interface I18nContextValue {
 
 const I18nContext = createContext<I18nContextValue | null>(null)
 
-// ─── Provider ─────────────────────────────────────────────────
 export function I18nProvider({ children }: { children: ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>(detectLocale)
 
@@ -58,7 +55,6 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   )
 }
 
-// ─── Hook ─────────────────────────────────────────────────────
 export function useI18n(): I18nContextValue {
   const ctx = useContext(I18nContext)
   if (!ctx) throw new Error('useI18n must be used inside <I18nProvider>')

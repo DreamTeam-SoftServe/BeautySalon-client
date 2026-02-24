@@ -1,31 +1,23 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useI18n } from '../shared/i18n'
 import { useAuth } from '../shared/auth/context.tsx'
 import { THEME } from '../shared/config/theme';
 import { Button } from '../shared/ui/Button'
 import { UserAvatar } from '../entities/user/ui/UserAvatar'
-import { BookingHistory } from '../features/features/user-profile/ui/BookingHistory'
-import { ProfileForm } from '../features/features/user-profile/ui/ProfileForm'
-import type { PageId } from '../app/types'
+import { BookingHistory } from '../features/user-profile/ui/BookingHistory.tsx'
+import { ProfileForm } from '../features/user-profile/ui/ProfileForm.tsx'
+import { useNavigate } from 'react-router-dom';
 
 type Tab = 'profile' | 'bookings'
 
-interface AccountPageProps {
-  onNavigate: (p: PageId) => void
-}
 
-export function AccountPage({ onNavigate }: AccountPageProps) {
+export function AccountPage() {
   const { t } = useI18n()
   const { user, logout, isLoading } = useAuth()
-  const [tab, setTab]           = useState<Tab>('profile')
+  const [tab, setTab] = useState<Tab>('profile')
+  const navigate = useNavigate();
   const [loggingOut, setLoggingOut] = useState(false)
   const ac = t.account
-
-    useEffect(() => {
-     if (!user) {
-    onNavigate('auth');
-  }
-}, [user, onNavigate]);
 
   if (isLoading || !user) {
     return (
@@ -38,21 +30,21 @@ export function AccountPage({ onNavigate }: AccountPageProps) {
   const handleLogout = async () => {
     setLoggingOut(true)
     await logout()
-    onNavigate('home')
+    navigate('/')
   }
 
   const tabStyle = (id: Tab): React.CSSProperties => ({
-    fontFamily:    THEME.fonts.sans,
-    fontSize:      '0.75rem',
+    fontFamily: THEME.fonts.sans,
+    fontSize: '0.75rem',
     letterSpacing: '0.15em',
     textTransform: 'uppercase',
-    padding:       '12px 0',
-    background:    'none',
-    border:        'none',
-    borderBottom:  tab === id ? `2px solid ${THEME.colors.gold}` : '2px solid transparent',
-    color:         tab === id ? THEME.colors.charcoal : THEME.colors.muted,
-    cursor:        'pointer',
-    transition:    'all 0.2s',
+    padding: '12px 0',
+    background: 'none',
+    border: 'none',
+    borderBottom: tab === id ? `2px solid ${THEME.colors.gold}` : '2px solid transparent',
+    color: tab === id ? THEME.colors.charcoal : THEME.colors.muted,
+    cursor: 'pointer',
+    transition: 'all 0.2s',
   })
 
   return (
@@ -103,8 +95,8 @@ export function AccountPage({ onNavigate }: AccountPageProps) {
 
       {/* Tab content */}
       <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '60px 5% 120px' }}>
-        {tab === 'profile'  && <ProfileForm />}
-        {tab === 'bookings' && <BookingHistory onNavigate={onNavigate} />}
+        {tab === 'profile'  && <ProfileForm/>}
+        {tab === 'bookings' && <BookingHistory/>}
       </div>
     </div>
   )

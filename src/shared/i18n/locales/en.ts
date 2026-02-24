@@ -37,8 +37,8 @@ export const en: Translations = {
     menuEyebrow: 'Complete Menu',
     menuTitle:   'Service Details',
     unit: {
-      min:  'min',
-      from: 'from',
+      min:  'Min',
+      from: 'From',
     },
   },
 
@@ -67,7 +67,7 @@ export const en: Translations = {
       notes:       'Notes (optional)',
       namePh:      'Your name',
       emailPh:     'your@email.com',
-      phonePh:     '+1 (555) 000-0000',
+      phonePh:     '+380 00 000 00 00',
       notesPh:     'Allergies, special requests…',
       selectPh:    'Select an option',
     },
@@ -98,9 +98,9 @@ export const en: Translations = {
     pageTitle:       'Contact Us',
     sectionEyebrow:  'Find Us',
     sectionTitle:    'Visit the Atelier',
-    address:         '14 Rue de la Beauté, Paris 75008',
-    phone:           '+33 1 42 60 00 00',
-    email:           'bonjour@lumiere-atelier.com',
+    address:         '6 Polytechnichna Street, Kyiv, 02000',
+    phone:           '+380 12 345 6789',
+    email:           'PrestigeStudio@gmail.com',
     hours:           'Mon–Sat: 9:00 – 19:00\nSunday: Closed',
     labels: {
       address: 'Address',
@@ -120,7 +120,7 @@ export const en: Translations = {
     privacy:  'Privacy Policy',
     terms:    'Terms of Service',
     cookies:  'Cookie Policy',
-    copy:     '© 2025 Lumière Hair Atelier. All rights reserved.',
+    copy:     '© 2025 Prestige Studio. All rights reserved.',
   },
 
   api: {

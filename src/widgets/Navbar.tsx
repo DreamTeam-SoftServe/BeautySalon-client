@@ -1,18 +1,18 @@
 import { THEME } from '../shared/config/theme';
 import { useState, useEffect } from 'react';
 import { Button } from '../shared/ui/Button';
-import type { PageName } from '../shared/api/routes';
-import { useAuth } from '../shared/auth/context';
+import { useI18n } from '../shared/i18n';
+import { useNavigate } from 'react-router-dom'; 
 
 interface NavbarProps {
-  onNavigate: (page: PageName) => void; 
   activePage?: string;                
 }
 
-export function Navbar({ activePage, onNavigate }: NavbarProps) {
-  const { user } = useAuth();
+export function Navbar({ activePage }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const { t } = useI18n();
+  const navigate = useNavigate(); 
 
   useEffect(() => {
     const h = () => setScrolled(window.scrollY > 40);
@@ -21,34 +21,28 @@ export function Navbar({ activePage, onNavigate }: NavbarProps) {
   }, []);
 
   const links = [
-    { id: "home", label: "Home" },
-    { id: "services", label: "Services" },
-    { id: "masters", label: "Masters" },
-    { id: "booking", label: "Book Now" },
-    { id: "contacts", label: "Contact" },
-    { id: "account", label: "My Account"},
+    { id: "home", path: "/", label: t.nav.home },
+    { id: "services", path: "/services", label: t.nav.services },
+    { id: "masters", path: "/masters", label: t.nav.masters },
+    { id: "booking", path: "/booking", label: t.nav.booking },
+    { id: "contacts", path: "/contacts", label: t.nav.contacts },
+    { id: "account", path: "/account", label: t.nav.account},
   ];
 
   return (
     <>
       <nav style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        right: 0,
-        zIndex: 100,
+        position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
         padding: "0 5%",
         background: scrolled ? "rgba(253,251,247,0.96)" : "transparent",
         backdropFilter: scrolled ? "blur(8px)" : "none",
         borderBottom: scrolled ? `1px solid rgba(201,168,76,0.15)` : "none",
         transition: "all 0.4s ease",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
+        display: "flex", alignItems: "center", justifyContent: "space-between",
         height: scrolled ? "64px" : "80px",
       }}>
-        {/* Logo */}
-        <div onClick={() => onNavigate("home")} style={{ cursor: "pointer" }}>
+        {}
+        <div onClick={() => navigate("/")} style={{ cursor: "pointer" }}>
           <p style={{ fontFamily: THEME.fonts.display, fontSize: "1.4rem", fontWeight: 700, color: THEME.colors.charcoal, margin: 0, letterSpacing: "0.04em" }}>
             Prestige Studio
           </p>
@@ -62,17 +56,13 @@ export function Navbar({ activePage, onNavigate }: NavbarProps) {
           {links.filter(l => l.id !== "booking").map((l) => (
             <button
               key={l.id}
-              onClick={() => onNavigate(l.id as PageName)}
+              onClick={() => navigate(l.path)} 
               style={{
-                background: "none",
-                border: "none",
-                fontFamily: THEME.fonts.sans,
-                fontSize: "0.75rem",
-                letterSpacing: "0.15em",
-                textTransform: "uppercase",
+                background: "none", border: "none",
+                fontFamily: THEME.fonts.sans, fontSize: "0.75rem",
+                letterSpacing: "0.15em", textTransform: "uppercase",
                 color: activePage === l.id ? THEME.colors.gold : THEME.colors.charcoal,
-                cursor: "pointer",
-                padding: "4px 0",
+                cursor: "pointer", padding: "4px 0",
                 borderBottom: activePage === l.id ? `1px solid ${THEME.colors.gold}` : "1px solid transparent",
                 transition: "all 0.2s",
               }}
@@ -80,11 +70,12 @@ export function Navbar({ activePage, onNavigate }: NavbarProps) {
               {l.label}
             </button>
           ))}
-          <Button onClick={() => onNavigate("booking")} variant="primary" style={{ padding: "10px 24px" }}>
-            Book Now
+          
+          <Button onClick={() => navigate("/booking")} variant="primary" style={{ padding: "10px 24px" }}>
+            {t.nav.booking}
           </Button>
         </div>
-      </nav>
+      </nav> 
 
       {/* Mobile menu overlay */}
       {menuOpen && (
@@ -97,7 +88,7 @@ export function Navbar({ activePage, onNavigate }: NavbarProps) {
         }}>
           <button onClick={() => setMenuOpen(false)} style={{ position: "absolute", top: "20px", right: "24px", background: "none", border: "none", color: THEME.colors.cream, fontSize: "1.5rem", cursor: "pointer" }}>✕</button>
           {links.map((l) => (
-            <button key={l.id} onClick={() => { onNavigate(l.id as PageName); setMenuOpen(false); }} style={{
+            <button key={l.id} onClick={() => { navigate(l.path); setMenuOpen(false); }} style={{
               background: "none", border: "none",
               fontFamily: THEME.fonts.display, fontSize: "2.5rem",
               color: THEME.colors.cream, cursor: "pointer",

@@ -2,9 +2,10 @@ import { useState } from 'react';
 import { THEME } from '../../../shared/config/theme';
 import { Badge } from '../../../shared/ui/Badge';
 import type { Service } from '../../../shared/api/api';
-
+import { useI18n } from '../../../shared/i18n';
 
 export function ServiceCard({ service }: { service: Service }) {
+  const { t } = useI18n();
   const [hovered, setHovered] = useState(false);
   return (
     <div
@@ -51,7 +52,7 @@ export function ServiceCard({ service }: { service: Service }) {
           color: hovered ? THEME.colors.goldLight : THEME.colors.gold,
           transition: "color 0.4s",
         }}>
-          from ${service.price}
+          {t.services.unit.from} ${service.price}
         </span>
         <span style={{
           fontFamily: THEME.fonts.sans,
@@ -60,7 +61,7 @@ export function ServiceCard({ service }: { service: Service }) {
           letterSpacing: "0.08em",
           transition: "color 0.4s",
         }}>
-          {service.duration} min
+          {service.duration} {t.services.unit.min}
         </span>
       </div>
     </div>

@@ -1,4 +1,5 @@
-const API_BASE_URL = 'http://localhost:5245'; 
+import { apiClient } from '../api/client'
+import { ENV } from '../config/env';
 
 export interface Service {
   id: string;
@@ -25,42 +26,56 @@ export interface BookingData {
   serviceId: string;
   date: string;
   time: string;
+  masterId?: string;
+  notes?: string;
 }
 
 export const api = {
-  getServices: async () => {
-    const response = await fetch(`${API_BASE_URL}/api/ServiceControllers`);
-    if (!response.ok) throw new Error('Помилка завантаження послуг');
-    return response.json(); 
+  getServices: () => apiClient.get<Service[]>('/api/ServiceControllers'),  
+  getMasters: () => apiClient.get<Master[]>('/api/Master'),
+  
+  submitBooking: (data: BookingData) => {
+    const combinedDateTime = new Date(`${data.date}T${data.time}:00`).toISOString();
+
+    const payloadForBackend = {
+      name: data.name,
+      phone: data.phone,
+      email: data.email,
+      serviceId: data.serviceId,
+      masterId: data.masterId,
+      start_date: combinedDateTime
+    };
+
+    console.log("SEND", payloadForBackend);
+
+    return apiClient.post<{ success: boolean; clientId: string }>(
+      "/api/ServiceAppointmentControllers",
+      payloadForBackend
+    );
   },
 
-  getMasters: async () => {
-    const response = await fetch(`${API_BASE_URL}/api/Master`);
-    if (!response.ok) throw new Error('Помилка завантаження майстрів');
-    return response.json();
+  getBusySlots: async (masterId: string, date: string): Promise<string[]> => {
+    const url = `/api/Master/${masterId}/busy-slots?date=${date}`;
+    return apiClient.get<string[]>(url);
   },
 
-  submitBooking: async (data: BookingData): Promise<{ success: boolean; message: string }> => {
-    const response = await fetch(`${API_BASE_URL}/api/ServiceAppointmentControllers`, {
+  setPassword: async (phone: string, password: string) => {
+    const response = await fetch(`${ENV.API_BASE_URL}/api/auth/set-password`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+      headers: { 
+        'Content-Type': 'application/json' 
       },
-      body: JSON.stringify(data), 
+      body: JSON.stringify({ 
+        phone: phone, 
+        newPassword: password 
+      }),
     });
-    
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to set password');
+    }
+
     return response.json();
   }
 };
-
-export class ApiError extends Error {
-  public readonly status: number
-  public readonly body: unknown
-
-  constructor(message: string, status: number, body: unknown) {
-    super(message)
-    this.name   = 'ApiError'
-    this.status = status
-    this.body   = body
-  }
-}

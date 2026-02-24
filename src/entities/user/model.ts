@@ -1,4 +1,3 @@
-// entities/user/model.ts
 
 export interface User {
   id: string
@@ -30,6 +29,7 @@ export type BookingStatus =
 export interface UpdateProfileDto {
   name: string
   phone: string
+  email: string;
 }
 
 export interface LoginDto {

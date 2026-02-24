@@ -1,13 +1,13 @@
 import { THEME } from '../shared/config/theme';
 import { Button } from '../shared/ui/Button';
-import type { PageName } from '../shared/api/routes';
-import heroImg from '../shared/assets/istockphoto-1488432774-2048x2048.jpg';
+import heroImg from '../shared/assets/heroImg.jpg';
+import { useI18n } from '../shared/i18n';
+import { useNavigate } from 'react-router-dom';
 
-interface HeroSectionProps {
-  onNavigate: (page: PageName) => void;                 
-}
-
-export function HeroSection({ onNavigate }: HeroSectionProps) {
+export function HeroSection() {
+const { t } = useI18n();
+const navigate = useNavigate();
+  
   return (
     <section style={{
       minHeight: "100vh",
@@ -52,7 +52,7 @@ export function HeroSection({ onNavigate }: HeroSectionProps) {
         />
       </div>
 
-      {/* 4. ВИПРАВЛЕНО: Додали zIndex: 2, щоб текст завжди був поверх картинки на малих екранах */}
+      {}
       <div style={{ position: "relative", maxWidth: "600px", zIndex: 2 }}>
         <p style={{
           fontFamily: THEME.fonts.sans,
@@ -61,12 +61,12 @@ export function HeroSection({ onNavigate }: HeroSectionProps) {
           textTransform: "uppercase",
           color: THEME.colors.gold,
           marginBottom: "24px",
-          background: "rgba(255, 255, 255, 0.7)", // Трохи фону, щоб текст краще читався, якщо під ним картинка
+          background: "rgba(255, 255, 255, 0.7)",
           display: "inline-block",
           padding: "4px 8px",
           borderRadius: "4px"
         }}>
-          ✦ Paris-Inspired Hair Atelier
+          {t.cta.eyebrow}
         </p>
         <h1 style={{
           fontFamily: THEME.fonts.display,
@@ -75,9 +75,9 @@ export function HeroSection({ onNavigate }: HeroSectionProps) {
           color: THEME.colors.charcoal,
           lineHeight: 1.05,
           margin: "0 0 28px",
-          textShadow: "2px 2px 10px rgba(255,255,255,0.8)" // Захист тексту від наїзду на картинку
+          textShadow: "2px 2px 10px rgba(255,255,255,0.8)"
         }}>
-          The Art<br />of Beautiful<br /><em style={{ fontStyle: "italic", color: THEME.colors.gold }}>Hair</em>
+          {t.hero.line1}<br />{t.hero.line2}<br /><em style={{ fontStyle: "italic", color: THEME.colors.gold }}>{t.hero.line3}</em>
         </h1>
         <p style={{
           fontFamily: THEME.fonts.body,
@@ -90,17 +90,17 @@ export function HeroSection({ onNavigate }: HeroSectionProps) {
           padding: "8px",
           borderRadius: "8px"
         }}>
-          Where Parisian craft meets modern vision. Each visit is a ritual — an experience of care, transformation, and quiet luxury.
+          {t.hero.body}
         </p>
         
         <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
-          <Button onClick={() => onNavigate("booking")}>Book Appointment</Button>
-          <Button variant="outline" onClick={() => onNavigate("services")}>Explore Services</Button>
+          <Button onClick={() => navigate("/booking")}>{t.hero.ctaPrimary}</Button>
+          <Button variant="outline" onClick={() => navigate("/services")}>{t.hero.ctaSecondary}</Button>
         </div>
 
         {/* Stats */}
         <div style={{ display: "flex", gap: "40px", marginTop: "64px", paddingTop: "40px", borderTop: `1px solid rgba(201,168,76,0.25)` }}>
-          {[["12+", "Years"], ["4", "Masters"], ["3000+", "Clients"]].map(([n, l]) => (
+          {[["12+", t.hero.stat1Label], ["4", t.hero.stat2Label], ["3000+", t.hero.stat3Label]].map(([n, l]) => (
             <div key={l}>
               <p style={{ fontFamily: THEME.fonts.display, fontSize: "2rem", color: THEME.colors.charcoal, margin: 0 }}>{n}</p>
               <p style={{ fontFamily: THEME.fonts.sans, fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase", color: THEME.colors.muted, margin: 0 }}>{l}</p>

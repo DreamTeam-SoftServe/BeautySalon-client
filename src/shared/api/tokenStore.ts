@@ -1,9 +1,7 @@
-// shared/api/tokenStore.ts
-// In-memory JWT store. Swap to httpOnly cookie in production.
-let _token: string | null = null
+const TOKEN_KEY = 'Prestige_auth_token';
 
 export const tokenStore = {
-  get: ()            => _token,
-  set: (t: string)   => { _token = t },
-  clear: ()          => { _token = null },
+  get: () => localStorage.getItem(TOKEN_KEY),
+  set: (t: string) => localStorage.setItem(TOKEN_KEY, t),
+  clear: () => localStorage.removeItem(TOKEN_KEY),
 }
