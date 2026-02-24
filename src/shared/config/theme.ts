@@ -9,7 +9,7 @@ export const THEME = {
     white: "#FFFFFF",
     offwhite: "#FDFBF7",
     errorText: "#D32F2F",
-    errorBg: "#FDEDED",      
+    errorBg: "#FDEDED",
     errorBorder: "#F1A8A8",
   },
   fonts: {

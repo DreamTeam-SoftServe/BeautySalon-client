@@ -1,21 +1,27 @@
-import { THEME } from '../../shared/config/theme';
-import type { ReactNode, CSSProperties, MouseEvent } from 'react';
+import { THEME } from "../../shared/config/theme";
+import type { ReactNode, CSSProperties, MouseEvent } from "react";
 
-type ButtonVariant = 'primary' | 'outline' | 'ghost' | 'dark';
+type ButtonVariant = "primary" | "outline" | "ghost" | "dark";
 
 interface ButtonProps {
   children: ReactNode;
-  variant?: ButtonVariant; 
-  type?: 'button' | 'submit' | 'reset'; 
-  onClick?: (e: MouseEvent<HTMLButtonElement>) => void; 
-  disabled?: boolean; 
-  extraStyle?: CSSProperties; 
+  variant?: ButtonVariant;
+  type?: "button" | "submit" | "reset";
+  onClick?: (e: MouseEvent<HTMLButtonElement>) => void;
+  disabled?: boolean;
+  extraStyle?: CSSProperties;
   style?: CSSProperties;
   className?: string;
 }
 
-
-export function Button({ children, variant = "primary", onClick, type = "button", disabled, style: extraStyle }: ButtonProps) {
+export function Button({
+  children,
+  variant = "primary",
+  onClick,
+  type = "button",
+  disabled,
+  style: extraStyle,
+}: ButtonProps) {
   const base = {
     fontFamily: THEME.fonts.sans,
     fontWeight: 500,
@@ -60,8 +66,14 @@ export function Button({ children, variant = "primary", onClick, type = "button"
       onMouseEnter={(e) => {
         if (disabled) return;
         if (variant === "primary") e.currentTarget.style.background = "#B8963E";
-        if (variant === "outline") { e.currentTarget.style.background = THEME.colors.charcoal; e.currentTarget.style.color = THEME.colors.cream; }
-        if (variant === "ghost") { e.currentTarget.style.background = THEME.colors.gold; e.currentTarget.style.color = THEME.colors.charcoal; }
+        if (variant === "outline") {
+          e.currentTarget.style.background = THEME.colors.charcoal;
+          e.currentTarget.style.color = THEME.colors.cream;
+        }
+        if (variant === "ghost") {
+          e.currentTarget.style.background = THEME.colors.gold;
+          e.currentTarget.style.color = THEME.colors.charcoal;
+        }
         if (variant === "dark") e.currentTarget.style.background = "#333";
       }}
       onMouseLeave={(e) => {
