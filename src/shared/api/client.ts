@@ -1,70 +1,78 @@
-
-import { ENV } from '../../shared/config/env'
-import { tokenStore } from '../api/tokenStore'
-
+import { ENV } from "../../shared/config/env";
+import { tokenStore } from "../api/tokenStore";
 
 export class ApiError extends Error {
-  public readonly status: number
-  public readonly body: unknown
+  public readonly status: number;
+  public readonly body: unknown;
 
   constructor(message: string, status: number, body: unknown) {
-    super(message)
-    this.name   = 'ApiError'
-    this.status = status
-    this.body   = body
+    super(message);
+    this.name = "ApiError";
+    this.status = status;
+    this.body = body;
   }
 }
 
-type FetchOptions = Omit<RequestInit, 'headers'> & { headers?: Record<string, string> }
+type FetchOptions = Omit<RequestInit, "headers"> & {
+  headers?: Record<string, string>;
+};
 
 export async function apiFetch<T = unknown>(
   path: string,
-  options: FetchOptions = {}
+  options: FetchOptions = {},
 ): Promise<T> {
-  const url = `${ENV.API_BASE_URL}${path}`
+  const url = `${ENV.API_BASE_URL}${path}`;
+
+  const isFormData = options.body instanceof FormData;
 
   const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
-    Accept: 'application/json',
+    Accept: "application/json",
     ...options.headers,
+  };
+
+  if (!isFormData) {
+    headers["Content-Type"] = "application/json";
   }
 
-  const token = tokenStore.get()
-  if (token) headers['Authorization'] = `Bearer ${token}`
+  const token = tokenStore.get();
+  if (token) headers["Authorization"] = `Bearer ${token}`;
 
-  let response: Response
+  let response: Response;
   try {
     response = await fetch(url, {
       ...options,
       headers,
-    })
+    });
   } catch {
-    throw new ApiError(
-      'Network error — cannot reach the server.',
-      0,
-      null
-    )
+    throw new ApiError("Network error", 0, null);
   }
 
-  if (response.status === 204) return null as T
-
-  const ct = response.headers.get('content-type') ?? ''
-  const body = ct.includes('application/json')
+  if (response.status === 204) return null as T;
+  const ct = response.headers.get("content-type") ?? "";
+  const body = ct.includes("application/json")
     ? await response.json()
-    : await response.text()
-
-  if (!response.ok) {
-    const message = (body as any)?.detail ?? (body as any)?.title ?? `HTTP ${response.status}`
-    throw new ApiError(message, response.status, body)
-  }
-
-  return body as T
+    : await response.text();
+  if (!response.ok)
+    throw new ApiError(`HTTP ${response.status}`, response.status, body);
+  return body as T;
 }
 
 export const apiClient = {
-  get: <T>(path: string) => apiFetch<T>(path, { method: 'GET' }),
-  post: <T>(path: string, data: unknown) => apiFetch<T>(path, { method: 'POST', body: JSON.stringify(data) }),
-  put: <T>(path: string, data: unknown) => apiFetch<T>(path, { method: 'PUT', body: JSON.stringify(data) }),
-  delete: <T>(path: string) => apiFetch<T>(path, { method: 'DELETE' }),
-  patch: <T>(path: string, data?: unknown) => apiFetch<T>(path, { method: 'PATCH', body: JSON.stringify(data) }),
-}
+  get: <T>(path: string) => apiFetch<T>(path, { method: "GET" }),
+  post: <T>(path: string, data: unknown) =>
+    apiFetch<T>(path, {
+      method: "POST",
+      body: data instanceof FormData ? data : JSON.stringify(data),
+    }),
+  put: <T>(path: string, data: unknown) =>
+    apiFetch<T>(path, {
+      method: "PUT",
+      body: data instanceof FormData ? data : JSON.stringify(data),
+    }),
+  delete: <T>(path: string) => apiFetch<T>(path, { method: "DELETE" }),
+  patch: <T>(path: string, data?: unknown) =>
+    apiFetch<T>(path, {
+      method: "PATCH",
+      body: data instanceof FormData ? data : JSON.stringify(data),
+    }),
+};

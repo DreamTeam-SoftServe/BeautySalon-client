@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
-import { THEME } from '../shared/config/theme';
-import { api } from '../shared/api/api';
-import { SectionTitle } from '../shared/ui/SectionTitle';
-import { BookingForm } from '../features/book-appointment/ui/BookingForm';
-import type { Service, Master } from '../shared/api/api';
-import { useI18n } from '../shared/i18n';
+import { useState, useEffect } from "react";
+import { THEME } from "../shared/config/theme";
+import { api } from "../shared/api/api";
+import { SectionTitle } from "../shared/ui/SectionTitle";
+import { BookingForm } from "../features/book-appointment/ui/BookingForm";
+import type { Service, Master } from "../shared/api/api";
+import { useI18n } from "../shared/i18n";
 
 export function BookingSection() {
   const [services, setServices] = useState<Service[]>([]);
@@ -17,16 +17,24 @@ export function BookingSection() {
   }, []);
 
   return (
-    <section 
-      className="booking-section" 
+    <section
+      className="booking-section"
       style={{ padding: "120px 5%", background: THEME.colors.charcoal }}
     >
-      <div style={{ maxWidth: "900px", padding: "0 40px", margin: "0 auto", width: "100%", boxSizing: "border-box" }}>
+      <div
+        style={{
+          maxWidth: "900px",
+          padding: "0 40px",
+          margin: "0 auto",
+          width: "100%",
+          boxSizing: "border-box",
+        }}
+      >
         <SectionTitle
           subtitle={t.booking.pageEyebrow}
           title={t.booking.pageTitle}
         />
-        
+
         <style>{`
           .booking-section h2, 
           .booking-section h3, 

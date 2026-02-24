@@ -1,22 +1,25 @@
-import { apiClient } from '../api/client'
-import { ENV } from '../config/env';
+import { apiClient } from "../api/client";
+import { ENV } from "../config/env";
 
 export interface Service {
   id: string;
   title: string;
-  category: string;
-  description: string;
-  price: number;
+  serviceType: number;
+  description?: string;
+  servicePrice: number;
   duration: number;
-  icon: string;
+  imageUrl?: string;
+  icon?: string;
 }
 
 export interface Master {
   id: string;
   name: string;
   role: string;
-  services: string[]; 
-  imageUrl?: string;  
+  profLevel: number;
+  experience?: string;
+  services: string[];
+  imageUrl?: string;
 }
 
 export interface BookingData {
@@ -30,27 +33,43 @@ export interface BookingData {
   notes?: string;
 }
 
+export interface ChangePasswordData {
+  oldPassword: string;
+  newPassword: string;
+}
+
 export const api = {
-  getServices: () => apiClient.get<Service[]>('/api/ServiceControllers'),  
-  getMasters: () => apiClient.get<Master[]>('/api/Master'),
-  
-  submitBooking: (data: BookingData) => {
-    const combinedDateTime = new Date(`${data.date}T${data.time}:00`).toISOString();
+  getServices: () => apiClient.get<Service[]>("/api/Service"),
+
+  createService: (data: Omit<Service, "id">) =>
+    apiClient.post<Service>("/api/Service", data),
+
+  deleteService: (id: string) => apiClient.delete(`/api/Service/${id}`),
+
+  getMasters: () => apiClient.get<Master[]>("/api/Master"),
+
+  createMaster: (data: any) => {
+    return apiClient.post("/api/Master", data);
+  },
+
+  deleteMaster: (id: string) => apiClient.delete(`/api/Master/${id}`),
+
+  submitBooking: (data: BookingData, clientId?: string) => {
+    const combinedDateTime = `${data.date}T${data.time}:00`;
 
     const payloadForBackend = {
+      CientId: clientId,
       name: data.name,
       phone: data.phone,
       email: data.email,
       serviceId: data.serviceId,
       masterId: data.masterId,
-      start_date: combinedDateTime
+      start_date: combinedDateTime,
     };
-
-    console.log("SEND", payloadForBackend);
 
     return apiClient.post<{ success: boolean; clientId: string }>(
       "/api/ServiceAppointmentControllers",
-      payloadForBackend
+      payloadForBackend,
     );
   },
 
@@ -61,21 +80,83 @@ export const api = {
 
   setPassword: async (phone: string, password: string) => {
     const response = await fetch(`${ENV.API_BASE_URL}/api/auth/set-password`, {
-      method: 'POST',
-      headers: { 
-        'Content-Type': 'application/json' 
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({ 
-        phone: phone, 
-        newPassword: password 
+      body: JSON.stringify({
+        phone: phone,
+        newPassword: password,
       }),
     });
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.message || 'Failed to set password');
+      throw new Error(errorData.message || "Failed to set password");
     }
 
     return response.json();
-  }
+  },
+
+  getAdminBookings: async () => {
+    return apiClient.get<any[]>(
+      "/api/ServiceAppointmentControllers/admin-list",
+    );
+  },
+
+  updateBookingStatus: async (bookingId: string, newStatus: string) => {
+    const response = await fetch(
+      `${ENV.API_BASE_URL}/api/ServiceAppointmentControllers/${bookingId}/status`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ newStatus: newStatus }),
+      },
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to update status");
+    }
+
+    return response.json();
+  },
+
+  getAllUsers: async () => {
+    return apiClient.get<any[]>("/api/Auth/users");
+  },
+
+  deleteUser: (id: string) => apiClient.delete(`/api/Client/${id}`),
+
+  updateUserRole: async (
+    userId: string,
+    newRole: string,
+    masterProfileId?: string,
+  ) => {
+    return apiClient.patch(`/api/Auth/users/${userId}/role`, {
+      role: newRole,
+      masterProfileId: masterProfileId,
+    });
+  },
+
+  getMasterBookings: async () => {
+    return apiClient.get<any[]>(
+      "/api/ServiceAppointmentControllers/master-list",
+    );
+  },
+
+  uploadImage: (file: File, folder: string = "general") => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    return apiClient.post<{ url: string }>(
+      `/api/Upload/image?folder=${folder}`,
+      formData,
+    );
+  },
+
+  changePassword: (data: ChangePasswordData) => {
+    return apiClient.post("/api/Auth/change-password", data);
+  },
 };

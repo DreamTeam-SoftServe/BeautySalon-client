@@ -1,67 +1,123 @@
-import { useState } from 'react';
-import { THEME } from '../../../shared/config/theme';
-import { Badge } from '../../../shared/ui/Badge';
-import type { Service } from '../../../shared/api/api';
-import { useI18n } from '../../../shared/i18n';
+import { THEME } from "../../../shared/config/theme";
+import type { Service } from "../../../shared/api/api";
+import { useI18n } from "../../../shared/i18n";
 
-export function ServiceCard({ service }: { service: Service }) {
+interface ServiceCardProps {
+  service: Service;
+}
+
+export function ServiceCard({ service }: ServiceCardProps) {
   const { t } = useI18n();
-  const [hovered, setHovered] = useState(false);
+
   return (
     <div
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
       style={{
-        padding: "40px 36px",
-        background: hovered ? THEME.colors.charcoal : THEME.colors.white,
-        transition: "all 0.4s ease",
-        cursor: "pointer",
-        border: `1px solid ${hovered ? THEME.colors.charcoal : "#E8E0D0"}`,
+        padding: "40px",
+        background: THEME.colors.white,
+        border: "1px solid #F0EBE3",
         display: "flex",
         flexDirection: "column",
-        gap: "16px",
+        gap: "24px",
+        transition: "transform 0.3s ease",
+        cursor: "pointer",
       }}
+      onMouseOver={(e) =>
+        (e.currentTarget.style.transform = "translateY(-5px)")
+      }
+      onMouseOut={(e) => (e.currentTarget.style.transform = "translateY(0)")}
     >
-      <div style={{ fontSize: "2rem" }}>{service.icon}</div>
-      <Badge>{service.category}</Badge>
-      <h3 style={{
-        fontFamily: THEME.fonts.display,
-        fontSize: "1.5rem",
-        fontWeight: 400,
-        color: hovered ? THEME.colors.cream : THEME.colors.charcoal,
-        margin: 0,
-        transition: "color 0.4s",
-      }}>
-        {service.title}
-      </h3>
-      <p style={{
-        fontFamily: THEME.fonts.body,
-        fontSize: "1rem",
-        color: hovered ? "rgba(245,240,232,0.75)" : THEME.colors.muted,
-        lineHeight: 1.7,
-        margin: 0,
-        flexGrow: 1,
-        transition: "color 0.4s",
-      }}>
-        {service.description}
-      </p>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <span style={{
-          fontFamily: THEME.fonts.display,
-          fontSize: "1.4rem",
-          color: hovered ? THEME.colors.goldLight : THEME.colors.gold,
-          transition: "color 0.4s",
-        }}>
-          {t.services.unit.from} ${service.price}
-        </span>
-        <span style={{
-          fontFamily: THEME.fonts.sans,
-          fontSize: "0.75rem",
-          color: hovered ? "rgba(245,240,232,0.6)" : THEME.colors.muted,
-          letterSpacing: "0.08em",
-          transition: "color 0.4s",
-        }}>
+      <div
+        style={{
+          width: "100%",
+          height: "220px",
+          background: service.imageUrl
+            ? `url(${service.imageUrl}) center/cover`
+            : "#F8F5F0",
+          borderRadius: "2px",
+          border: "1px solid #F0EBE3",
+        }}
+      >
+        {!service.imageUrl && (
+          <div
+            style={{
+              height: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "#D4C5A0",
+              fontSize: "0.8rem",
+              letterSpacing: "0.1em",
+            }}
+          >
+            {t.services.placeHolderPhoto}
+          </div>
+        )}
+      </div>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+        <h3
+          style={{
+            fontFamily: THEME.fonts.display,
+            fontSize: "1.5rem",
+            margin: 0,
+            color: THEME.colors.charcoal,
+            fontWeight: 400,
+          }}
+        >
+          {service.title}
+        </h3>
+
+        <p
+          style={{
+            fontSize: "0.9rem",
+            color: THEME.colors.muted,
+            lineHeight: "1.7",
+            margin: 0,
+            minHeight: "60px",
+          }}
+        >
+          {service.description || t.services.defaultDescription}
+        </p>
+      </div>
+
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginTop: "auto",
+          paddingTop: "20px",
+          borderTop: "1px solid #F8F5F0",
+        }}
+      >
+        <span
+          style={{
+            fontSize: "0.75rem",
+            color: THEME.colors.gold,
+            textTransform: "uppercase",
+            letterSpacing: "0.15em",
+            fontWeight: 600,
+          }}
+        >
           {service.duration} {t.services.unit.min}
+        </span>
+
+        <div
+          style={{
+            width: "30px",
+            height: "1px",
+            background: THEME.colors.gold,
+          }}
+        ></div>
+
+        <span
+          style={{
+            fontSize: "0.9rem",
+            fontWeight: 600,
+            color: THEME.colors.charcoal,
+          }}
+        >
+          {service.servicePrice} {t.services.unit.cost}
         </span>
       </div>
     </div>

@@ -1,5 +1,5 @@
-import { THEME } from '../../shared/config/theme';
-import { useI18n } from '../i18n';
+import { THEME } from "../../shared/config/theme";
+import { useI18n } from "../i18n";
 
 interface SelectProps {
   label?: string;
@@ -11,13 +11,28 @@ interface SelectProps {
   disabled?: boolean;
 }
 
-export function Select({ label, name, value, onChange, options, error }: SelectProps) {
+export function Select({
+  label,
+  name,
+  value,
+  onChange,
+  options,
+  error,
+}: SelectProps) {
   const { t } = useI18n();
-  
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
       {label && (
-        <label style={{ fontFamily: THEME.fonts.sans, fontSize: "0.75rem", letterSpacing: "0.12em", textTransform: "uppercase", color: THEME.colors.muted }}>
+        <label
+          style={{
+            fontFamily: THEME.fonts.sans,
+            fontSize: "0.75rem",
+            letterSpacing: "0.12em",
+            textTransform: "uppercase",
+            color: THEME.colors.muted,
+          }}
+        >
           {label}
         </label>
       )}
@@ -40,10 +55,22 @@ export function Select({ label, name, value, onChange, options, error }: SelectP
       >
         <option value="">{t.booking.fields.selectPh}</option>
         {options.map((o) => (
-          <option key={o.value} value={o.value}>{o.label}</option>
+          <option key={o.value} value={o.value}>
+            {o.label}
+          </option>
         ))}
       </select>
-      {error && <span style={{ fontFamily: THEME.fonts.sans, fontSize: "0.75rem", color: "#C0392B" }}>{error}</span>}
+      {error && (
+        <span
+          style={{
+            fontFamily: THEME.fonts.sans,
+            fontSize: "0.75rem",
+            color: "#C0392B",
+          }}
+        >
+          {error}
+        </span>
+      )}
     </div>
   );
 }

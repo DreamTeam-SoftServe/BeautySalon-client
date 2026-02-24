@@ -1,181 +1,247 @@
-import { THEME } from '../../../shared/config/theme';
-import { api } from '../../../shared/api/api';
-import { useEffect, useState, type FormEvent } from 'react'; 
-import { Input } from '../../../shared/ui/Input';
-import { Select } from '../../../shared/ui/Select';
-import { Button } from '../../../shared/ui/Button';
-import type { Service, Master, BookingData } from '../../../shared/api/api';
-import { useI18n } from '../../../shared/i18n';
-import { useAuth } from '../../../shared/auth/context';
+import { THEME } from "../../../shared/config/theme";
+import { api } from "../../../shared/api/api";
+import { useEffect, useState, type FormEvent } from "react";
+import { Input } from "../../../shared/ui/Input";
+import { Select } from "../../../shared/ui/Select";
+import { Button } from "../../../shared/ui/Button";
+import type { Service, Master, BookingData } from "../../../shared/api/api";
+import { useI18n } from "../../../shared/i18n";
+import { useAuth } from "../../../shared/auth/context";
 
 interface BookingFormProps {
-  services: Service[]; 
-  masters: Master[];  
+  services: Service[];
+  masters: Master[];
 }
 
-const ALL_SLOTS = ["09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00"];
+const ALL_SLOTS = [
+  "09:00",
+  "10:00",
+  "11:00",
+  "12:00",
+  "13:00",
+  "14:00",
+  "15:00",
+  "16:00",
+  "17:00",
+  "18:00",
+];
 
-type FormStatus = 'idle' | 'loading' | 'success' | 'error';
+type FormStatus = "idle" | "loading" | "success" | "error";
 
 export function BookingForm({ services, masters }: BookingFormProps) {
   const { t } = useI18n();
   const { user } = useAuth();
-  const today = new Date().toISOString().split('T')[0];
-  
+  const today = new Date().toISOString().split("T")[0];
+
   const [formData, setFormData] = useState<BookingData>({
-    name: "", email: "", phone: "",
-    serviceId: "", masterId: "", date: "", time: "", notes: "",
+    name: "",
+    email: "",
+    phone: "",
+    serviceId: "",
+    masterId: "",
+    date: "",
+    time: "",
+    notes: "",
   });
-  
+
   const [busySlots, setBusySlots] = useState<string[]>([]);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [status, setStatus] = useState<FormStatus>("idle"); 
+  const [status, setStatus] = useState<FormStatus>("idle");
 
   useEffect(() => {
     if (user) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         name: user.name || "",
         email: user.email || "",
-        phone: user.phone || ""
+        phone: user.phone || "",
       }));
     }
   }, [user]);
 
-  // Завантаження зайнятих слотів
   useEffect(() => {
     const fetchBusyTime = async () => {
       if (formData.masterId && formData.date) {
         try {
           const busy = await api.getBusySlots(formData.masterId, formData.date);
-          const slotsArray = Array.isArray(busy) ? busy : (busy as any).data || [];
+          const slotsArray = Array.isArray(busy)
+            ? busy
+            : (busy as any).data || [];
           setBusySlots(slotsArray);
         } catch (e) {
           console.error("Slot loading error", e);
-          setBusySlots([]); 
+          setBusySlots([]);
         }
       } else {
-          setBusySlots([]);
+        setBusySlots([]);
       }
     };
     fetchBusyTime();
   }, [formData.masterId, formData.date]);
 
-  const availableSlots = ALL_SLOTS.filter(slot => !busySlots.includes(slot));
+  const availableSlots = ALL_SLOTS.filter((slot) => !busySlots.includes(slot));
 
   const handleChange = (e: any) => {
     if (e?.target) {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
-        if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }));
-    } 
-    else if (e?.name !== undefined && e?.value !== undefined) {
-        setFormData(prev => ({ ...prev, [e.name]: e.value }));
-        if (errors[e.name]) setErrors(prev => ({ ...prev, [e.name]: '' }));
+      const { name, value } = e.target;
+      setFormData((prev) => ({ ...prev, [name]: value }));
+      if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
+    } else if (e?.name !== undefined && e?.value !== undefined) {
+      setFormData((prev) => ({ ...prev, [e.name]: e.value }));
+      if (errors[e.name]) setErrors((prev) => ({ ...prev, [e.name]: "" }));
     }
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const start_date = new Date(`${formData.date}T${formData.time}:00`).toISOString();
-    const dataToSend = { ...formData, start_date: start_date };
 
-    setStatus("loading");
+    const rawDateTime = `${formData.date}T${formData.time}:00`;
+
+    const payload = {
+      ...formData,
+      start_date: rawDateTime,
+    };
+
     try {
-      await api.submitBooking(dataToSend); 
+      await api.submitBooking(payload, user?.id);
       setStatus("success");
     } catch (e) {
       setStatus("error");
     }
   };
+
   const handleBookAgain = () => {
-    setFormData(prev => ({
-      ...prev,
-      serviceId: "",
-      masterId: "",
-      date: "",
-      time: "",
-      notes: ""
-    }));
-    setBusySlots([]); 
-    setStatus("idle"); 
+    window.location.reload();
   };
 
   if (status === "success") {
     return (
       <div style={{ textAlign: "center", padding: "80px 40px" }}>
-        <div style={{ fontSize: "3rem", marginBottom: "24px", color: THEME.colors.gold }}>✓</div>
-        <h3 style={{ fontFamily: THEME.fonts.display, fontSize: "2rem", fontWeight: 400 }}>{t.booking.success.title}</h3>
+        <div
+          style={{
+            fontSize: "3rem",
+            marginBottom: "24px",
+            color: THEME.colors.gold,
+          }}
+        >
+          ✓
+        </div>
+        <h3
+          style={{
+            fontFamily: THEME.fonts.display,
+            fontSize: "2rem",
+            fontWeight: 400,
+          }}
+        >
+          {t.booking.success.title}
+        </h3>
         <Button onClick={handleBookAgain}>{t.booking.success.again}</Button>
       </div>
     );
   }
 
-  const isFormValid = 
-    formData.name.trim() !== "" && 
-    formData.phone.trim() !== "" && 
-    formData.serviceId !== "" && 
-    formData.date !== "" && 
+  const isFormValid =
+    formData.name.trim() !== "" &&
+    formData.phone.trim() !== "" &&
+    formData.serviceId !== "" &&
+    formData.date !== "" &&
     formData.time !== "";
 
   return (
-    <form onSubmit={handleSubmit} className='booking-section-appointment'>
-      <div className='booking-section-appointment'>
-        <Input label={t.booking.fields.name} name="name" value={formData.name} onChange={handleChange} placeholder={t.booking.fields.namePh} />
-        <Input label={t.booking.fields.email} name="email" type="email" value={formData.email} onChange={handleChange} placeholder={t.booking.fields.emailPh} />
-        <Input label={t.booking.fields.phone} name="phone" type="tel" value={formData.phone} onChange={handleChange} placeholder={t.booking.fields.phonePh} />
+    <form onSubmit={handleSubmit} className="booking-section-appointment">
+      <div className="booking-section-appointment">
+        <Input
+          label={t.booking.fields.name}
+          name="name"
+          value={formData.name}
+          onChange={handleChange}
+          placeholder={t.booking.fields.namePh}
+        />
+        <Input
+          label={t.booking.fields.email}
+          name="email"
+          type="email"
+          value={formData.email}
+          onChange={handleChange}
+          placeholder={t.booking.fields.emailPh}
+        />
+        <Input
+          label={t.booking.fields.phone}
+          name="phone"
+          type="tel"
+          value={formData.phone}
+          onChange={handleChange}
+          placeholder={t.booking.fields.phonePh}
+        />
       </div>
 
-      <div className='booking-section-grid'>
+      <div className="booking-section-grid">
         <Select
           label={t.booking.fields.service}
           name="serviceId"
           value={formData.serviceId}
           onChange={handleChange}
           options={[
-            { value: '', label: t.booking.fields.selectPh },
-            ...services.map((s) => ({ value: String(s.id), label: `${s.title} — ${s.price}` }))
+            { value: "", label: t.booking.fields.selectPh },
+            ...services.map((s) => ({
+              value: String(s.id),
+              label: `${s.title} — ${s.servicePrice}`,
+            })),
           ]}
         />
         <Select
           label={t.booking.fields.master}
           name="masterId"
-          value={formData.masterId || ''}
+          value={formData.masterId || ""}
           onChange={handleChange}
           options={[
-            { value: '', label: 'Any master' },
-            ...(masters || []).map((m) => ({ value: String(m.id || (m as any)._id), label: m.name }))
+            { value: "", label: t.booking.fields.masterPh },
+            ...(masters || []).map((m) => ({
+              value: String(m.id || (m as any)._id),
+              label: m.name,
+            })),
           ]}
         />
       </div>
 
-      <div className='booking-section-grid'>
-        <Input 
-          label={t.booking.fields.date} 
-          name="date" 
-          type="date" 
-          value={formData.date} 
-          onChange={handleChange} 
+      <div className="booking-section-grid">
+        <Input
+          label={t.booking.fields.date}
+          name="date"
+          type="date"
+          value={formData.date}
+          onChange={handleChange}
           min={today}
         />
-        <Select 
+        <Select
           label={t.booking.fields.time}
           name="time"
           value={formData.time}
           onChange={handleChange}
           disabled={!formData.date || !formData.masterId}
           options={[
-            { value: '', label: formData.date ? t.booking.fields.selectPh : 'Select master & date' },
-            ...availableSlots.map((slot) => ({ value: slot, label: slot }))
+            {
+              value: "",
+              label: formData.date
+                ? t.booking.fields.selectPh
+                : "Select master & date",
+            },
+            ...availableSlots.map((slot) => ({ value: slot, label: slot })),
           ]}
         />
       </div>
-      
-      <div className='booking-full'>
-        <Input label={t.booking.fields.notes} name="notes" as="textarea" value={formData.notes || ''} onChange={handleChange} />
+
+      <div className="booking-full">
+        <Input
+          label={t.booking.fields.notes}
+          name="notes"
+          as="textarea"
+          value={formData.notes || ""}
+          onChange={handleChange}
+        />
       </div>
 
-      <div className='booking-button'>
+      <div className="booking-button">
         <Button type="submit" disabled={status === "loading" || !isFormValid}>
           {status === "loading" ? t.booking.sending : t.booking.submit}
         </Button>
