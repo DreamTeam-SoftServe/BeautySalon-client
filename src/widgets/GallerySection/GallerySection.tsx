@@ -20,15 +20,17 @@ import {
   galleryDecor2,
 } from "./GallerySection.styles";
 
+const S3_URL = "https://beautysalon-dreamteam.s3.eu-north-1.amazonaws.com";
+
 const GALLERY_ITEMS = [
-  { id: 1, title: "Балаяж",      tag: "Фарбування", img: "https://placehold.co/800x320/2C2826/C9A84C?text=Balayage",   size: "wide"   },
-  { id: 2, title: "Кератин",     tag: "Догляд",     img: "https://placehold.co/400x320/2C2826/C9A84C?text=Keratin",    size: "tall"   },
-  { id: 3, title: "Стрижка",     tag: "Стрижка",    img: "https://placehold.co/400x320/2C2826/C9A84C?text=Haircut",    size: "tall"   },
-  { id: 4, title: "Колорування", tag: "Фарбування", img: "https://placehold.co/600x320/2C2826/C9A84C?text=Coloring",   size: "medium" },
-  { id: 5, title: "Укладка",     tag: "Стайлінг",   img: "https://placehold.co/200x320/2C2826/C9A84C?text=Styling",    size: "slim"   },
-  { id: 6, title: "Хайлайтинг", tag: "Фарбування", img: "https://placehold.co/400x160/2C2826/C9A84C?text=Highlights", size: "small"  },
-  { id: 7, title: "Омбре",       tag: "Фарбування", img: "https://placehold.co/400x160/2C2826/C9A84C?text=Ombre",      size: "small"  },
-  { id: 8, title: "Догляд",      tag: "Процедури",  img: "https://placehold.co/400x160/2C2826/C9A84C?text=Treatment",  size: "small"  },
+  { id: 1, title: "Балаяж",      tag: "Фарбування", img: `${S3_URL}/gallery/gallery1.jpg`, size: "wide"   },
+  { id: 2, title: "Кератин",     tag: "Догляд",     img: `${S3_URL}/gallery/gallery2.jpg`, size: "tall"   },
+  { id: 3, title: "Стрижка",     tag: "Стрижка",    img: `${S3_URL}/gallery/gallery3.jpg`, size: "tall"   },
+  { id: 4, title: "Колорування", tag: "Фарбування", img: `${S3_URL}/gallery/gallery4.jpg`, size: "medium" },
+  { id: 5, title: "Укладка",     tag: "Стайлінг",   img: `${S3_URL}/gallery/gallery5.jpg`, size: "slim"   },
+  { id: 6, title: "Хайлайтинг", tag: "Фарбування", img: `${S3_URL}/gallery/gallery6.jpg`, size: "small"  },
+  { id: 7, title: "Омбре",       tag: "Фарбування", img: `${S3_URL}/gallery/gallery7.jpg`, size: "small"  },
+  { id: 8, title: "Догляд",      tag: "Процедури",  img: `${S3_URL}/gallery/gallery8.jpg`, size: "small"  },
 ];
 
 export function GallerySection() {

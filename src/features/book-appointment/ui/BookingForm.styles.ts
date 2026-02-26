@@ -2,7 +2,7 @@ import { THEME } from "../../../shared/config/theme";
 import type { CSSProperties } from "react";
 
 export const bookingSectionStyle: CSSProperties = {
-  height: "calc(100vh - 85px)", 
+  height: "calc(100vh - 85px)",
   display: "flex",
   backgroundColor: THEME.colors.charcoal,
   position: "relative",
@@ -16,7 +16,7 @@ export const formSideStyle: CSSProperties = {
   display: "flex",
   flexDirection: "column",
   justifyContent: "flex-start",
-  paddingTop: "8vh", 
+  paddingTop: "8vh",
   zIndex: 2,
 };
 
@@ -44,15 +44,15 @@ export const imageSideStyle: CSSProperties = {
   position: "relative",
   height: "100%",
   display: "flex",
-  alignItems: "flex-start", 
+  alignItems: "flex-start",
   justifyContent: "center",
-  paddingTop: "8vh", 
+  paddingTop: "8vh",
   background: "#121212",
 };
 
 export const floatingFrameStyle: CSSProperties = {
   width: "85%",
-  height: "75vh", 
+  height: "75vh",
   position: "relative",
   borderRadius: "4px",
   boxShadow: "0 40px 100px rgba(0,0,0,0.6)",
@@ -100,5 +100,20 @@ export const successWrapStyle: CSSProperties = {
   justifyContent: "center",
 };
 
-export const successIconStyle: CSSProperties = { fontSize: "4rem", color: THEME.colors.gold, marginBottom: "20px" };
-export const successTitleStyle: CSSProperties = { fontFamily: THEME.fonts.display, fontSize: "2.5rem", color: THEME.colors.cream, marginBottom: "30px" };
+export const successIconStyle: CSSProperties = {
+  fontSize: "4rem",
+  color: THEME.colors.gold,
+  marginBottom: "20px",
+};
+
+export const successTitleStyle: CSSProperties = {
+  fontFamily: THEME.fonts.display,
+  fontSize: "2.5rem",
+  color: THEME.colors.cream,
+  marginBottom: "30px",
+};
+
+export const dateLabelWrapStyle: CSSProperties = {
+  display: "flex",
+  flexDirection: "column",
+};

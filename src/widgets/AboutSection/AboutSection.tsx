@@ -2,7 +2,6 @@ import { useI18n } from "../../shared/i18n";
 import { SectionTitle } from "../../shared/ui/SectionTitle";
 import { Button } from "../../shared/ui/Button";
 import { useNavigate } from "react-router-dom";
-import aboutImg from "../../shared/assets/heroImg2.jpg";
 import { useScrollAnimation } from "../../shared/hooks/useScrollAnimation";
 import {
   sectionStyle,
@@ -23,7 +22,9 @@ import {
   aboutDecor2,
 } from "./AboutSection.styles";
 
-// Хелпер для анімації: початковий стан → фінальний
+const S3_URL = "https://beautysalon-dreamteam.s3.eu-north-1.amazonaws.com";
+const aboutImg = `${S3_URL}/about/about1.png`;
+
 const anim = (
   visible: boolean,
   direction: "left" | "right" | "up" = "up",
@@ -46,7 +47,6 @@ export function AboutSection() {
   const { t } = useI18n();
   const navigate = useNavigate();
 
-  // Окремі ref-и для лівого та правого блоків
   const [imgRef, imgVisible] = useScrollAnimation(0.1);
   const [contentRef, contentVisible] = useScrollAnimation(0.1);
 
@@ -63,7 +63,6 @@ export function AboutSection() {
       <div style={aboutDecor2} />
       <div style={containerStyle}>
 
-        {/* Ліва частина — фото з'являється зліва */}
         <div
           ref={imgRef as React.RefObject<HTMLDivElement>}
           style={{ ...imageBlockStyle, ...anim(imgVisible, "left", "0s") }}
@@ -75,7 +74,6 @@ export function AboutSection() {
           </div>
         </div>
 
-        {/* Права частина — текст з'являється справа зі stagger */}
         <div
           ref={contentRef as React.RefObject<HTMLDivElement>}
           style={contentStyle}

@@ -140,7 +140,6 @@ export const getCtaRowStyle = (visible: boolean): CSSProperties => ({
   transitionDelay: "0.45s",
 });
 
-// Статистика — знизу вгору з більшою затримкою
 export const getStatsRowStyle = (visible: boolean): CSSProperties => ({
   display: "flex",
   gap: "40px",

@@ -13,6 +13,7 @@ import {
   successWrapStyle,
   successIconStyle,
   successTitleStyle,
+  datePickerLabelStyle,
 } from "./BookingForm.styles";
 import { uk, enUS } from "date-fns/locale";
 interface BookingFormProps {
@@ -227,7 +228,7 @@ export function BookingForm({ services, masters }: BookingFormProps) {
 
       <div className="booking-row-2">
         <div>
-          <label>{t.booking.fields.date}</label>
+          <label style={datePickerLabelStyle}>{t.booking.fields.date}</label>
           <DatePicker
             locale={t.lang === "en" ? "en" : "uk"}
             selected={formData.date ? new Date(formData.date) : null}
@@ -251,7 +252,7 @@ export function BookingForm({ services, masters }: BookingFormProps) {
         </div>
 
         <div>
-          <label>{t.booking.fields.time}</label>
+          <label style={datePickerLabelStyle}>{t.booking.fields.time}</label>
           <DatePicker
             locale={t.lang === "en" ? "en" : "uk"}
             selected={

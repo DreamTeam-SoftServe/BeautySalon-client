@@ -11,6 +11,7 @@ import {
   actionsStyle,
   successStyle,
   errorStyle,
+  submitBtnInnerStyle,
 } from "./ProfileForm.styles";
 
 export function ProfileForm() {
@@ -113,9 +114,7 @@ export function ProfileForm() {
             type="submit"
             disabled={saveStatus === "saving"}
           >
-            <span
-              style={{ display: "block", width: "100%", textAlign: "center" }}
-            >
+            <span style={submitBtnInnerStyle}>
               {saveStatus === "saving" ? ac.profileSaving : ac.profileSave}
             </span>
           </Button>

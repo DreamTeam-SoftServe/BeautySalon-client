@@ -43,3 +43,9 @@ export const errorStyle: CSSProperties = {
   fontSize: "0.8rem",
   color: "#C0392B",
 };
+
+export const submitBtnInnerStyle: CSSProperties = {
+  display: "block",
+  width: "100%",
+  textAlign: "center",
+};

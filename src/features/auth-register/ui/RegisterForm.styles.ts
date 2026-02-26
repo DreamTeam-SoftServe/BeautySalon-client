@@ -43,3 +43,13 @@ export const switchBtnStyle: CSSProperties = {
   textDecoration: "underline",
   padding: 0,
 };
+
+export const submitBtnStyle: CSSProperties = {
+  width: "106.5%",
+};
+
+export const submitBtnInnerStyle: CSSProperties = {
+  display: "block",
+  width: "100%",
+  textAlign: "center",
+};

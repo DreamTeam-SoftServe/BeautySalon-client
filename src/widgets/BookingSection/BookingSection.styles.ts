@@ -145,6 +145,52 @@ export const dividerStyle: CSSProperties = {
   opacity: 0.6,
 };
 
+export const getFormSideAnimStyle = (visible: boolean): CSSProperties => ({
+  ...formSideStyle,
+  opacity: visible ? 1 : 0,
+  transform: visible ? "translateX(0)" : "translateX(-40px)",
+  transition: "opacity 0.9s ease, transform 0.9s ease",
+});
+
+export const getHeaderAnimStyle = (visible: boolean): CSSProperties => ({
+  ...headerStyle,
+  opacity: visible ? 1 : 0,
+  transform: visible ? "translateY(0)" : "translateY(20px)",
+  transition: "opacity 0.8s ease, transform 0.8s ease",
+  transitionDelay: "0.1s",
+});
+
+export const getFormAnimStyle = (visible: boolean): CSSProperties => ({
+  opacity: visible ? 1 : 0,
+  transform: visible ? "translateY(0)" : "translateY(30px)",
+  transition: "opacity 0.8s ease, transform 0.8s ease",
+  transitionDelay: "0.3s",
+});
+
+export const getCarouselAnimStyle = (visible: boolean): CSSProperties => ({
+  ...carouselSideStyle,
+  opacity: visible ? 1 : 0,
+  transform: visible ? "translateX(0)" : "translateX(50px)",
+  transition: "opacity 0.9s ease, transform 0.9s ease",
+  transitionDelay: "0.2s",
+});
+
+export const carouselSlideStyle = (active: boolean): CSSProperties => ({
+  position: "absolute",
+  inset: 0,
+  opacity: active ? 1 : 0,
+  transform: active ? "scale(1)" : "scale(1.12)",
+  transition: "opacity 0.9s ease, transform 0.9s ease",
+  zIndex: active ? 1 : 0,
+});
+
+export const carouselSlideImgStyle: CSSProperties = {
+  width: "100%",
+  height: "100%",
+  objectFit: "cover",
+  display: "block",
+};
+
 export const bookingSectionCss = `
   .booking-section h2,
   .booking-section h3,
