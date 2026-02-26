@@ -1,4 +1,4 @@
-import { apiClient } from "../api/client";
+import { apiClient } from "./client";
 import { ENV } from "../config/env";
 
 export interface Service {
@@ -44,13 +44,21 @@ export const api = {
   createService: (data: Omit<Service, "id">) =>
     apiClient.post<Service>("/api/Service", data),
 
+  updateService: (id: string, data: any) =>
+    apiClient.put<Service>(`/api/Service/${id}`, data),
+
   deleteService: (id: string) => apiClient.delete(`/api/Service/${id}`),
+
+  // --- МАСТЕРА (MASTERS) ---
 
   getMasters: () => apiClient.get<Master[]>("/api/Master"),
 
   createMaster: (data: any) => {
     return apiClient.post("/api/Master", data);
   },
+
+  updateMaster: (id: string, data: any) =>
+    apiClient.put(`/api/Master/${id}`, data),
 
   deleteMaster: (id: string) => apiClient.delete(`/api/Master/${id}`),
 
@@ -65,6 +73,7 @@ export const api = {
       serviceId: data.serviceId,
       masterId: data.masterId,
       start_date: combinedDateTime,
+      notes: data.notes,
     };
 
     return apiClient.post<{ success: boolean; clientId: string }>(
@@ -78,29 +87,15 @@ export const api = {
     return apiClient.get<string[]>(url);
   },
 
-  setPassword: async (phone: string, password: string) => {
-    const response = await fetch(`${ENV.API_BASE_URL}/api/auth/set-password`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        phone: phone,
-        newPassword: password,
-      }),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Failed to set password");
-    }
-
-    return response.json();
-  },
-
   getAdminBookings: async () => {
     return apiClient.get<any[]>(
       "/api/ServiceAppointmentControllers/admin-list",
+    );
+  },
+
+  getMasterBookings: async () => {
+    return apiClient.get<any[]>(
+      "/api/ServiceAppointmentControllers/master-list",
     );
   },
 
@@ -127,6 +122,8 @@ export const api = {
     return apiClient.get<any[]>("/api/Auth/users");
   },
 
+  getClientsCount: () => apiClient.get<number>("/api/Client/count"),
+
   deleteUser: (id: string) => apiClient.delete(`/api/Client/${id}`),
 
   updateUserRole: async (
@@ -140,10 +137,28 @@ export const api = {
     });
   },
 
-  getMasterBookings: async () => {
-    return apiClient.get<any[]>(
-      "/api/ServiceAppointmentControllers/master-list",
-    );
+  setPassword: async (phone: string, password: string) => {
+    const response = await fetch(`${ENV.API_BASE_URL}/api/auth/set-password`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        phone: phone,
+        newPassword: password,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to set password");
+    }
+
+    return response.json();
+  },
+
+  changePassword: (data: ChangePasswordData) => {
+    return apiClient.post("/api/Auth/change-password", data);
   },
 
   uploadImage: (file: File, folder: string = "general") => {
@@ -154,9 +169,5 @@ export const api = {
       `/api/Upload/image?folder=${folder}`,
       formData,
     );
-  },
-
-  changePassword: (data: ChangePasswordData) => {
-    return apiClient.post("/api/Auth/change-password", data);
   },
 };

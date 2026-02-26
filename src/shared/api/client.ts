@@ -1,5 +1,5 @@
 import { ENV } from "../../shared/config/env";
-import { tokenStore } from "../api/tokenStore";
+import { tokenStore } from "./tokenStore";
 
 export class ApiError extends Error {
   public readonly status: number;

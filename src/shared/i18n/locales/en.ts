@@ -26,6 +26,29 @@ export const en: Translations = {
     button: "Book Now — It's Free",
   },
 
+  gallery: {
+  eyebrow: "Our Work",
+  title: "Portfolio",
+  cta: "View All Services",
+},
+
+about: {
+  eyebrow: "About Us",
+  title: "Prestige Studio",
+  body: "We are a team of passionate masters. Every detail in our studio is designed to make you feel special. From the first consultation to the final result — we are with you.",
+  cta: "Meet the Team",
+  features: {
+    f1title: "Premium Products",
+    f1desc: "We use only certified cosmetics from world brands",
+    f2title: "Experienced Masters",
+    f2desc: "Certified specialists with 5+ years of experience",
+    f3title: "Personal Approach",
+    f3desc: "Every client receives a personal consultation",
+    f4title: "Quality Guarantee",
+    f4desc: "Free correction if you are not satisfied with the result",
+  },
+},
+
   services: {
     sectionEyebrow: "What We Offer",
     sectionTitle: "Our Services",
@@ -99,13 +122,13 @@ export const en: Translations = {
     pageEyebrow: "Reserve Your Visit",
     pageTitle: "Book an Appointment",
     pageBody:
-      "Fill in the form below. Our team will confirm your slot via email within 2 hours.",
+      "Fill out the form below. Our team will confirm your registration within 2 hours.",
     fields: {
       name: "Full Name",
       email: "Email",
       phone: "Phone",
       service: "Service",
-      master: "Preferred Master (optional)",
+      master: "Preferred Master",
       date: "Preferred Date",
       time: "Preferred Time",
       notes: "Notes (optional)",
@@ -115,6 +138,7 @@ export const en: Translations = {
       phonePh: "+380 00 000 00 00",
       notesPh: "Allergies, special requests…",
       selectPh: "Select an option",
+      datePh: "DD.MM.YYYY",
     },
     submit: "Reserve Appointment",
     sending: "Sending…",
@@ -167,7 +191,7 @@ export const en: Translations = {
     privacy: "Privacy Policy",
     terms: "Terms of Service",
     cookies: "Cookie Policy",
-    copy: "© 2025 Prestige Studio. All rights reserved.",
+    copy: "© 2026 Prestige Studio. All rights reserved.",
   },
 
   api: {
@@ -258,6 +282,8 @@ export const en: Translations = {
       confirmed: "Confirmed",
       completed: "Completed",
       cancelled: "Cancelled",
+      in_progress: "In progress",
+      scheduled: "Planned",
     },
     adminButton: "⚙️ Administration panel",
     masterButton: "📅 My schedule",
@@ -282,6 +308,7 @@ export const en: Translations = {
       client: "Client",
       service: "Service / Master",
       price: "Price",
+      notes: "Notes",
       status: "Manage Status",
     },
     empty: "No bookings yet.",
@@ -368,7 +395,10 @@ export const en: Translations = {
       },
       success: {
         masterIsCreated: "The master has been successfully created!",
+        masterIsUpdated: "Master data updated!",
         removedCompletely: "Completely deleted!",
+        serviceIsUpdated: "The service has been updated!",
+
       },
       status: {
         loading: "Loading data...",
@@ -386,6 +416,8 @@ export const en: Translations = {
       saveBtn: "Save service",
       namePh: "Service name",
       durationPh: "Duration (min)",
+      category: "Category",
+      description: "Service description",
       costPh: "Price (UAH)",
       descServicePh: "",
       photo: "PHOTO SERVICES",
