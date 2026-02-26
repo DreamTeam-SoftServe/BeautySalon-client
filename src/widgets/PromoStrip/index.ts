@@ -1,0 +1,1 @@
+export { PromoStrip } from "./PromoStrip";

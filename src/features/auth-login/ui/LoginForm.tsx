@@ -1,10 +1,21 @@
 import { useState } from "react";
 import { useI18n } from "../../../shared/i18n";
 import { useAuth } from "../../../shared/auth/context";
-import { THEME } from "../../../shared/config/theme";
 import { ApiError } from "../../../shared/api/client";
 import { Button } from "../../../shared/ui/Button";
 import { Input } from "../../../shared/ui/Input";
+import {
+  formStyle,
+  serverErrorStyle,
+  forgotRowStyle,
+  forgotBtnStyle,
+  switchRowStyle,
+  switchTextStyle,
+  switchBtnStyle,
+  dividerRowStyle,
+  dividerLineStyle,
+  dividerTextStyle,
+} from "./LoginForm.styles";
 
 interface LoginFormProps {
   onSuccess: () => void;
@@ -20,6 +31,7 @@ export function LoginForm({
   const { t } = useI18n();
   const { login } = useAuth();
   const a = t.auth;
+
   const [form, setForm] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState<Record<string, string | undefined>>({});
   const [serverError, setServerError] = useState<string | undefined>();
@@ -49,27 +61,23 @@ export function LoginForm({
       setErrors(errs);
       return;
     }
-
     setSubmitting(true);
     try {
       await login({ email: form.email, password: form.password });
       onSuccess();
     } catch (err) {
-      if (err instanceof ApiError && err.status === 401) {
-        setServerError(a.errors.invalidCredentials);
-      } else {
-        setServerError(a.errors.server);
-      }
+      setServerError(
+        err instanceof ApiError && err.status === 401
+          ? a.errors.invalidCredentials
+          : a.errors.server,
+      );
     } finally {
       setSubmitting(false);
     }
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      style={{ display: "flex", flexDirection: "column", gap: "20px" }}
-    >
+    <form onSubmit={handleSubmit} style={formStyle}>
       <Input
         label={a.emailLabel}
         name="email"
@@ -89,101 +97,52 @@ export function LoginForm({
         placeholder={a.passwordPh}
       />
 
-      {serverError && (
-        <p
-          style={{
-            fontFamily: THEME.fonts.sans,
-            fontSize: "0.85rem",
-            color: THEME.colors.errorText,
-            margin: 0,
-          }}
-        >
-          {serverError}
-        </p>
-      )}
+      {serverError && <p style={serverErrorStyle}>{serverError}</p>}
 
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          flexWrap: "wrap",
-          gap: "8px",
-        }}
-      >
-        <button
-          type="button"
-          onClick={() => {}}
-          style={{
-            background: "none",
-            border: "none",
-            fontFamily: THEME.fonts.sans,
-            fontSize: "0.75rem",
-            color: THEME.colors.muted,
-            cursor: "pointer",
-            textDecoration: "underline",
-            padding: 0,
-          }}
-        >
+      <div style={forgotRowStyle}>
+        <button type="button" onClick={() => {}} style={forgotBtnStyle}>
           {a.forgotPassword}
         </button>
       </div>
 
-      <Button type="submit" disabled={submitting}>
+      <Button
+        type="submit"
+        disabled={submitting}
+        style={{
+          marginTop: "10px",
+          width: "106.5%",
+          textAlign: "center",
+          justifyContent: "center",
+          display: "flex",
+        }}
+      >
         {submitting ? a.loggingIn : a.loginSubmit}
       </Button>
 
-      <div style={{ textAlign: "center" }}>
-        <span
-          style={{
-            fontFamily: THEME.fonts.sans,
-            fontSize: "0.8rem",
-            color: THEME.colors.muted,
-          }}
-        >
-          {a.noAccount}{" "}
-        </span>
-        <button
-          type="button"
-          onClick={onSwitchRegister}
-          style={{
-            background: "none",
-            border: "none",
-            fontFamily: THEME.fonts.sans,
-            fontSize: "0.8rem",
-            color: THEME.colors.gold,
-            cursor: "pointer",
-            textDecoration: "underline",
-            padding: 0,
-          }}
-        >
+      <div style={switchRowStyle}>
+        <span style={switchTextStyle}>{a.noAccount} </span>
+        <button type="button" onClick={onSwitchRegister} style={switchBtnStyle}>
           {a.switchToRegister}
         </button>
       </div>
 
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "12px",
-          margin: "4px 0",
-        }}
-      >
-        <div style={{ flex: 1, height: "1px", background: "#E8E0D0" }} />
-        <span
-          style={{
-            fontFamily: THEME.fonts.sans,
-            fontSize: "0.7rem",
-            color: THEME.colors.muted,
-            letterSpacing: "0.05em",
-          }}
-        >
-          {a.orContinueAs}
-        </span>
-        <div style={{ flex: 1, height: "1px", background: "#E8E0D0" }} />
+      <div style={dividerRowStyle}>
+        <div style={dividerLineStyle} />
+        <span style={dividerTextStyle}>{a.orContinueAs}</span>
+        <div style={dividerLineStyle} />
       </div>
 
-      <Button type="button" variant="outline" onClick={onGuestContinue}>
+      <Button
+        type="button"
+        variant="outline"
+        onClick={onGuestContinue}
+        style={{
+          width: "106.5%",
+          textAlign: "center",
+          justifyContent: "centАer",
+          display: "flex",
+        }}
+      >
         {t.nav.booking}
       </Button>
     </form>

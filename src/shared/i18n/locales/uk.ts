@@ -26,6 +26,29 @@ export const uk: Translations = {
     button: "Записатись — Це Безкоштовно",
   },
 
+  gallery: {
+  eyebrow: "Наші роботи",
+  title: "Портфоліо",
+  cta: "Переглянути всі послуги",
+},
+
+about: {
+  eyebrow: "Про нас",
+  title: "Prestige Studio",
+  body: "Ми — команда закоханих у свою справу майстрів. Кожна деталь у нашій студії продумана для того, щоб ви відчували себе особливими. Від першої консультації до фінального результату — ми поруч.",
+  cta: "Познайомитись з командою",
+  features: {
+    f1title: "Преміум продукти",
+    f1desc: "Використовуємо лише сертифіковану косметику світових брендів",
+    f2title: "Досвідчені майстри",
+    f2desc: "Команда з сертифікованих фахівців з досвідом від 5 років",
+    f3title: "Індивідуальний підхід",
+    f3desc: "Кожен клієнт отримує персональну консультацію",
+    f4title: "Гарантія якості",
+    f4desc: "Безкоштовна корекція якщо результат вас не влаштував",
+  },
+},
+
   services: {
     sectionEyebrow: "Що Ми Пропонуємо",
     sectionTitle: "Наші Послуги",
@@ -97,13 +120,13 @@ export const uk: Translations = {
     pageEyebrow: "Забронюйте Візит",
     pageTitle: "Записатись на Прийом",
     pageBody:
-      "Заповніть форму нижче. Наша команда підтвердить ваш запис електронною поштою протягом 2 годин.",
+      "Заповніть форму нижче. Наша команда підтвердить ваш запис протягом 2 годин.",
     fields: {
       name: "Повне Ім'я",
       email: "Електронна Пошта",
       phone: "Телефон",
       service: "Послуга",
-      master: "Бажаний Майстер (необов'язково)",
+      master: "Бажаний Майстер",
       date: "Бажана Дата",
       time: "Бажаний Час",
       notes: "Примітки (необов'язково)",
@@ -113,6 +136,7 @@ export const uk: Translations = {
       phonePh: "+380 00 000 00 00",
       notesPh: "Алергії, особливі побажання…",
       selectPh: "Оберіть варіант",
+      datePh: "ДД.ММ.РРРР",
     },
     submit: "Підтвердити Запис",
     sending: "Надсилання…",
@@ -166,7 +190,7 @@ export const uk: Translations = {
     privacy: "Політика Конфіденційності",
     terms: "Умови Використання",
     cookies: "Політика Cookies",
-    copy: "© 2025 Prestige Studio. Всі права захищено.",
+    copy: "© 2026 Prestige Studio. Всі права захищено.",
   },
 
   api: {
@@ -257,6 +281,8 @@ export const uk: Translations = {
       confirmed: "Підтверджено",
       completed: "Завершено",
       cancelled: "Скасовано",
+      in_progress: "У процесі",
+      scheduled: "Заплановано",
     },
     adminButton: "⚙️ Адмін-панель",
     masterButton: "📅 Мій розклад",
@@ -271,6 +297,7 @@ export const uk: Translations = {
       client: "Клієнт",
       service: "Послуга / Майстер",
       price: "Ціна",
+      notes: "Примітки",
       status: "Керування статусом",
     },
     empty: "Записів ще немає.",
@@ -339,6 +366,8 @@ export const uk: Translations = {
       closeBtn: "✕ Закрити",
       saveBtn: "Зберегти послугу",
       namePh: "Назва послуги",
+      category: "Категорія",
+      description: "Опис послуги",
       durationPh: "Тривалість (хв)",
       costPh: "Ціна (грн)",
       descServicePh: "",
@@ -382,6 +411,8 @@ export const uk: Translations = {
       },
       success: {
         masterIsCreated: "Майстра успішно створено!",
+        masterIsUpdated: "Дані майстра оновлено!",
+        serviceIsUpdated: "Послугу оновлено!",
         removedCompletely: "Видалено повністю!",
       },
       status: {

@@ -20,7 +20,6 @@ interface AuthContextValue {
   refreshUser: () => Promise<void>;
 }
 
-const TOKEN_KEY = "prestige_token";
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
@@ -29,7 +28,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setLoading] = useState(true);
 
   useEffect(() => {
-    const storedToken = localStorage.getItem(TOKEN_KEY);
+    const storedToken = tokenStore.get();
     if (!storedToken) {
       setLoading(false);
       return;
@@ -41,22 +40,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(u);
       })
       .catch(() => {
-        localStorage.removeItem(TOKEN_KEY);
-        localStorage.removeItem("clientId");
         tokenStore.clear();
+        localStorage.removeItem("clientId");
       })
       .finally(() => setLoading(false));
   }, []);
 
   const persistToken = (token: string, userId: string) => {
     tokenStore.set(token);
-    localStorage.setItem(TOKEN_KEY, token);
     localStorage.setItem("clientId", userId);
   };
 
   const clearSession = () => {
     tokenStore.clear();
-    localStorage.removeItem(TOKEN_KEY);
+    tokenStore.clear(); 
     localStorage.removeItem("clientId");
     setUser(null);
   };
@@ -64,7 +61,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = useCallback(async (dto: LoginDto) => {
     const res = await authApi.login(dto);
     persistToken(res.accessToken, res.user.id);
-    localStorage.setItem("clientId", res.user.id);
     setUser(res.user);
   }, []);
 
@@ -78,7 +74,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       await authApi.logout();
     } catch {
-      /* ignore server errors on logout */
     }
     clearSession();
   }, []);

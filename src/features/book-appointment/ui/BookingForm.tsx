@@ -1,13 +1,20 @@
-import { THEME } from "../../../shared/config/theme";
 import { api } from "../../../shared/api/api";
 import { useEffect, useState, type FormEvent } from "react";
 import { Input } from "../../../shared/ui/Input";
 import { Select } from "../../../shared/ui/Select";
 import { Button } from "../../../shared/ui/Button";
+import "react-datepicker/dist/react-datepicker.css";
 import type { Service, Master, BookingData } from "../../../shared/api/api";
 import { useI18n } from "../../../shared/i18n";
 import { useAuth } from "../../../shared/auth/context";
-
+import { useLocation } from "react-router-dom";
+import DatePicker, { registerLocale } from "react-datepicker";
+import {
+  successWrapStyle,
+  successIconStyle,
+  successTitleStyle,
+} from "./BookingForm.styles";
+import { uk, enUS } from "date-fns/locale";
 interface BookingFormProps {
   services: Service[];
   masters: Master[];
@@ -26,37 +33,46 @@ const ALL_SLOTS = [
   "18:00",
 ];
 
+registerLocale("uk", uk);
+registerLocale("en", enUS);
+
 type FormStatus = "idle" | "loading" | "success" | "error";
 
 export function BookingForm({ services, masters }: BookingFormProps) {
+  const location = useLocation();
   const { t } = useI18n();
   const { user } = useAuth();
-  const today = new Date().toISOString().split("T")[0];
+
+  const now = new Date();
+  const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+
+  const minBookableDate = new Date();
+  if (now.getHours() >= 18) {
+    minBookableDate.setDate(minBookableDate.getDate() + 1);
+  }
 
   const [formData, setFormData] = useState<BookingData>({
     name: "",
     email: "",
     phone: "",
-    serviceId: "",
-    masterId: "",
+    serviceId: location.state?.selectedServiceId || "",
+    masterId: location.state?.selectedMasterId || "",
     date: "",
     time: "",
     notes: "",
   });
-
   const [busySlots, setBusySlots] = useState<string[]>([]);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [status, setStatus] = useState<FormStatus>("idle");
 
   useEffect(() => {
-    if (user) {
+    if (user)
       setFormData((prev) => ({
         ...prev,
         name: user.name || "",
         email: user.email || "",
         phone: user.phone || "",
       }));
-    }
   }, [user]);
 
   useEffect(() => {
@@ -64,12 +80,8 @@ export function BookingForm({ services, masters }: BookingFormProps) {
       if (formData.masterId && formData.date) {
         try {
           const busy = await api.getBusySlots(formData.masterId, formData.date);
-          const slotsArray = Array.isArray(busy)
-            ? busy
-            : (busy as any).data || [];
-          setBusySlots(slotsArray);
-        } catch (e) {
-          console.error("Slot loading error", e);
+          setBusySlots(Array.isArray(busy) ? busy : (busy as any).data || []);
+        } catch {
           setBusySlots([]);
         }
       } else {
@@ -79,77 +91,86 @@ export function BookingForm({ services, masters }: BookingFormProps) {
     fetchBusyTime();
   }, [formData.masterId, formData.date]);
 
-  const availableSlots = ALL_SLOTS.filter((slot) => !busySlots.includes(slot));
+  const currentHour = now.getHours();
+  const currentMinute = now.getMinutes();
+
+  const availableSlots = ALL_SLOTS.filter((slot) => {
+    if (busySlots.includes(slot)) return false;
+    if (formData.date === today) {
+      const [slotHour, slotMinute] = slot.split(":").map(Number);
+      if (
+        slotHour < currentHour ||
+        (slotHour === currentHour && slotMinute <= currentMinute)
+      )
+        return false;
+    }
+    return true;
+  });
+
+  useEffect(() => {
+    if (
+      formData.time &&
+      formData.date &&
+      !availableSlots.includes(formData.time)
+    ) {
+      setFormData((prev) => ({ ...prev, time: "" }));
+    }
+  }, [formData.date, availableSlots, formData.time]);
 
   const handleChange = (e: any) => {
-    if (e?.target) {
-      const { name, value } = e.target;
-      setFormData((prev) => ({ ...prev, [name]: value }));
-      if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
-    } else if (e?.name !== undefined && e?.value !== undefined) {
-      setFormData((prev) => ({ ...prev, [e.name]: e.value }));
-      if (errors[e.name]) setErrors((prev) => ({ ...prev, [e.name]: "" }));
-    }
+    const name = e?.target?.name ?? e?.name;
+    const value = e?.target?.value ?? e?.value;
+    if (!name) return;
+    if (name === "date" && value && value < today) return;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    const rawDateTime = `${formData.date}T${formData.time}:00`;
-
-    const payload = {
-      ...formData,
-      start_date: rawDateTime,
-    };
-
+    setStatus("loading");
     try {
-      await api.submitBooking(payload, user?.id);
+      await api.submitBooking(
+        {
+          ...formData,
+          start_date: `${formData.date}T${formData.time}:00`,
+        } as any,
+        user?.id,
+      );
       setStatus("success");
-    } catch (e) {
+    } catch {
       setStatus("error");
     }
   };
 
-  const handleBookAgain = () => {
-    window.location.reload();
-  };
-
   if (status === "success") {
     return (
-      <div style={{ textAlign: "center", padding: "80px 40px" }}>
-        <div
-          style={{
-            fontSize: "3rem",
-            marginBottom: "24px",
-            color: THEME.colors.gold,
-          }}
-        >
-          ✓
-        </div>
-        <h3
-          style={{
-            fontFamily: THEME.fonts.display,
-            fontSize: "2rem",
-            fontWeight: 400,
-          }}
-        >
-          {t.booking.success.title}
-        </h3>
-        <Button onClick={handleBookAgain}>{t.booking.success.again}</Button>
+      <div style={successWrapStyle}>
+        <div style={successIconStyle}>✓</div>
+        <h3 style={successTitleStyle}>{t.booking.success.title}</h3>
+        <Button onClick={() => window.location.reload()}>
+          {t.booking.success.again}
+        </Button>
       </div>
     );
   }
 
+  
   const isFormValid =
     formData.name.trim() !== "" &&
     formData.phone.trim() !== "" &&
     formData.serviceId !== "" &&
-    formData.date !== "" &&
+    formData.date >= today &&
     formData.time !== "";
 
+  const isTimeDisabled =
+    !formData.date || (formData.date !== "" && availableSlots.length === 0);
+
   return (
-    <form onSubmit={handleSubmit} className="booking-section-appointment">
-      <div className="booking-section-appointment">
+    
+    <form onSubmit={handleSubmit} className="booking-form">
+      
+      <div className="booking-row-3">
         <Input
           label={t.booking.fields.name}
           name="name"
@@ -175,7 +196,7 @@ export function BookingForm({ services, masters }: BookingFormProps) {
         />
       </div>
 
-      <div className="booking-section-grid">
+      <div className="booking-row-2">
         <Select
           label={t.booking.fields.service}
           name="serviceId"
@@ -204,31 +225,76 @@ export function BookingForm({ services, masters }: BookingFormProps) {
         />
       </div>
 
-      <div className="booking-section-grid">
-        <Input
-          label={t.booking.fields.date}
-          name="date"
-          type="date"
-          value={formData.date}
-          onChange={handleChange}
-          min={today}
-        />
-        <Select
-          label={t.booking.fields.time}
-          name="time"
-          value={formData.time}
-          onChange={handleChange}
-          disabled={!formData.date || !formData.masterId}
-          options={[
-            {
-              value: "",
-              label: formData.date
-                ? t.booking.fields.selectPh
-                : "Select master & date",
-            },
-            ...availableSlots.map((slot) => ({ value: slot, label: slot })),
-          ]}
-        />
+      <div className="booking-row-2">
+        <div>
+          <label>{t.booking.fields.date}</label>
+          <DatePicker
+            locale={t.lang === "en" ? "en" : "uk"}
+            selected={formData.date ? new Date(formData.date) : null}
+            onChange={(date: Date | null) => {
+              if (date) {
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, "0");
+                const day = String(date.getDate()).padStart(2, "0");
+                handleChange({
+                  target: { name: "date", value: `${year}-${month}-${day}` },
+                });
+              } else {
+                handleChange({ target: { name: "date", value: "" } });
+              }
+            }}
+            minDate={minBookableDate}
+            dateFormat="dd.MM.yyyy"
+            placeholderText={t.booking.fields.datePh}
+            autoComplete="off"
+          />
+        </div>
+
+        <div>
+          <label>{t.booking.fields.time}</label>
+          <DatePicker
+            locale={t.lang === "en" ? "en" : "uk"}
+            selected={
+              formData.time
+                ? (() => {
+                    const d = new Date();
+                    const [h, m] = formData.time.split(":");
+                    d.setHours(Number(h), Number(m), 0, 0);
+                    return d;
+                  })()
+                : null
+            }
+            onChange={(date: Date | null) => {
+              if (date) {
+                const hours = String(date.getHours()).padStart(2, "0");
+                const minutes = String(date.getMinutes()).padStart(2, "0");
+                handleChange({
+                  target: { name: "time", value: `${hours}:${minutes}` },
+                });
+              } else {
+                handleChange({ target: { name: "time", value: "" } });
+              }
+            }}
+            showTimeSelect
+            showTimeSelectOnly
+            timeIntervals={60}
+            timeCaption={t.booking.fields.time}
+            dateFormat="HH:mm"
+            timeFormat="HH:mm"
+            placeholderText={
+              formData.date ? t.booking.fields.selectPh : "Оберіть дату"
+            }
+            disabled={isTimeDisabled}
+            minTime={new Date(new Date().setHours(9, 0, 0, 0))}
+            maxTime={new Date(new Date().setHours(18, 0, 0, 0))}
+            filterTime={(time) => {
+              const h = String(time.getHours()).padStart(2, "0");
+              const m = String(time.getMinutes()).padStart(2, "0");
+              return availableSlots.includes(`${h}:${m}`);
+            }}
+            autoComplete="off"
+          />
+        </div>
       </div>
 
       <div className="booking-full">

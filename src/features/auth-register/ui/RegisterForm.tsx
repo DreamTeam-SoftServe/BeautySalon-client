@@ -1,10 +1,17 @@
 import { useState } from "react";
 import { useI18n } from "../../../shared/i18n";
 import { useAuth } from "../../../shared/auth/context";
-import { THEME } from "../../../shared/config/theme";
 import { ApiError } from "../../../shared/api/client";
 import { Button } from "../../../shared/ui/Button";
 import { Input } from "../../../shared/ui/Input";
+import {
+  formStyle,
+  gridStyle,
+  serverErrorStyle,
+  switchRowStyle,
+  switchTextStyle,
+  switchBtnStyle,
+} from "./RegisterForm.styles";
 
 interface RegisterFormProps {
   onSuccess: () => void;
@@ -23,7 +30,6 @@ export function RegisterForm({ onSuccess, onSwitchLogin }: RegisterFormProps) {
     password: "",
     confirmPassword: "",
   });
-
   const [errors, setErrors] = useState<Record<string, string | undefined>>({});
   const [serverError, setServerError] = useState<string | undefined>();
   const [submitting, setSubmitting] = useState(false);
@@ -32,7 +38,6 @@ export function RegisterForm({ onSuccess, onSwitchLogin }: RegisterFormProps) {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
-
     setErrors((er) => ({ ...er, [e.target.name]: undefined }));
     setServerError(undefined);
   };
@@ -59,7 +64,6 @@ export function RegisterForm({ onSuccess, onSwitchLogin }: RegisterFormProps) {
       setErrors(errs);
       return;
     }
-
     setSubmitting(true);
     try {
       await register({
@@ -70,34 +74,19 @@ export function RegisterForm({ onSuccess, onSwitchLogin }: RegisterFormProps) {
       });
       onSuccess();
     } catch (err) {
-      if (err instanceof ApiError && err.status === 409) {
-        setServerError(a.errors.emailTaken);
-      } else {
-        setServerError(a.errors.server);
-      }
+      setServerError(
+        err instanceof ApiError && err.status === 409
+          ? a.errors.emailTaken
+          : a.errors.server,
+      );
     } finally {
       setSubmitting(false);
     }
   };
 
-  const grid2: React.CSSProperties = {
-    display: "grid",
-    gridTemplateColumns: "1fr 1fr",
-    gap: "50px",
-  };
-
   return (
-    <form
-      onSubmit={handleSubmit}
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        gap: "26px",
-        maxWidth: "500px",
-        margin: "0 auto",
-      }}
-    >
-      <div style={grid2}>
+    <form onSubmit={handleSubmit} style={formStyle}>
+      <div style={gridStyle}>
         <Input
           label={a.nameLabel}
           name="name"
@@ -144,47 +133,17 @@ export function RegisterForm({ onSuccess, onSwitchLogin }: RegisterFormProps) {
         />
       </div>
 
-      {serverError && (
-        <p
-          style={{
-            fontFamily: THEME.fonts.sans,
-            fontSize: "0.85rem",
-            color: THEME.colors.errorText,
-            margin: 0,
-          }}
-        >
-          {serverError}
-        </p>
-      )}
+      {serverError && <p style={serverErrorStyle}>{serverError}</p>}
 
-      <Button type="submit" disabled={submitting}>
-        {submitting ? a.registering : a.registerSubmit}
+      <Button type="submit" disabled={submitting} style={{ width: "106.5%" }}>
+        <span style={{ display: "block", width: "100%", textAlign: "center" }}>
+          {submitting ? a.registering : a.registerSubmit}
+        </span>
       </Button>
 
-      <div style={{ textAlign: "center" }}>
-        <span
-          style={{
-            fontFamily: THEME.fonts.sans,
-            fontSize: "0.8rem",
-            color: THEME.colors.muted,
-          }}
-        >
-          {a.hasAccount}{" "}
-        </span>
-        <button
-          type="button"
-          onClick={onSwitchLogin}
-          style={{
-            background: "none",
-            border: "none",
-            fontFamily: THEME.fonts.sans,
-            fontSize: "0.8rem",
-            color: THEME.colors.gold,
-            cursor: "pointer",
-            textDecoration: "underline",
-            padding: 0,
-          }}
-        >
+      <div style={switchRowStyle}>
+        <span style={switchTextStyle}>{a.hasAccount} </span>
+        <button type="button" onClick={onSwitchLogin} style={switchBtnStyle}>
           {a.switchToLogin}
         </button>
       </div>

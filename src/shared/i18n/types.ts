@@ -26,6 +26,29 @@ export interface Translations {
     button: string;
   };
 
+  gallery: {
+    eyebrow: string;
+    title: string;
+    cta: string;
+  };
+
+  about: {
+    eyebrow: string;
+    title: string;
+    body: string;
+    cta: string;
+    features: {
+      f1title: string;
+      f1desc: string;
+      f2title: string;
+      f2desc: string;
+      f3title: string;
+      f3desc: string;
+      f4title: string;
+      f4desc: string;
+    };
+  };
+
   services: {
     sectionEyebrow: string;
     sectionTitle: string;
@@ -110,6 +133,7 @@ export interface Translations {
       phonePh: string;
       notesPh: string;
       selectPh: string;
+      datePh: string;
     };
     submit: string;
     sending: string;
@@ -251,6 +275,8 @@ export interface Translations {
       confirmed: string;
       completed: string;
       cancelled: string;
+      in_progress: string;
+      scheduled: string;
     };
     adminButton: string;
     masterButton: string;
@@ -265,6 +291,7 @@ export interface Translations {
       client: string;
       service: string;
       price: string;
+      notes: string;
       status: string;
     };
     empty: string;
@@ -308,18 +335,18 @@ export interface Translations {
       phonePh: string;
       mailPh: string;
       passwPh: string;
-      expPh: string
+      expPh: string;
       specs: string;
       photo: string;
       hintPhoto: string;
 
-      gender:{
-        woman: string
+      gender: {
+        woman: string;
         man: string;
-        other: string
+        other: string;
       };
 
-      exprank:{
+      exprank: {
         junior: string;
         middle: string;
         senior: string;
@@ -327,26 +354,28 @@ export interface Translations {
       };
     };
 
-    services:{
+    services: {
       manageService: string;
       addBtn: string;
       closeBtn: string;
       saveBtn: string;
       namePh: string;
       durationPh: string;
+      category: string;
+      description: string;
       costPh: string;
       descServicePh: string;
       photo: string;
       hintPhoto: string;
 
-      type:{
-        option1:string;
-        option2:string;
-        option3:string;
-        option4:string;
-        option5:string;
-        option6:string;
-        option7:string;
+      type: {
+        option1: string;
+        option2: string;
+        option3: string;
+        option4: string;
+        option5: string;
+        option6: string;
+        option7: string;
       };
     };
 
@@ -371,6 +400,8 @@ export interface Translations {
       };
       success: {
         masterIsCreated: string;
+        masterIsUpdated: string;
+        serviceIsUpdated: string;
         removedCompletely: string;
       };
 
