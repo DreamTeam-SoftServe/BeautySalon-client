@@ -49,8 +49,6 @@ export const api = {
 
   deleteService: (id: string) => apiClient.delete(`/api/Service/${id}`),
 
-  // --- МАСТЕРА (MASTERS) ---
-
   getMasters: () => apiClient.get<Master[]>("/api/Master"),
 
   createMaster: (data: any) => {
@@ -159,6 +157,10 @@ export const api = {
 
   changePassword: (data: ChangePasswordData) => {
     return apiClient.post("/api/Auth/change-password", data);
+  },
+
+  forgotPassword: async (email: string) => {
+  return apiClient.post("/auth/forgot-password", { email });
   },
 
   uploadImage: (file: File, folder: string = "general") => {

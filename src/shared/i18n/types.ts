@@ -220,6 +220,22 @@ export interface Translations {
     hasAccount: string;
     forgotPassword: string;
     orContinueAs: string;
+
+    forgotPassw: {
+      resetTitle: string;
+      resetSubtitle: string;
+      resetButton: string;
+      remembTitle: string;
+      returnButton: string;
+      instrtuctionsTitle: string;
+      instrtuctionsSubtitle: string;
+      exit: string;
+
+      status: {
+        sending: string;
+      };
+    };
+
     errors: {
       required: string;
       email: string;

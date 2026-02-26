@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useI18n } from "../../../shared/i18n";
 import { useAuth } from "../../../shared/auth/context";
 import { ApiError } from "../../../shared/api/client";
@@ -11,17 +11,43 @@ import {
   switchRowStyle,
   switchTextStyle,
   switchBtnStyle,
+  submitBtnStyle,
+  submitBtnInnerStyle
 } from "./RegisterForm.styles";
 
 interface RegisterFormProps {
   onSuccess: () => void;
   onSwitchLogin: () => void;
+  animating?: boolean;
+  animDir?: "in" | "out";
 }
 
-export function RegisterForm({ onSuccess, onSwitchLogin }: RegisterFormProps) {
+function shakeElement(el: HTMLElement) {
+  el.animate(
+    [
+      { transform: "translateX(0)" },
+      { transform: "translateX(-8px)" },
+      { transform: "translateX(8px)" },
+      { transform: "translateX(-6px)" },
+      { transform: "translateX(6px)" },
+      { transform: "translateX(-3px)" },
+      { transform: "translateX(3px)" },
+      { transform: "translateX(0)" },
+    ],
+    { duration: 450, easing: "ease-in-out" },
+  );
+}
+
+export function RegisterForm({
+  onSuccess,
+  onSwitchLogin,
+  animating,
+  animDir,
+}: RegisterFormProps) {
   const { t } = useI18n();
   const { register } = useAuth();
   const a = t.auth;
+  const formRef = useRef<HTMLFormElement>(null);
 
   const [form, setForm] = useState({
     name: "",
@@ -62,6 +88,7 @@ export function RegisterForm({ onSuccess, onSwitchLogin }: RegisterFormProps) {
     const errs = validate();
     if (Object.keys(errs).length) {
       setErrors(errs);
+      if (formRef.current) shakeElement(formRef.current);
       return;
     }
     setSubmitting(true);
@@ -79,69 +106,92 @@ export function RegisterForm({ onSuccess, onSwitchLogin }: RegisterFormProps) {
           ? a.errors.emailTaken
           : a.errors.server,
       );
+      if (formRef.current) shakeElement(formRef.current);
     } finally {
       setSubmitting(false);
     }
   };
 
+  const fieldAnim = (index: number): React.CSSProperties => ({
+    opacity: animating && animDir === "out" ? 0 : 1,
+    transform:
+      animating && animDir === "out" ? "translateY(-12px)" : "translateY(0)",
+    transition: "opacity 0.4s ease, transform 0.4s ease",
+    transitionDelay: `${index * 0.06}s`,
+  });
+
   return (
-    <form onSubmit={handleSubmit} style={formStyle}>
-      <div style={gridStyle}>
-        <Input
-          label={a.nameLabel}
-          name="name"
-          value={form.name}
-          onChange={handleChange}
-          error={errors.name}
-          placeholder={a.namePh}
-        />
-        <Input
-          label={a.phoneLabel}
-          name="phone"
-          type="tel"
-          value={form.phone}
-          onChange={handleChange}
-          error={errors.phone}
-          placeholder={a.phonePh}
-        />
-        <Input
-          label={a.emailLabel}
-          name="email"
-          type="email"
-          value={form.email}
-          onChange={handleChange}
-          error={errors.email}
-          placeholder={a.emailPh}
-        />
-        <Input
-          label={a.passwordLabel}
-          name="password"
-          type="password"
-          value={form.password}
-          onChange={handleChange}
-          error={errors.password}
-          placeholder={a.passwordPh}
-        />
-        <Input
-          label={a.confirmPasswordLabel}
-          name="confirmPassword"
-          type="password"
-          value={form.confirmPassword}
-          onChange={handleChange}
-          error={errors.confirmPassword}
-          placeholder={a.confirmPasswordPh}
-        />
+    <form ref={formRef} onSubmit={handleSubmit} style={formStyle}>
+      <div style={{ ...gridStyle }}>
+        <div style={fieldAnim(0)}>
+          <Input
+            label={a.nameLabel}
+            name="name"
+            value={form.name}
+            onChange={handleChange}
+            error={errors.name}
+            placeholder={a.namePh}
+          />
+        </div>
+        <div style={fieldAnim(1)}>
+          <Input
+            label={a.phoneLabel}
+            name="phone"
+            type="tel"
+            value={form.phone}
+            onChange={handleChange}
+            error={errors.phone}
+            placeholder={a.phonePh}
+          />
+        </div>
+        <div style={fieldAnim(2)}>
+          <Input
+            label={a.emailLabel}
+            name="email"
+            type="email"
+            value={form.email}
+            onChange={handleChange}
+            error={errors.email}
+            placeholder={a.emailPh}
+          />
+        </div>
+        <div style={fieldAnim(3)}>
+          <Input
+            label={a.passwordLabel}
+            name="password"
+            type="password"
+            value={form.password}
+            onChange={handleChange}
+            error={errors.password}
+            placeholder={a.passwordPh}
+          />
+        </div>
+        <div style={fieldAnim(4)}>
+          <Input
+            label={a.confirmPasswordLabel}
+            name="confirmPassword"
+            type="password"
+            value={form.confirmPassword}
+            onChange={handleChange}
+            error={errors.confirmPassword}
+            placeholder={a.confirmPasswordPh}
+          />
+        </div>
       </div>
 
-      {serverError && <p style={serverErrorStyle}>{serverError}</p>}
+      {serverError && (
+        <p style={{ ...serverErrorStyle, ...fieldAnim(5) }}>{serverError}</p>
+      )}
 
-      <Button type="submit" disabled={submitting} style={{ width: "106.5%" }}>
-        <span style={{ display: "block", width: "100%", textAlign: "center" }}>
-          {submitting ? a.registering : a.registerSubmit}
-        </span>
-      </Button>
+      <div style={fieldAnim(6)}>
+        <Button type="submit" disabled={submitting} style={submitBtnStyle}>
+          <span style={submitBtnInnerStyle}>
+            {submitting ? a.registering : a.registerSubmit}
+          </span>
+        </Button>
+      </div>
 
-      <div style={switchRowStyle}>
+      <div style={{ ...switchRowStyle, ...fieldAnim(7) }}>
         <span style={switchTextStyle}>{a.hasAccount} </span>
         <button type="button" onClick={onSwitchLogin} style={switchBtnStyle}>
           {a.switchToLogin}

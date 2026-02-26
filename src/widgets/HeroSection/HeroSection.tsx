@@ -1,10 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { Button } from "../../shared/ui/Button/Button";
 import { api } from "../../shared/api/api";
-import heroImg from "../../shared/assets/heroImg.jpg";
-import heroImg2 from "../../shared/assets/heroImg2.jpg";
-import heroImg3 from "../../shared/assets/heroImg3.jpg";
-import heroImg4 from "../../shared/assets/heroImg4.jpg";
 import { useI18n } from "../../shared/i18n";
 import { useNavigate } from "react-router-dom";
 import {
@@ -15,13 +11,13 @@ import {
   dotsWrapStyle, getDotStyle, arrowBtnStyle, imageCounterStyle,
 } from "./HeroSection.styles";
 
-const HERO_IMAGES = [heroImg, heroImg2, heroImg3, heroImg4];
+const S3_URL = "https://beautysalon-dreamteam.s3.eu-north-1.amazonaws.com";
 
-const PARALLAX_DIRS = [
-  { from: "scale(1.08) translateX(2%)",  to: "scale(1) translateX(-1%)" },
-  { from: "scale(1.06) translateX(-2%)", to: "scale(1.02) translateX(1%)" },
-  { from: "scale(1.1)  translateY(1%)",  to: "scale(1) translateY(-1%)" },
-  { from: "scale(1.07) translateX(1%)",  to: "scale(1.01) translateX(-2%)" },
+const HERO_IMAGES = [
+  `${S3_URL}/hero/hero1.jpg`,
+  `${S3_URL}/hero/hero2.jpg`,
+  `${S3_URL}/hero/hero3.jpg`,
+  `${S3_URL}/hero/hero4.jpg`,
 ];
 
 export function HeroSection() {
@@ -30,28 +26,20 @@ export function HeroSection() {
   const [masterCount, setMasterCount] = useState<number | string>("...");
   const [clientCount, setClientCount] = useState<number | string>("...");
   const [current, setCurrent] = useState(0);
-  const [prev, setPrev] = useState<number | null>(null);
   const [isPaused, setIsPaused] = useState(false);
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const t = setTimeout(() => setVisible(true), 80);
-    return () => clearTimeout(t);
+    const timer = setTimeout(() => setVisible(true), 80);
+    return () => clearTimeout(timer);
   }, []);
 
   const goTo = useCallback((next: number) => {
-    setPrev(current);
-    setCurrent(next);
-    setTimeout(() => setPrev(null), 1200);
-  }, [current]);
+    setCurrent((next + HERO_IMAGES.length) % HERO_IMAGES.length);
+  }, []);
 
-  const goNext = useCallback(() => {
-    goTo(current === HERO_IMAGES.length - 1 ? 0 : current + 1);
-  }, [current, goTo]);
-
-  const goPrev = useCallback(() => {
-    goTo(current === 0 ? HERO_IMAGES.length - 1 : current - 1);
-  }, [current, goTo]);
+  const goNext = useCallback(() => goTo(current + 1), [current, goTo]);
+  const goPrev = useCallback(() => goTo(current - 1), [current, goTo]);
 
   useEffect(() => {
     api.getMasters()
@@ -89,9 +77,6 @@ export function HeroSection() {
       >
         {HERO_IMAGES.map((img, index) => {
           const isActive = index === current;
-          const isLeaving = index === prev;
-          const dir = PARALLAX_DIRS[index];
-
           return (
             <div
               key={index}
@@ -99,50 +84,29 @@ export function HeroSection() {
                 position: "absolute",
                 inset: 0,
                 opacity: isActive ? 1 : 0,
-                zIndex: isActive ? 2 : isLeaving ? 1 : 0,
-                transition: "opacity 1.2s ease",
+                transform: isActive ? "scale(1)" : "scale(1.12)",
+                transition: "opacity 0.9s ease, transform 0.9s ease",
+                zIndex: isActive ? 1 : 0,
               }}
             >
               <img
                 src={img}
                 alt={`Hero Slide ${index + 1}`}
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                  display: "block",
-                  transform: isActive
-                    ? dir.to
-                    : isLeaving
-                    ? `scale(1.05) translateX(3%)`
-                    : dir.from,
-                  transition: isActive
-                    ? "transform 5s ease-out"
-                    : isLeaving
-                    ? "transform 1.2s ease-in"
-                    : "none",
-                }}
+                style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
               />
             </div>
           );
         })}
 
         <div style={imageFrameStyle} />
-
         <div style={imageCounterStyle}>
           {current + 1} / {HERO_IMAGES.length}
         </div>
-
         <button style={arrowBtnStyle("left")} onClick={goPrev}>‹</button>
         <button style={arrowBtnStyle("right")} onClick={goNext}>›</button>
-
         <div style={dotsWrapStyle}>
           {HERO_IMAGES.map((_, i) => (
-            <button
-              key={i}
-              style={getDotStyle(i === current)}
-              onClick={() => goTo(i)}
-            />
+            <button key={i} style={getDotStyle(i === current)} onClick={() => goTo(i)} />
           ))}
         </div>
       </div>

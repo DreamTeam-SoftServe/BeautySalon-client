@@ -27,27 +27,27 @@ export const en: Translations = {
   },
 
   gallery: {
-  eyebrow: "Our Work",
-  title: "Portfolio",
-  cta: "View All Services",
-},
-
-about: {
-  eyebrow: "About Us",
-  title: "Prestige Studio",
-  body: "We are a team of passionate masters. Every detail in our studio is designed to make you feel special. From the first consultation to the final result — we are with you.",
-  cta: "Meet the Team",
-  features: {
-    f1title: "Premium Products",
-    f1desc: "We use only certified cosmetics from world brands",
-    f2title: "Experienced Masters",
-    f2desc: "Certified specialists with 5+ years of experience",
-    f3title: "Personal Approach",
-    f3desc: "Every client receives a personal consultation",
-    f4title: "Quality Guarantee",
-    f4desc: "Free correction if you are not satisfied with the result",
+    eyebrow: "Our Work",
+    title: "Portfolio",
+    cta: "View All Services",
   },
-},
+
+  about: {
+    eyebrow: "About Us",
+    title: "Prestige Studio",
+    body: "We are a team of passionate masters. Every detail in our studio is designed to make you feel special. From the first consultation to the final result — we are with you.",
+    cta: "Meet the Team",
+    features: {
+      f1title: "Premium Products",
+      f1desc: "We use only certified cosmetics from world brands",
+      f2title: "Experienced Masters",
+      f2desc: "Certified specialists with 5+ years of experience",
+      f3title: "Personal Approach",
+      f3desc: "Every client receives a personal consultation",
+      f4title: "Quality Guarantee",
+      f4desc: "Free correction if you are not satisfied with the result",
+    },
+  },
 
   services: {
     sectionEyebrow: "What We Offer",
@@ -227,6 +227,23 @@ about: {
     hasAccount: "Already have an account?",
     forgotPassword: "Forgot password?",
     orContinueAs: "or continue as guest",
+
+    forgotPassw: {
+      resetTitle: "Password recovery",
+      resetSubtitle: "Enter your email and we will send you instructions",
+      resetButton: "Send instructions",
+      remembTitle: "Remembered your password?",
+      returnButton: "Return",
+      instrtuctionsTitle: "A letter with instructions has been sent to",
+      instrtuctionsSubtitle:
+        "Check your spam folder if you don't see the email.",
+      exit: "← Return to login",
+
+      status: {
+        sending: "Sending...",
+      },
+    },
+
     errors: {
       required: "This field is required",
       email: "Invalid email address",
@@ -398,7 +415,6 @@ about: {
         masterIsUpdated: "Master data updated!",
         removedCompletely: "Completely deleted!",
         serviceIsUpdated: "The service has been updated!",
-
       },
       status: {
         loading: "Loading data...",
@@ -423,7 +439,7 @@ about: {
       photo: "PHOTO SERVICES",
       hintPhoto: "Recommended size: 800x600 px (4:3), JPG or PNG format",
       type: {
-        option1: "Coloring",
+        option1: "Dying",
         option2: "Haircut",
         option3: "Extensions",
         option4: "Styling",

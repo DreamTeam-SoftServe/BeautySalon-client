@@ -44,7 +44,6 @@ import {
   specLabelStyle,
 } from "./AdminDashboard.styles";
 
-
 type TabType = "bookings" | "users" | "masters" | "services";
 
 const EMPTY_MASTER = {
@@ -91,44 +90,44 @@ export function AdminDashboard() {
   }, [activeTab]);
 
   const fetchData = async () => {
-  setLoading(true);
-  try {
-    if (activeTab === "bookings") {
-      const res = await api.getAdminBookings();
-      let bookingsArr = Array.isArray(res) ? res : (res as any).data || [];
+    setLoading(true);
+    try {
+      if (activeTab === "bookings") {
+        const res = await api.getAdminBookings();
+        let bookingsArr = Array.isArray(res) ? res : (res as any).data || [];
 
-      const completedIds = await autoCompleteBookings(bookingsArr);
-      if (completedIds.length > 0) {
-        bookingsArr = (bookingsArr as any[]).map((b) =>
-          completedIds.includes(b.id) ? { ...b, status: "COMPLETED" } : b
-        );  
+        const completedIds = await autoCompleteBookings(bookingsArr);
+        if (completedIds.length > 0) {
+          bookingsArr = (bookingsArr as any[]).map((b) =>
+            completedIds.includes(b.id) ? { ...b, status: "COMPLETED" } : b,
+          );
+        }
+
+        setBookings(bookingsArr);
+      } else if (activeTab === "users" || activeTab === "masters") {
+        const [uRes, mRes] = await Promise.all([
+          api.getAllUsers(),
+          api.getMasters(),
+        ]);
+        setUsers(Array.isArray(uRes) ? uRes : (uRes as any).data || []);
+        setMastersList(Array.isArray(mRes) ? mRes : (mRes as any).data || []);
+      } else if (activeTab === "services") {
+        const res = await api.getServices();
+        setServicesList(Array.isArray(res) ? res : (res as any).data || []);
       }
-
-      setBookings(bookingsArr);
-    } else if (activeTab === "users" || activeTab === "masters") {
-      const [uRes, mRes] = await Promise.all([
-        api.getAllUsers(),
-        api.getMasters(),
-      ]);
-      setUsers(Array.isArray(uRes) ? uRes : (uRes as any).data || []);
-      setMastersList(Array.isArray(mRes) ? mRes : (mRes as any).data || []);
-    } else if (activeTab === "services") {
-      const res = await api.getServices();
-      setServicesList(Array.isArray(res) ? res : (res as any).data || []);
+    } catch (error) {
+      console.error("Data loading error", error);
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    console.error("Data loading error", error);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   const handleEditMasterClick = (m: any) => {
     setNewMaster({
       name: m.name || "",
       phone: m.phone || "",
       email: m.email || "",
-      password: "", 
+      password: "",
       gender: m.gender || 1,
       pricePersent: m.pricePersent || 40,
       specialization: m.specialization || 1,
@@ -319,15 +318,20 @@ export function AdminDashboard() {
     if (!window.confirm(t.admin.dashboard.deleteCLientFromBase)) return;
     try {
       await api.deleteUser(userId);
-      setUsers((prev) => prev.filter((u) => u.id !== userId));
-      if (masterProfileId) {
-        await api.deleteMaster(masterProfileId);
-        setMastersList((prev) => prev.filter((m) => m.id !== masterProfileId));
-      }
-      alert(t.admin.dashboard.success.removedCompletely);
-    } catch (error) {
+    } catch {
       alert(t.admin.dashboard.errors.errorDelete);
+      return;
     }
+
+    if (masterProfileId) {
+      try {
+        await api.deleteMaster(masterProfileId);
+      } catch {}
+    }
+
+    setUsers((prev) => prev.filter((u) => u.id !== userId));
+    setMastersList((prev) => prev.filter((m) => m.id !== masterProfileId));
+    alert(t.admin.dashboard.success.removedCompletely);
   };
 
   const serviceTypeOptions = [0, 1, 2, 3, 4, 5, 6].map((key) => ({
@@ -394,12 +398,14 @@ export function AdminDashboard() {
                       </td>
 
                       <td style={tdStyle}>
-                        <div style={{ 
-                          fontSize: "0.85rem", 
-                          color: "#7A7A7A", 
-                          maxWidth: "150px", 
-                          overflowWrap: "break-word" 
-                        }}>
+                        <div
+                          style={{
+                            fontSize: "0.85rem",
+                            color: "#7A7A7A",
+                            maxWidth: "150px",
+                            overflowWrap: "break-word",
+                          }}
+                        >
                           {b.notes || "—"}
                         </div>
                       </td>
@@ -770,21 +776,39 @@ export function AdminDashboard() {
               {isAddingService && (
                 <div style={formWrapStyle}>
                   <div style={formGridStyle}>
-                    
-                    <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                      <label style={specLabelStyle}>{t.admin.services.namePh}</label>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "8px",
+                      }}
+                    >
+                      <label style={specLabelStyle}>
+                        {t.admin.services.namePh}
+                      </label>
                       <input
                         placeholder={t.admin.services.namePh}
                         value={newService.title}
                         style={inputStyle}
                         onChange={(e) =>
-                          setNewService({ ...newService, title: e.target.value })
+                          setNewService({
+                            ...newService,
+                            title: e.target.value,
+                          })
                         }
                       />
                     </div>
 
-                    <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                      <label style={specLabelStyle}>{t.admin.services.durationPh}</label>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "8px",
+                      }}
+                    >
+                      <label style={specLabelStyle}>
+                        {t.admin.services.durationPh}
+                      </label>
                       <input
                         placeholder={t.admin.services.durationPh}
                         value={newService.duration}
@@ -799,8 +823,16 @@ export function AdminDashboard() {
                       />
                     </div>
 
-                    <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                      <label style={specLabelStyle}>{t.admin.services.costPh}</label>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "8px",
+                      }}
+                    >
+                      <label style={specLabelStyle}>
+                        {t.admin.services.costPh}
+                      </label>
                       <input
                         placeholder={t.admin.services.costPh}
                         value={newService.price}
@@ -815,8 +847,16 @@ export function AdminDashboard() {
                       />
                     </div>
 
-                    <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                      <label style={specLabelStyle}>{t.admin.services.category}</label>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "8px",
+                      }}
+                    >
+                      <label style={specLabelStyle}>
+                        {t.admin.services.category}
+                      </label>
                       <select
                         style={inputStyle}
                         value={newService.serviceType}
@@ -835,8 +875,17 @@ export function AdminDashboard() {
                       </select>
                     </div>
 
-                    <div style={{ display: "flex", flexDirection: "column", gap: "8px", gridColumn: "span 2" }}>
-                      <label style={specLabelStyle}>{t.admin.services.description}</label>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "8px",
+                        gridColumn: "span 2",
+                      }}
+                    >
+                      <label style={specLabelStyle}>
+                        {t.admin.services.description}
+                      </label>
                       <textarea
                         placeholder={t.admin.services.descServicePh}
                         value={newService.description}
@@ -898,7 +947,7 @@ export function AdminDashboard() {
                       )}
                     </div>
                   </div>
-                  
+
                   <button
                     onClick={handleSaveService}
                     disabled={uploading}
