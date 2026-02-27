@@ -89,15 +89,15 @@ export const datePickerLabelStyle: CSSProperties = {
   marginBottom: "8px",
 };
 
+
 export const successWrapStyle: CSSProperties = {
   textAlign: "center",
-  padding: "80px 40px",
-  background: THEME.colors.charcoal,
-  height: "100vh",
+  padding: "60px 40px",
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
   justifyContent: "center",
+  flex: 1,
 };
 
 export const successIconStyle: CSSProperties = {
