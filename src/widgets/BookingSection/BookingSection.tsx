@@ -4,12 +4,13 @@ import { BookingForm } from "../../features/book-appointment/ui/BookingForm";
 import type { Service, Master } from "../../shared/api/api";
 import { useI18n } from "../../shared/i18n";
 import {
-  sectionStyle, carouselOverlayStyle, carouselFrameStyle,
+  getSectionStyle, getFormSideStyle, getCarouselStyle,
+  getHeaderStyle, getFormAnimStyle,
+  carouselOverlayStyle, carouselFrameStyle,
   carouselDotsStyle, getDotStyle, carouselArrowStyle,
   eyebrowStyle, titleStyle, bodyTextStyle, dividerStyle,
-  bookingSectionCss, getFormSideAnimStyle, getHeaderAnimStyle,
-  getFormAnimStyle, getCarouselAnimStyle, carouselSlideStyle,
-  carouselSlideImgStyle,
+  carouselSlideStyle, carouselSlideImgStyle,
+  getBookingCss,
 } from "./BookingSection.styles";
 
 const S3_URL = "https://beautysalon-dreamteam.s3.eu-north-1.amazonaws.com";
@@ -21,6 +22,16 @@ const IMAGES = [
   `${S3_URL}/booking/booking4.jpg`,
 ];
 
+function useWindowWidth() {
+  const [width, setWidth] = useState(window.innerWidth);
+  useEffect(() => {
+    const handler = () => setWidth(window.innerWidth);
+    window.addEventListener("resize", handler);
+    return () => window.removeEventListener("resize", handler);
+  }, []);
+  return width;
+}
+
 export function BookingSection() {
   const [services, setServices] = useState<Service[]>([]);
   const [masters, setMasters]   = useState<Master[]>([]);
@@ -28,6 +39,7 @@ export function BookingSection() {
   const [isPaused, setIsPaused] = useState(false);
   const [visible, setVisible]   = useState(false);
   const { t } = useI18n();
+  const w = useWindowWidth();
 
   useEffect(() => {
     const timer = setTimeout(() => setVisible(true), 80);
@@ -53,11 +65,11 @@ export function BookingSection() {
   }, [isPaused, goNext]);
 
   return (
-    <section className="booking-section" style={sectionStyle}>
-      <style>{bookingSectionCss}</style>
+    <section className="booking-section" style={getSectionStyle(w)}>
+      <style>{getBookingCss(w)}</style>
 
-      <div style={getFormSideAnimStyle(visible)}>
-        <div style={getHeaderAnimStyle(visible)}>
+      <div style={getFormSideStyle(w, visible)}>
+        <div style={getHeaderStyle(visible)}>
           <span style={eyebrowStyle}>{t.booking.pageEyebrow}</span>
           <h1 style={titleStyle}>{t.booking.pageTitle}</h1>
           <div style={dividerStyle} />
@@ -69,7 +81,7 @@ export function BookingSection() {
       </div>
 
       <div
-        style={getCarouselAnimStyle(visible)}
+        style={getCarouselStyle(w, visible)}
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
       >

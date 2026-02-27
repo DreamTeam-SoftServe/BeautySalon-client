@@ -23,6 +23,12 @@ export function AuthPage({ initialMode = "login" }: AuthPageProps) {
   const [mode, setMode] = useState<AuthMode>(initialMode);
   const [visibleMode, setVisibleMode] = useState<AuthMode>(initialMode);
   const [phase, setPhase] = useState<"idle" | "out" | "in">("idle");
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    const t = setTimeout(() => setMounted(true), 60);
+    return () => clearTimeout(t);
+  }, []);
 
   const switchMode = (next: AuthMode) => {
     if (next === mode || phase !== "idle") return;
@@ -44,18 +50,28 @@ export function AuthPage({ initialMode = "login" }: AuthPageProps) {
     }
   }, [phase, mode]);
 
-  const formWrapStyle: React.CSSProperties = {
-    opacity: phase === "out" ? 0 : 1,
-    transform: phase === "out" ? "translateY(-16px)" : "translateY(0)",
-    transition: phase === "out"
-      ? "opacity 0.35s ease, transform 0.35s ease"
-      : "opacity 0.4s ease 0.05s, transform 0.4s ease 0.05s",
-  };
+  const entranceStyle = (delay: number): React.CSSProperties => ({
+    opacity: mounted ? 1 : 0,
+    transform: mounted ? "translateY(0)" : "translateY(-18px)",
+    transition: `opacity 0.6s ease, transform 0.6s ease`,
+    transitionDelay: `${delay}s`,
+  });
 
   const headerAnimStyle: React.CSSProperties = {
     opacity: phase === "out" ? 0 : 1,
     transform: phase === "out" ? "translateY(-10px)" : "translateY(0)",
     transition: "opacity 0.3s ease, transform 0.3s ease",
+  };
+
+  const formWrapStyle: React.CSSProperties = {
+    opacity: phase === "out" ? 0 : mounted ? 1 : 0,
+    transform: phase === "out"
+      ? "translateY(-16px)"
+      : mounted ? "translateY(0)" : "translateY(20px)",
+    transition: phase === "out"
+      ? "opacity 0.35s ease, transform 0.35s ease"
+      : "opacity 0.5s ease, transform 0.5s ease",
+    transitionDelay: phase === "out" ? "0s" : "0.35s",
   };
 
   const getTitle = () => {
@@ -75,10 +91,16 @@ export function AuthPage({ initialMode = "login" }: AuthPageProps) {
       <div style={containerStyle}>
 
         <div style={{ ...headerStyle, ...headerAnimStyle }}>
-          <p style={eyebrowStyle}>Prestige Studio</p>
-          <h1 style={titleStyle}>{getTitle()}</h1>
-          <p style={subtitleStyle}>{getSubtitle()}</p>
-          <div style={dividerStyle} />
+          <p style={{ ...eyebrowStyle, ...entranceStyle(0.05) }}>
+            Prestige Studio
+          </p>
+          <h1 style={{ ...titleStyle, ...entranceStyle(0.15) }}>
+            {getTitle()}
+          </h1>
+          <p style={{ ...subtitleStyle, ...entranceStyle(0.25) }}>
+            {getSubtitle()}
+          </p>
+          <div style={{ ...dividerStyle, ...entranceStyle(0.3) }} />
         </div>
 
         <div style={formWrapStyle}>
