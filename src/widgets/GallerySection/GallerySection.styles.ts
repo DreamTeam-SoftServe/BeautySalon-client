@@ -44,7 +44,7 @@ export const galleryDecor1: CSSProperties = {
 export const galleryDecor2: CSSProperties = {
   ...basePattern,
   bottom: "-100px",
-  left: "-250px",
+  left: "-280px",
   transform: "rotate(200deg)",
 };
 

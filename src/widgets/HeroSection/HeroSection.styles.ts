@@ -36,7 +36,7 @@ export const sectionStyle: CSSProperties = {
   alignItems: "center",
   background: THEME.colors.cream,
   position: "relative",
-  padding: "0 5%",
+  padding: "5% 5%",
 };
 
 export const getImageWrapStyle = (visible: boolean): CSSProperties => ({
