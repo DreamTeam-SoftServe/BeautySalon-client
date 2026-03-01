@@ -5,6 +5,7 @@ export const sectionStyle: CSSProperties = {
   padding: "120px 0",
   background: THEME.colors.cream,
   position: "relative",
+  
 };
 
 export const containerStyle: CSSProperties = {
@@ -29,20 +30,21 @@ const basePattern: CSSProperties = {
   backgroundSize: "contain",
   opacity: 0.3,
   pointerEvents: "none",
+  overflowX: "hidden", 
   zIndex: 0,
 };
 
 export const galleryDecor1: CSSProperties = {
   ...basePattern,
   top: "-80px",
-  right: "-150px",
+  right: "90px",
   transform: "rotate(15deg)",
 };
 
 export const galleryDecor2: CSSProperties = {
   ...basePattern,
   bottom: "-100px",
-  left: "-150px",
+  left: "-250px",
   transform: "rotate(200deg)",
 };
 

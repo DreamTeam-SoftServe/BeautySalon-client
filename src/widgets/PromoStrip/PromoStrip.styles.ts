@@ -5,6 +5,7 @@ export const sectionStyle: CSSProperties = {
   padding: "80px 5%",
   background: THEME.colors.charcoal,
   textAlign: "center",
+
 };
 
 export const eyebrowStyle: CSSProperties = {
