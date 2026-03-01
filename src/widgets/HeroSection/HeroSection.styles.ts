@@ -17,15 +17,15 @@ const basePattern: CSSProperties = {
 export const heroDecor1: CSSProperties = {
   ...basePattern,
   top: "-10%",
-  left: "-250px",
+  left: "200px",
   transform: "rotate(25deg)",
 };
 
 export const heroDecor2: CSSProperties = {
   ...basePattern,
-  bottom: "-15%",
-  left: "35%",
-  transform: "rotate(105deg)",
+  bottom: "20px",
+  left: "40%",
+  transform: "rotate(140deg)",
 };
 
 export const sectionStyle: CSSProperties = {
@@ -36,12 +36,8 @@ export const sectionStyle: CSSProperties = {
   alignItems: "center",
   background: THEME.colors.cream,
   position: "relative",
-  overflow: "hidden",
   padding: "0 5%",
 };
-
-// Анімації через <style> тег — додай у index.html або глобальний CSS
-// Тут ми задаємо початковий стан + transition через inline styles
 
 export const getImageWrapStyle = (visible: boolean): CSSProperties => ({
   position: "absolute",
@@ -85,7 +81,6 @@ export const getDynamicImageStyle = (isActive: boolean): CSSProperties => ({
   zIndex: isActive ? 1 : 0,
 });
 
-// Eyebrow — з'являється першим
 export const getEyebrowStyle = (visible: boolean): CSSProperties => ({
   fontFamily: THEME.fonts.sans,
   fontSize: "0.7rem",
@@ -101,7 +96,6 @@ export const getEyebrowStyle = (visible: boolean): CSSProperties => ({
   transitionDelay: "0s",
 });
 
-// Heading — з'являється зліва
 export const getHeadingStyle = (visible: boolean): CSSProperties => ({
   fontFamily: THEME.fonts.display,
   fontSize: "clamp(3rem, 6vw, 5.5rem)",
@@ -115,7 +109,6 @@ export const getHeadingStyle = (visible: boolean): CSSProperties => ({
   transitionDelay: "0.15s",
 });
 
-// Body text
 export const getBodyStyle = (visible: boolean): CSSProperties => ({
   fontFamily: THEME.fonts.body,
   fontSize: "1.1rem",
@@ -129,7 +122,6 @@ export const getBodyStyle = (visible: boolean): CSSProperties => ({
   transitionDelay: "0.3s",
 });
 
-// CTA кнопки
 export const getCtaRowStyle = (visible: boolean): CSSProperties => ({
   display: "flex",
   gap: "16px",
