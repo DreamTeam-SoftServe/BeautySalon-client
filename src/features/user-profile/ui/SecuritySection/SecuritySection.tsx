@@ -83,7 +83,7 @@ export function SecuritySection() {
           disabled={loading}
           style={{
             marginTop: "10px",
-            width: "108%",
+            width: "100%",
             textAlign: "center",
             justifyContent: "center",
             display: "flex",

@@ -30,7 +30,7 @@ export const aboutDecor1: CSSProperties = {
 export const aboutDecor2: CSSProperties = {
   ...basePattern,
   bottom: "-80px",
-  right: "95px",
+  right: "100px",
   transform: "rotate(130deg)",
 };
 

@@ -76,14 +76,14 @@ export const dividerTextStyle: CSSProperties = {
 
 export const getSubmitBtnStyle = (): CSSProperties => ({
   marginTop: "10px",
-  width: "106.5%",
+  width: "270px",
   textAlign: "center",
   justifyContent: "center",
   display: "flex",
 });
 
 export const getOutlineBtnStyle = (): CSSProperties => ({
-  width: "106.5%",
+  width: "270px",
   textAlign: "center",
   justifyContent: "center",
   display: "flex",
