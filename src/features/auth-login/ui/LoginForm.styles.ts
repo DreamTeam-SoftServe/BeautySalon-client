@@ -5,6 +5,7 @@ export const formStyle: CSSProperties = {
   display: "flex",
   flexDirection: "column",
   gap: "20px",
+  width: "100%",
 };
 
 export const serverErrorStyle: CSSProperties = {
@@ -74,17 +75,5 @@ export const dividerTextStyle: CSSProperties = {
   letterSpacing: "0.05em",
 };
 
-export const getSubmitBtnStyle = (): CSSProperties => ({
-  marginTop: "10px",
-  width: "270px",
-  textAlign: "center",
-  justifyContent: "center",
-  display: "flex",
-});
-
-export const getOutlineBtnStyle = (): CSSProperties => ({
-  width: "270px",
-  textAlign: "center",
-  justifyContent: "center",
-  display: "flex",
-});
+export const getSubmitBtnStyle = (): CSSProperties => ({});
+export const getOutlineBtnStyle = (): CSSProperties => ({});

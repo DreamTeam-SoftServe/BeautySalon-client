@@ -6,14 +6,13 @@ export const formStyle: CSSProperties = {
   flexDirection: "column",
   alignItems: "stretch",
   gap: "26px",
-  maxWidth: "500px",
-  margin: "0 auto",
+  width: "100%",
 };
 
 export const gridStyle: CSSProperties = {
   display: "grid",
-  gridTemplateColumns: "1fr 1fr",
-  gap: "50px",
+  gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+  gap: "20px",
 };
 
 export const serverErrorStyle: CSSProperties = {
@@ -44,12 +43,5 @@ export const switchBtnStyle: CSSProperties = {
   padding: 0,
 };
 
-export const submitBtnStyle: CSSProperties = {
-  width: "106.5%",
-};
-
-export const submitBtnInnerStyle: CSSProperties = {
-  display: "block",
-  width: "100%",
-  textAlign: "center",
-};
+export const submitBtnStyle: CSSProperties = {};
+export const submitBtnInnerStyle: CSSProperties = {};

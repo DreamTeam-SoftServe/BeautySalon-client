@@ -11,6 +11,7 @@ interface ButtonProps {
   onClick?: (e: MouseEvent<HTMLButtonElement>) => void;
   disabled?: boolean;
   style?: CSSProperties;
+  fullWidth?: boolean; // новий проп
 }
 
 export function Button({
@@ -20,6 +21,7 @@ export function Button({
   type = "button",
   disabled,
   style: extraStyle,
+  fullWidth,
 }: ButtonProps) {
   const [hovered, setHovered] = useState(false);
 
@@ -28,6 +30,7 @@ export function Button({
     ...variants[variant],
     ...(hovered && !disabled ? hoverVariants[variant] : {}),
     ...(disabled ? disabledStyle : {}),
+    ...(fullWidth ? { width: "100%", justifyContent: "center" } : {}),
     ...extraStyle,
   };
 
