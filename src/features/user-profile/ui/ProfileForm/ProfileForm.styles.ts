@@ -24,13 +24,13 @@ export const memberStyle: CSSProperties = {
   margin: 0,
 };
 
-export const actionsStyle: CSSProperties = {
+export const getActionsStyle = (w: number): CSSProperties => ({
   display: "flex",
   flexDirection: "column",
-  alignItems: "stretch",
+  alignItems: "stretch", 
   gap: "16px",
-  width: "106%",
-};
+  width: "100%", 
+});
 
 export const successStyle: CSSProperties = {
   fontFamily: THEME.fonts.sans,
@@ -46,6 +46,7 @@ export const errorStyle: CSSProperties = {
 
 export const submitBtnInnerStyle: CSSProperties = {
   display: "block",
-  width: "100%",
+  width: "100%", 
   textAlign: "center",
+  boxSizing: "border-box",
 };

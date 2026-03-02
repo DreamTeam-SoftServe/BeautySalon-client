@@ -11,7 +11,7 @@ interface ButtonProps {
   onClick?: (e: MouseEvent<HTMLButtonElement>) => void;
   disabled?: boolean;
   style?: CSSProperties;
-  fullWidth?: boolean; // новий проп
+  fullWidth?: boolean;
 }
 
 export function Button({
