@@ -132,7 +132,7 @@ export function LoginForm({
       </div>
 
       <div style={fieldAnim(3)}>
-        <Button type="submit" disabled={submitting} style={getSubmitBtnStyle()}>
+        <Button type="submit" disabled={submitting} fullWidth>
           {submitting ? a.loggingIn : a.loginSubmit}
         </Button>
       </div>
@@ -151,7 +151,7 @@ export function LoginForm({
       </div>
 
       <div style={fieldAnim(6)}>
-        <Button type="button" variant="outline" onClick={onGuestContinue} style={getOutlineBtnStyle()}>
+        <Button type="button" variant="outline" onClick={onGuestContinue} fullWidth>
           {t.nav.booking}
         </Button>
       </div>

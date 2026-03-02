@@ -7,7 +7,6 @@ import { Input } from "../../../shared/ui/Input";
 import {
   formStyle, gridStyle, serverErrorStyle,
   switchRowStyle, switchTextStyle, switchBtnStyle,
-  submitBtnStyle, submitBtnInnerStyle,
 } from "./RegisterForm.styles";
 
 interface RegisterFormProps {
@@ -20,14 +19,10 @@ interface RegisterFormProps {
 function shakeElement(el: HTMLElement) {
   el.animate(
     [
-      { transform: "translateX(0)" },
-      { transform: "translateX(-8px)" },
-      { transform: "translateX(8px)" },
-      { transform: "translateX(-6px)" },
-      { transform: "translateX(6px)" },
-      { transform: "translateX(-3px)" },
-      { transform: "translateX(3px)" },
-      { transform: "translateX(0)" },
+      { transform: "translateX(0)" }, { transform: "translateX(-8px)" },
+      { transform: "translateX(8px)" }, { transform: "translateX(-6px)" },
+      { transform: "translateX(6px)" }, { transform: "translateX(-3px)" },
+      { transform: "translateX(3px)" }, { transform: "translateX(0)" },
     ],
     { duration: 450, easing: "ease-in-out" },
   );
@@ -85,8 +80,7 @@ export function RegisterForm({ onSuccess, onSwitchLogin, animating, animDir }: R
       onSuccess();
     } catch (err) {
       setServerError(
-        err instanceof ApiError && err.status === 409
-          ? a.errors.emailTaken : a.errors.server,
+        err instanceof ApiError && err.status === 409 ? a.errors.emailTaken : a.errors.server,
       );
       if (formRef.current) shakeElement(formRef.current);
     } finally {
@@ -97,8 +91,7 @@ export function RegisterForm({ onSuccess, onSwitchLogin, animating, animDir }: R
   const fieldAnim = (index: number): React.CSSProperties => {
     if (animating && animDir === "out") {
       return {
-        opacity: 0,
-        transform: "translateY(-12px)",
+        opacity: 0, transform: "translateY(-12px)",
         transition: "opacity 0.35s ease, transform 0.35s ease",
         transitionDelay: `${index * 0.04}s`,
       };
@@ -140,10 +133,8 @@ export function RegisterForm({ onSuccess, onSwitchLogin, animating, animDir }: R
       {serverError && <p style={{ ...serverErrorStyle, ...fieldAnim(5) }}>{serverError}</p>}
 
       <div style={fieldAnim(6)}>
-        <Button type="submit" disabled={submitting} style={submitBtnStyle}>
-          <span style={submitBtnInnerStyle}>
-            {submitting ? a.registering : a.registerSubmit}
-          </span>
+        <Button type="submit" disabled={submitting} fullWidth>
+          {submitting ? a.registering : a.registerSubmit}
         </Button>
       </div>
 

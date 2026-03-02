@@ -5,7 +5,7 @@ import { Input } from "../../../shared/ui/Input";
 import { api } from "../../../shared/api/api";
 import {
   formStyle, serverErrorStyle, switchRowStyle,
-  switchTextStyle, switchBtnStyle, getSubmitBtnStyle,
+  switchTextStyle, switchBtnStyle,
 } from "../../auth-login/ui/LoginForm.styles";
 
 interface ForgotPasswordFormProps {
@@ -34,7 +34,6 @@ export function ForgotPasswordForm({ onBack, animating, animDir }: ForgotPasswor
     e.preventDefault();
     if (!email.trim()) { setError(t.auth.errors.required); return; }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setError(t.auth.errors.email); return; }
-
     setStatus("loading");
     try {
       await api.forgotPassword(email);
@@ -50,10 +49,10 @@ export function ForgotPasswordForm({ onBack, animating, animDir }: ForgotPasswor
       <div style={{ textAlign: "center", padding: "20px 0" }}>
         <div style={{ fontSize: "3rem", marginBottom: "16px", color: "#C9A84C" }}>✉️</div>
         <p style={{ fontSize: "1rem", lineHeight: 1.7, marginBottom: "32px", color: "#6B6355" }}>
-         {t.auth.forgotPassw.instrtuctionsTitle}<strong>{email}</strong>.
+          {t.auth.forgotPassw.instrtuctionsTitle}<strong>{email}</strong>.
           {t.auth.forgotPassw.instrtuctionsSubtitle}
         </p>
-        <Button onClick={onBack} variant="outline">{t.auth.forgotPassw.exit}</Button>
+        <Button onClick={onBack} variant="outline" fullWidth>{t.auth.forgotPassw.exit}</Button>
       </div>
     );
   }
@@ -62,22 +61,17 @@ export function ForgotPasswordForm({ onBack, animating, animDir }: ForgotPasswor
     <form ref={formRef} onSubmit={handleSubmit} style={formStyle}>
       <div style={fieldAnim(0)}>
         <Input
-          label={t.auth.emailLabel}
-          name="email"
-          type="email"
+          label={t.auth.emailLabel} name="email" type="email"
           value={email}
           onChange={(e) => { setEmail(e.target.value); setError(undefined); }}
-          error={error}
-          placeholder={t.auth.emailPh}
+          error={error} placeholder={t.auth.emailPh}
         />
       </div>
 
-      {status === "error" && (
-        <p style={{ ...serverErrorStyle, ...fieldAnim(1) }}>{error}</p>
-      )}
+      {status === "error" && <p style={{ ...serverErrorStyle, ...fieldAnim(1) }}>{error}</p>}
 
       <div style={fieldAnim(2)}>
-        <Button type="submit" disabled={status === "loading"} style={getSubmitBtnStyle()}>
+        <Button type="submit" disabled={status === "loading"} fullWidth>
           {status === "loading" ? t.auth.forgotPassw.status.sending : t.auth.forgotPassw.resetButton}
         </Button>
       </div>
@@ -85,7 +79,7 @@ export function ForgotPasswordForm({ onBack, animating, animDir }: ForgotPasswor
       <div style={{ ...switchRowStyle, ...fieldAnim(3) }}>
         <span style={switchTextStyle}>{t.auth.forgotPassw.remembTitle} </span>
         <button type="button" onClick={onBack} style={switchBtnStyle}>
-            {t.auth.forgotPassw.returnButton}
+          {t.auth.forgotPassw.returnButton}
         </button>
       </div>
     </form>
