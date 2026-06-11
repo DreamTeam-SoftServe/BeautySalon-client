@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { api, type Master, type Service } from "../../shared/api/api";
+import { api, type Master, type Service, type Product } from "../../shared/api/api";
 import { useI18n } from "../../shared/i18n";
 import { autoCompleteBookings } from "../../shared/lib/autoCompleteBookings";
 import { AddProductForm } from './AddProductForm';
