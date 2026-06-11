@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { api, type Master, type Service } from "../../shared/api/api";
 import { useI18n } from "../../shared/i18n";
 import { autoCompleteBookings } from "../../shared/lib/autoCompleteBookings";
+import { AddProductForm } from './AddProductForm';
+import { AdminProductsList } from './AdminProductsList';
+import {AdminOrdersList} from './AdminOrdersList'
 import {
   pageStyle,
   pageTitleStyle,
@@ -44,7 +47,8 @@ import {
   specLabelStyle,
 } from "./AdminDashboard.styles";
 
-type TabType = "bookings" | "users" | "masters" | "services";
+
+type TabType = "bookings" | "users" | "masters" | "services" | "products" | "orders";
 
 const EMPTY_MASTER = {
   name: "",
@@ -347,14 +351,14 @@ export function AdminDashboard() {
       <h2 style={pageTitleStyle}>{t.admin.title}</h2>
 
       <div style={tabsRowStyle}>
-        {(["bookings", "users", "masters", "services"] as TabType[]).map(
+        {(["bookings", "users", "masters", "services", "products", "orders"] as TabType[]).map(
           (tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
               style={getTabBtnStyle(activeTab === tab)}
             >
-              {t.admin.tabs[tab === "services" ? "service" : tab]}
+              {tab === "products" ? "Products" : tab === "orders" ? "Store Orders" : t.admin.tabs[tab === "services" ? "service" : tab]}
             </button>
           ),
         )}
@@ -437,6 +441,65 @@ export function AdminDashboard() {
                 </tbody>
               </table>
             </div>
+          )}
+
+          {/* PRODUCTS (STORE MANAGEMENT) */}
+          {activeTab === "products" && (
+            <div style={{ display: 'flex', gap: '30px', flexWrap: 'wrap', marginTop: '20px' }}>
+              
+              {/* Створюємо локальний стан для керування редагуванням */}
+              {(() => {
+                const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+                const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+                const triggerRefresh = () => {
+                  setRefreshTrigger(prev => prev + 1);
+                  setEditingProduct(null); // Скидаємо режим редагування після збереження
+                };
+
+                return (
+                  <>
+                    {/* Left Column: Form to add or edit a product */}
+                    <div style={{ 
+                        flex: '1 1 300px', 
+                        backgroundColor: '#ffffff', 
+                        padding: '20px', 
+                        borderRadius: '12px',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
+                    }}>
+                      <AddProductForm 
+                        editingProduct={editingProduct} 
+                        onSuccess={triggerRefresh} 
+                        onCancel={() => setEditingProduct(null)}
+                      />
+                    </div>
+
+                    {/* Right Column: List of existing products */}
+                    <div style={{ 
+                        flex: '2 1 600px',
+                        backgroundColor: '#ffffff', 
+                        padding: '20px', 
+                        borderRadius: '12px',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
+                    }}>
+                      <AdminProductsList 
+                        onEdit={setEditingProduct} 
+                        refreshTrigger={refreshTrigger}
+                        onDeleteSuccess={triggerRefresh}
+                      />
+                    </div>
+                  </>
+                );
+              })()}
+
+            </div>
+          )}
+
+          {/* STORE ORDERS */}
+          {activeTab === "orders" && (
+              <div style={{ marginTop: '20px' }}>
+                  <AdminOrdersList />
+              </div>
           )}
 
           {/* USERS */}
