@@ -2,9 +2,8 @@ import { useEffect, useState } from "react";
 import { api, type Master, type Service, type Product } from "../../shared/api/api";
 import { useI18n } from "../../shared/i18n";
 import { autoCompleteBookings } from "../../shared/lib/autoCompleteBookings";
-import { AddProductForm } from './AddProductForm';
-import { AdminProductsList } from './AdminProductsList';
-import {AdminOrdersList} from './AdminOrdersList'
+import { OrdersTab } from './tabs/OrdersTab'
+import { ProductTab } from "./tabs/ProductTab";
 import {
   pageStyle,
   pageTitleStyle,
@@ -444,63 +443,10 @@ export function AdminDashboard() {
           )}
 
           {/* PRODUCTS (STORE MANAGEMENT) */}
-          {activeTab === "products" && (
-            <div style={{ display: 'flex', gap: '30px', flexWrap: 'wrap', marginTop: '20px' }}>
-              
-              {/* Створюємо локальний стан для керування редагуванням */}
-              {(() => {
-                const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-                const [refreshTrigger, setRefreshTrigger] = useState(0);
-
-                const triggerRefresh = () => {
-                  setRefreshTrigger(prev => prev + 1);
-                  setEditingProduct(null); // Скидаємо режим редагування після збереження
-                };
-
-                return (
-                  <>
-                    {/* Left Column: Form to add or edit a product */}
-                    <div style={{ 
-                        flex: '1 1 300px', 
-                        backgroundColor: '#ffffff', 
-                        padding: '20px', 
-                        borderRadius: '12px',
-                        boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
-                    }}>
-                      <AddProductForm 
-                        editingProduct={editingProduct} 
-                        onSuccess={triggerRefresh} 
-                        onCancel={() => setEditingProduct(null)}
-                      />
-                    </div>
-
-                    {/* Right Column: List of existing products */}
-                    <div style={{ 
-                        flex: '2 1 600px',
-                        backgroundColor: '#ffffff', 
-                        padding: '20px', 
-                        borderRadius: '12px',
-                        boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
-                    }}>
-                      <AdminProductsList 
-                        onEdit={setEditingProduct} 
-                        refreshTrigger={refreshTrigger}
-                        onDeleteSuccess={triggerRefresh}
-                      />
-                    </div>
-                  </>
-                );
-              })()}
-
-            </div>
-          )}
+          {activeTab === "products" && <ProductTab />}
 
           {/* STORE ORDERS */}
-          {activeTab === "orders" && (
-              <div style={{ marginTop: '20px' }}>
-                  <AdminOrdersList />
-              </div>
-          )}
+          {activeTab === "orders" && <OrdersTab />}
 
           {/* USERS */}
           {activeTab === "users" && (
