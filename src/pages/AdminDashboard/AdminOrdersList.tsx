@@ -33,11 +33,20 @@ export const AdminOrdersList = () => {
         fetchOrders();
     }, []);
 
-    // Обробка станів перед викликом хуків
+    const handleStatusChange = async (orderId: string, newStatus: number) => {
+        try {
+            await api.updateOrderStatus(orderId, newStatus);
+            fetchOrders(); // Оновлюємо таблицю після зміни статусу
+        } catch (error) {
+            console.error("Failed to update status", error);
+            alert("Failed to update status");
+        }
+    };
+
     if (loading) return <div style={{ padding: '20px' }}>Loading...</div>;
     if (error) return <div style={{ padding: '20px', color: 'red' }}>Error: {error}</div>;
     if (!orders || orders.length === 0) return <div style={{ padding: '20px' }}>No orders found.</div>;
-   
+
     // Сортуємо: найновіші замовлення зверху
     const sortedOrders = [...orders].sort((a, b) => 
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
