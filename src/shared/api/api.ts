@@ -38,6 +38,54 @@ export interface ChangePasswordData {
   newPassword: string;
 }
 
+export interface Product {
+  id: string;
+  name: string;
+  brand: string;
+  category: number; // Maps to ProductCategory enum
+  price: number;
+  stock: number;
+  description: string;
+  volume: number;
+  imgUrl: string;
+}
+
+export interface OrderItemData {
+  productId: string;
+  productName: string;
+  quantity: number;
+  price: number;
+}
+
+export interface CreateOrderData {
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  deliveryType: string;
+  items: OrderItemData[];
+}
+
+export interface OrderItemData {
+  productId: string;
+  productName: string;
+  quantity: number;
+  price: number;
+}
+
+export interface OrderData {
+  id: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  deliveryType: string;
+  status: number;
+  totalPrice: number;
+  items: OrderItemData[];
+  createdAt: string;
+}
+
+
+
 export const api = {
   getServices: () => apiClient.get<Service[]>("/api/Service"),
 
@@ -172,4 +220,20 @@ export const api = {
       formData,
     );
   },
+
+  // --- Product Endpoints ---
+  getProducts: () => apiClient.get<Product[]>("/api/Product"),
+  getProductById: (id: string) => apiClient.get<Product>(`/api/Product/${id}`), // <--- Додано
+  createProduct: (data: Omit<Product, "id">) => apiClient.post<Product>("/api/Product", data),
+  updateProduct: (id: string, data: Partial<Product>) => apiClient.put<Product>(`/api/Product/${id}`, data),
+  deleteProduct: (id: string) => apiClient.delete(`/api/Product/${id}`),  
+  
+  // --- Order Endpoints ---
+  submitOrder: (data: CreateOrderData) =>
+    apiClient.post<{ success: boolean; orderId: string }>("/api/Order", data),
+
+  getOrdersAdmin: () => apiClient.get<OrderData[]>("/api/Order"),
+
+  updateOrderStatus: (id: string, newStatus: number) =>
+    apiClient.patch(`/api/Order/${id}/status`, { newStatus }),
 };

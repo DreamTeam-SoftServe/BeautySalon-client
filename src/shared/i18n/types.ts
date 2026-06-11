@@ -114,6 +114,54 @@ export interface Translations {
     };
   };
 
+  store: {
+    title: string;
+    eyebrow: string;
+    body: string;
+    emptyCart: string;
+    backToStore: string;
+    checkout: string;
+    addToCart: string;
+    outOfStock: string;
+    details: string;
+    buy: string;
+    volume: string;
+    availability: string;
+    inStock: string;
+    outOfProductCategory: string;
+    categories: {
+      all: string;
+      shampoo: string;
+      conditioner: string;
+      stylingOil: string;
+      hairMask: string;
+      hairOil: string;
+      hairSpray: string;
+      hairDye: string;
+      treatment: string;
+      tools: string;
+    };
+    checkoutPage: {
+      title: string;
+      eyebrow: string;
+      body: string;
+      deliveryDetails: string;
+      firstName: string;
+      lastName: string;
+      phone: string;
+      deliveryMethod: string;
+      pickup: string;
+      novaPoshta: string;
+      courier: string;
+      confirmOrder: string;
+      orderSummary: string;
+      total: string;
+      successMessage: string;
+      emptyError: string;
+      error: string;
+    };
+  };
+
   booking: {
     pageEyebrow: string;
     pageTitle: string;
@@ -436,6 +484,7 @@ export interface Translations {
     home: string;
     services: string;
     masters: string;
+    store: string;
     booking: string;
     contacts: string;
     login: string;

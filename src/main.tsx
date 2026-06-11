@@ -5,13 +5,17 @@ import { App } from "./app/App";
 import { BrowserRouter } from "react-router-dom";
 import { I18nProvider } from "./shared/i18n";
 import { AuthProvider } from "./shared/auth/context";
+import { CartProvider } from './app/providers/CartProvider'; // <--- Імпортуйте CartProvider
+
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <BrowserRouter>
       <I18nProvider>
         <AuthProvider>
-          <App />
+          <CartProvider>
+            <App />
+          </CartProvider>
         </AuthProvider>
       </I18nProvider>
     </BrowserRouter>

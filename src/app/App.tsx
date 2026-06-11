@@ -15,6 +15,9 @@ import { MasterDashboard } from "../pages/MasterDashboard";
 import { Divider } from "../shared/ui/Divider";
 import { useAuth } from "../shared/auth/context";
 import { ProtectedRoute } from "../shared/auth/ProtectedRoute";
+import { StorePage } from '../pages/StorePage/StorePage';
+import { ProductDetailsPage } from '../pages/StorePage/ProductDetailsPage';
+import { CheckoutPage } from '../pages/CheckoutPage/CheckoutPage';
 
 export function App() {
   const { isLoading } = useAuth();
@@ -71,6 +74,10 @@ export function App() {
           <Route element={<ProtectedRoute allowedRoles={["Admin"]} />}>
             <Route path="/admin" element={<AdminDashboard />} />
           </Route>
+
+          <Route path="/store" element={<StorePage />} />
+          <Route path="/store/:id" element={<ProductDetailsPage />} />
+          <Route path="/checkout" element={<CheckoutPage />} />
 
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

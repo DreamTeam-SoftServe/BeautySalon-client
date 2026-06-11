@@ -4,8 +4,8 @@ import { wrapStyle, labelStyle, getInputStyle, errorStyle } from "./Input.styles
 
 interface InputProps {
   label?: string;
-  name: string;
-  value: string;
+  name?: string; // Changed to optional
+  value: string | number; // Added number support for price/stock
   onChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   error?: string;
   placeholder?: string;
@@ -13,6 +13,7 @@ interface InputProps {
   type?: string;
   readOnly?: boolean;
   min?: string;
+  required?: boolean; // Added required property
   as?: "input" | "textarea";
 }
 
@@ -26,6 +27,7 @@ export function Input({
   placeholder,
   as: As = "input",
   rows,
+  required, // Added to destructured props
 }: InputProps) {
   const Tag = As;
 
@@ -39,6 +41,7 @@ export function Input({
         onChange={onChange}
         placeholder={placeholder}
         rows={rows}
+        required={required} // Passed to the actual HTML element
         style={getInputStyle(error, As === "textarea")}
         onFocus={(e: FocusEvent<HTMLInputElement | HTMLTextAreaElement>) =>
           (e.currentTarget.style.borderColor = THEME.colors.gold)
