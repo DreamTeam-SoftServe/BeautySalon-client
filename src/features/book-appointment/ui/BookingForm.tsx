@@ -16,6 +16,7 @@ import {
   datePickerLabelStyle,
 } from "./BookingForm.styles";
 import { uk, enUS } from "date-fns/locale";
+
 interface BookingFormProps {
   services: Service[];
   masters: Master[];
@@ -38,6 +39,7 @@ registerLocale("uk", uk);
 registerLocale("en", enUS);
 
 type FormStatus = "idle" | "loading" | "success" | "error";
+type BookingMode = "PROCEDURE" | "TRAINING";
 
 export function BookingForm({ services, masters }: BookingFormProps) {
   const location = useLocation();
@@ -51,6 +53,9 @@ export function BookingForm({ services, masters }: BookingFormProps) {
   if (now.getHours() >= 18) {
     minBookableDate.setDate(minBookableDate.getDate() + 1);
   }
+
+  // ДОДАНО: Стан для перемикача
+  const [bookingMode, setBookingMode] = useState<BookingMode>("PROCEDURE");
 
   const [formData, setFormData] = useState<BookingData>({
     name: "",
@@ -118,6 +123,10 @@ export function BookingForm({ services, masters }: BookingFormProps) {
     }
   }, [formData.date, availableSlots, formData.time]);
 
+  const availableServices = services.filter((s: any) => 
+    bookingMode === "TRAINING" ? s.isTraining : !s.isTraining
+  );
+
   const handleChange = (e: any) => {
     const name = e?.target?.name ?? e?.name;
     const value = e?.target?.value ?? e?.value;
@@ -125,6 +134,11 @@ export function BookingForm({ services, masters }: BookingFormProps) {
     if (name === "date" && value && value < today) return;
     setFormData((prev) => ({ ...prev, [name]: value }));
     if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
+  };
+
+  const handleModeChange = (mode: BookingMode) => {
+    setBookingMode(mode);
+    setFormData((prev) => ({ ...prev, serviceId: "" }));
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -156,7 +170,6 @@ export function BookingForm({ services, masters }: BookingFormProps) {
     );
   }
 
-  
   const isFormValid =
     formData.name.trim() !== "" &&
     formData.phone.trim() !== "" &&
@@ -168,9 +181,53 @@ export function BookingForm({ services, masters }: BookingFormProps) {
     !formData.date || (formData.date !== "" && availableSlots.length === 0);
 
   return (
-    
     <form onSubmit={handleSubmit} className="booking-form">
       
+      {/* ДОДАНО: Стильний перемикач режимів */}
+      <div style={{ 
+        display: "flex", 
+        width: "100%", 
+        borderBottom: "2px solid #EAEAEA", 
+        marginBottom: "20px" 
+      }}>
+        <button
+          type="button"
+          onClick={() => handleModeChange("PROCEDURE")}
+          style={{
+            flex: 1,
+            padding: "12px",
+            background: "none",
+            border: "none",
+            borderBottom: bookingMode === "PROCEDURE" ? "3px solid #D4AF37" : "3px solid transparent",
+            color: bookingMode === "PROCEDURE" ? "#000000" : "#7A7A7A",
+            fontWeight: bookingMode === "PROCEDURE" ? 600 : 400,
+            cursor: "pointer",
+            transition: "all 0.2s ease",
+            fontSize: "1rem"
+          }}
+        >
+          Запис на процедуру
+        </button>
+        <button
+          type="button"
+          onClick={() => handleModeChange("TRAINING")}
+          style={{
+            flex: 1,
+            padding: "12px",
+            background: "none",
+            border: "none",
+            borderBottom: bookingMode === "TRAINING" ? "3px solid #D4AF37" : "3px solid transparent",
+            color: bookingMode === "TRAINING" ? "#000000" : "#7A7A7A",
+            fontWeight: bookingMode === "TRAINING" ? 600 : 400,
+            cursor: "pointer",
+            transition: "all 0.2s ease",
+            fontSize: "1rem"
+          }}
+        >
+          Запис на навчання
+        </button>
+      </div>
+
       <div className="booking-row-3">
         <Input
           label={t.booking.fields.name}
@@ -205,7 +262,8 @@ export function BookingForm({ services, masters }: BookingFormProps) {
           onChange={handleChange}
           options={[
             { value: "", label: t.booking.fields.selectPh },
-            ...services.map((s) => ({
+            // ДОДАНО: Використовуємо відфільтровані послуги
+            ...availableServices.map((s) => ({
               value: String(s.id),
               label: `${s.title} — ${s.servicePrice}`,
             })),
