@@ -138,17 +138,20 @@ const handleModeSelect = (mode: BookingMode) => {
   const nextStep = () => setStep((prev) => prev + 1);
   const prevStep = () => setStep((prev) => prev - 1);
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setStatus("loading");
     try {
-      await api.submitBooking(
-        {
-          ...formData,
-          start_date: `${formData.date}T${formData.time}:00`,
-        } as any,
-        user?.id,
-      );
+      const payload: any = {
+        ...formData,
+        start_date: `${formData.date}T${formData.time}:00`,
+      };
+
+      if (!payload.masterId) {
+        payload.masterId = null;
+      }
+
+      await api.submitBooking(payload, user?.id);
       setStatus("success");
     } catch {
       setStatus("error");
