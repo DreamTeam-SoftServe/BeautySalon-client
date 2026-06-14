@@ -156,6 +156,10 @@ export const en: Translations = {
     success: {
       title: "Booking successfully created!",
       again: "Book again",
+      cancelled: "Calcelled"
+    },
+    errors: {
+      server: "Server responded with error"
     },
     sending: "Sending...",
     submit: "Confirm Booking",
