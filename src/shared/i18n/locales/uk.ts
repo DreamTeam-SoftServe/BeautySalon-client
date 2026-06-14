@@ -21,7 +21,7 @@ export const uk: Translations = {
   },
 
   cta: {
-    eyebrow: "Обмежена Кількість Місць",
+    eyebrow: "",
     heading: "Забронюйте Місце в Ател'є",
     button: "Записатись — Це Безкоштовно",
   },

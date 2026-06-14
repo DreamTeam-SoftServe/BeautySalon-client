@@ -21,7 +21,7 @@ export const en: Translations = {
   },
 
   cta: {
-    eyebrow: "Limited Availability",
+    eyebrow: "",
     heading: "Reserve Your Seat at the Atelier",
     button: "Book Now — It's Free",
   },
