@@ -163,48 +163,47 @@ export interface Translations {
   };
 
   booking: {
-    pageEyebrow: string;
     pageTitle: string;
-    pageBody: string;
+    pageSubtitle: string;
+    modes: {
+      procedure: string;
+      training: string;
+    },
+    steps: {
+      type: string;
+      contacts: string;
+      details: string;
+      notes: string;
+    },
     fields: {
       name: string;
-      email: string;
-      phone: string;
-      service: string;
-      master: string;
-      date: string;
-      time: string;
-      notes: string;
-      masterPh: string;
       namePh: string;
+      email: string;
       emailPh: string;
+      phone: string;
       phonePh: string;
-      notesPh: string;
+      service: string;
       selectPh: string;
+      master: string;
+      masterPh: string;
+      date: string;
       datePh: string;
-    };
-    submit: string;
-    sending: string;
+      time: string;
+      selectDateFirst: string;
+      notes: string;
+      notesPh: string;
+    },
+    actions: {
+      back: string;
+      next: string;
+    },
     success: {
       title: string;
-      cancelled: string;
-      reference: string;
-      body: string;
       again: string;
-    };
-    errors: {
-      required: string;
-      email: string;
-      phone: string;
-      service: string;
-      date: string;
-      time: string;
-      slot: string;
-      session: string;
-      server: string;
-      network: string;
-    };
-  };
+    },
+    sending: string;
+    submit: string;
+  },
 
   contacts: {
     pageEyebrow: string;
