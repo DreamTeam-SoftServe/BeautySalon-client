@@ -409,8 +409,17 @@ export function AdminDashboard() {
                     </tr>
                   </thead>
                   <tbody>
-                    {bookings.map((b) => (
-                      <tr key={b.id} style={trStyle}>
+                            {bookings
+                              .filter((b) => {
+                                const isTrain = b.isTraining === true || String(b.isTraining).toLowerCase() === "true";
+                                
+                                if (bookingTypeFilter === "PROCEDURES") return !isTrain;
+                                if (bookingTypeFilter === "TRAININGS") return isTrain;
+                                
+                                return true;
+                              })
+                              .map((b) => (
+                        <tr key={b.id} style={trStyle}>
                         <td style={tdStyle}>
                           <div style={datePrimaryStyle}>{b.date}</div>
                           <div style={dateSecondaryStyle}>{b.time}</div>

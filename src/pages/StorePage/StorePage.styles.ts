@@ -1,9 +1,11 @@
 import type { CSSProperties } from "react";
+import { THEME } from "../../shared/config/theme";
+
 
 export const pageWrapStyle: CSSProperties = {
   minHeight: "100vh",
-  backgroundColor: "#FAFAFA",
   paddingTop: "80px",
+  backgroundColor: THEME.colors.cream,
 };
 
 export const containerStyle: CSSProperties = {

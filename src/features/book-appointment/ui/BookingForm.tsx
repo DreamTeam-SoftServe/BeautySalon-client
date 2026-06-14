@@ -125,9 +125,13 @@ export function BookingForm({ services, masters }: BookingFormProps) {
     if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
-  const handleModeSelect = (mode: BookingMode) => {
+const handleModeSelect = (mode: BookingMode) => {
     setBookingMode(mode);
-    setFormData((prev) => ({ ...prev, serviceId: "" }));
+    setFormData((prev) => ({ 
+      ...prev, 
+      serviceId: "", 
+      masterId: mode === "TRAINING" ? "" : prev.masterId 
+    }));
     setStep(2); 
   };
 
@@ -317,19 +321,21 @@ export function BookingForm({ services, masters }: BookingFormProps) {
                 })),
               ]}
             />
-            <Select
-              label={t.booking.fields.master}
-              name="masterId"
-              value={formData.masterId || ""}
-              onChange={handleChange}
-              options={[
-                { value: "", label: t.booking.fields.masterPh },
-                ...(masters || []).map((m) => ({
-                  value: String(m.id || (m as any)._id),
-                  label: m.name,
-                })),
-              ]}
-            />
+            {bookingMode === "PROCEDURE" && (
+              <Select
+                label={t.booking.fields.master}
+                name="masterId"
+                value={formData.masterId || ""}
+                onChange={handleChange}
+                options={[
+                  { value: "", label: t.booking.fields.masterPh },
+                  ...(masters || []).map((m) => ({
+                    value: String(m.id || (m as any)._id),
+                    label: m.name,
+                  })),
+                ]}
+              />
+            )}
             
             <div style={{ display: "flex", gap: "20px" }}>
               <div style={{ flex: 1 }}>
