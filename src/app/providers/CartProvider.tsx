@@ -35,6 +35,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
             }
             return [...prev, { ...product, quantity: 1 }];
         });
+        
+        alert(`«${product.name}» успішно додано до кошика!`);
     };
 
     const removeFromCart = (productId: string) => {

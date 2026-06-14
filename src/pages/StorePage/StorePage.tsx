@@ -83,7 +83,17 @@ export const StorePage = () => {
                 {/* Сітка товарів */}
                 <div style={gridStyle}>
                     {filteredProducts.map(product => (
-                        <div key={product.id} style={cardStyle}>
+                        <div key={product.id} style={cardStyle}
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.transform = "translateY(-8px)";
+                                e.currentTarget.style.boxShadow = "0 12px 32px rgba(26, 26, 26, 0.08)";
+                                e.currentTarget.style.borderColor = "#D4C5A0"; // Золотий колір
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.transform = "translateY(0)";
+                                e.currentTarget.style.boxShadow = "0 4px 20px rgba(0,0,0,0.04)";
+                                e.currentTarget.style.borderColor = "#F0F0F0";
+                            }}>
                             
                             <div style={imgWrapStyle} onClick={() => navigate(`/store/${product.id}`)}>
                                 <img src={product.imgUrl} alt={product.name} style={imgStyle} />
