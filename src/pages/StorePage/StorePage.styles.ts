@@ -3,9 +3,9 @@ import { THEME } from "../../shared/config/theme";
 
 
 export const pageWrapStyle: CSSProperties = {
-  minHeight: "100vh",
+  minHeight: "120vh",
   paddingTop: "80px",
-  backgroundColor: THEME.colors.cream,
+  background: THEME.colors.offwhite,
 };
 
 export const containerStyle: CSSProperties = {
@@ -13,6 +13,35 @@ export const containerStyle: CSSProperties = {
   margin: "0 auto",
   padding: "40px 20px",
 };
+
+
+const basePattern: CSSProperties = {
+  position: "absolute",
+  width: "500px",
+  height: "500px",
+  backgroundImage:
+    "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='none' stroke='%23C9A84C' stroke-width='0.5' d='M50 0 C60 30 100 40 100 50 C100 60 60 70 50 100 C40 70 0 60 0 50 C0 40 40 30 50 0 Z'/%3E%3Ccircle cx='50' cy='50' r='15' fill='none' stroke='%23C9A84C' stroke-width='0.5'/%3E%3Cpath fill='none' stroke='%23C9A84C' stroke-width='0.5' d='M50 20 C55 35 80 45 80 50 C80 55 55 65 50 80 C45 65 20 55 20 50 C20 45 45 35 50 20 Z'/%3E%3C/svg%3E\")",
+  backgroundRepeat: "no-repeat",
+  backgroundSize: "contain",
+  opacity: 0.5,
+  pointerEvents: "none",
+  zIndex: 0,
+};
+
+export const decor1: CSSProperties = {
+  ...basePattern,
+  top: "40%",
+  left: "-350px",
+  transform: "rotate(150deg)",
+};
+
+export const decor2: CSSProperties = {
+  ...basePattern,
+  top: "60%",
+  right: "-200px",
+  transform: "rotate(30deg)",
+};
+
 
 export const topActionsStyle: CSSProperties = {
   display: "flex",

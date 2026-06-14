@@ -9,7 +9,7 @@ import { useI18n } from '../../shared/i18n';
 
 // Імпортуємо стилі
 import {
-    pageWrapStyle, containerStyle, topActionsStyle, tabsWrapStyle, 
+    pageWrapStyle, decor1, decor2, containerStyle, topActionsStyle, tabsWrapStyle, 
     getTabStyle, gridStyle, cardStyle, imgWrapStyle, imgStyle, 
     contentWrapStyle, brandStyle, nameStyle, priceRowStyle, 
     priceStyle, stockStyle, buttonsRowStyle
@@ -53,6 +53,8 @@ export const StorePage = () => {
                 title={t.store.title} 
                 body={t.store.body} 
             />
+                  <div style={decor1} />
+                  <div style={decor2} />
 
             <div style={containerStyle}>
                 
