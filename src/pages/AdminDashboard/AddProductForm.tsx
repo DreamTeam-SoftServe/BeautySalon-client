@@ -49,7 +49,7 @@ export const AddProductForm = ({ editingProduct, onSuccess, onCancel }: AddProdu
             // 1. Завантажуємо фото на S3, лише якщо обрано новий файл
             if (file) {
                 const uploadRes = await api.uploadImage(file, "products");
-                finalImgUrl = uploadRes.data.url; 
+                finalImgUrl = uploadRes.url; 
             }
 
             const payload = {

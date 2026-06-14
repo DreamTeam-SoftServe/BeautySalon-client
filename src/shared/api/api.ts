@@ -10,6 +10,7 @@ export interface Service {
   duration: number;
   imageUrl?: string;
   icon?: string;
+  isTraining?: boolean;
 }
 
 export interface Master {
@@ -31,6 +32,7 @@ export interface BookingData {
   time: string;
   masterId?: string;
   notes?: string;
+  isTraining?: boolean;
 }
 
 export interface ChangePasswordData {

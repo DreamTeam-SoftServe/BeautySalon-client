@@ -2,9 +2,8 @@ import { useEffect, useState } from "react";
 import { api, type Master, type Service } from "../../shared/api/api";
 import { useI18n } from "../../shared/i18n";
 import { autoCompleteBookings } from "../../shared/lib/autoCompleteBookings";
-import { AddProductForm } from './AddProductForm';
-import { AdminProductsList } from './AdminProductsList';
-import {AdminOrdersList} from './AdminOrdersList'
+import { OrdersTab } from './tabs/OrdersTab'
+import { ProductTab } from "./tabs/ProductTab";
 import {
   pageStyle,
   pageTitleStyle,
@@ -69,6 +68,7 @@ const EMPTY_SERVICE = {
   duration: 60,
   serviceType: 1,
   imageUrl: "",
+  isTraining: false,
 };
 
 export function AdminDashboard() {
@@ -76,6 +76,7 @@ export function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<TabType>("bookings");
   const [bookings, setBookings] = useState<any[]>([]);
   const [users, setUsers] = useState<any[]>([]);
+  const [bookingTypeFilter, setBookingTypeFilter] = useState<"ALL" | "PROCEDURES" | "TRAININGS">("ALL");
   const [mastersList, setMastersList] = useState<Master[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
@@ -221,6 +222,7 @@ export function AdminDashboard() {
       duration: s.duration || 60,
       serviceType: s.serviceType || 1,
       imageUrl: s.imageUrl || "",
+      isTraining: s.isTraining || false,
     });
     setEditingServiceId(s.id);
     setIsAddingService(true);
@@ -264,6 +266,7 @@ export function AdminDashboard() {
         duration: Number(newService.duration),
         serviceType: Number(newService.serviceType),
         imageUrl: newService.imageUrl,
+        isTraining: newService.isTraining,
       };
 
       if (editingServiceId) {
@@ -370,137 +373,108 @@ export function AdminDashboard() {
         <>
           {/* BOOKINGS */}
           {activeTab === "bookings" && (
-            <div style={tableWrapStyle}>
-              <table style={tableStyle}>
-                <thead>
-                  <tr>
-                    <th style={thStyle}>{t.admin.columns.dateTime}</th>
-                    <th style={thStyle}>{t.admin.columns.client}</th>
-                    <th style={thStyle}>{t.admin.columns.service}</th>
-                    <th style={thStyle}>{t.admin.columns.price}</th>
-                    <th style={thStyle}>{t.admin.columns.notes}</th>
-                    <th style={thStyle}>{t.admin.columns.status}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {bookings.map((b) => (
-                    <tr key={b.id} style={trStyle}>
-                      <td style={tdStyle}>
-                        <div style={datePrimaryStyle}>{b.date}</div>
-                        <div style={dateSecondaryStyle}>{b.time}</div>
-                      </td>
-                      <td style={tdStyle}>
-                        <div style={datePrimaryStyle}>{b.clientName}</div>
-                        <div style={mutedTextStyle}>{b.clientPhone}</div>
-                      </td>
-                      <td style={tdStyle}>
-                        <div style={datePrimaryStyle}>{b.serviceName}</div>
-                        <div style={mutedTextStyle}>{b.masterName}</div>
-                      </td>
-                      <td style={{ ...tdStyle, fontWeight: 600 }}>
-                        {b.price} {t.services.unit.cost}
-                      </td>
-
-                      <td style={tdStyle}>
-                        <div
-                          style={{
-                            fontSize: "0.85rem",
-                            color: "#7A7A7A",
-                            maxWidth: "150px",
-                            overflowWrap: "break-word",
-                          }}
-                        >
-                          {b.notes || "—"}
-                        </div>
-                      </td>
-
-                      <td style={tdStyle}>
-                        <select
-                          value={b.status}
-                          onChange={(e) =>
-                            handleStatusChange(b.id, e.target.value)
-                          }
-                          style={selectStyle}
-                        >
-                          <option value="IN_PROGRESS">
-                            {t.admin.statusOptions.IN_PROGRESS}
-                          </option>
-                          <option value="CONFIRMED">
-                            {t.admin.statusOptions.CONFIRMED}
-                          </option>
-                          <option value="COMPLETED">
-                            {t.admin.statusOptions.COMPLETED}
-                          </option>
-                          <option value="CANCELLED">
-                            {t.admin.statusOptions.CANCELLED}
-                          </option>
-                        </select>
-                      </td>
+            <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
+    
+              {/* НОВИЙ БЛОК: Сортування/Фільтрація по виду записів */}
+              <div style={{ display: "flex", gap: "10px", marginBottom: "5px" }}>
+                <button
+                  onClick={() => setBookingTypeFilter("ALL")}
+                  style={{ ...getTabBtnStyle(bookingTypeFilter === "ALL"), padding: "6px 14px", fontSize: "0.85rem" }}
+                >
+                  Всі записи
+                </button>
+                <button
+                  onClick={() => setBookingTypeFilter("PROCEDURES")}
+                  style={{ ...getTabBtnStyle(bookingTypeFilter === "PROCEDURES"), padding: "6px 14px", fontSize: "0.85rem" }}
+                >
+                  Самі процедури
+                </button>
+                <button
+                  onClick={() => setBookingTypeFilter("TRAININGS")}
+                  style={{ ...getTabBtnStyle(bookingTypeFilter === "TRAININGS"), padding: "6px 14px", fontSize: "0.85rem" }}
+                >
+                  Тренінги / Навчання
+                </button>
+              </div>
+              <div style={tableWrapStyle}>
+                <table style={tableStyle}>
+                  <thead>
+                    <tr>
+                      <th style={thStyle}>{t.admin.columns.dateTime}</th>
+                      <th style={thStyle}>{t.admin.columns.client}</th>
+                      <th style={thStyle}>{t.admin.columns.service}</th>
+                      <th style={thStyle}>{t.admin.columns.price}</th>
+                      <th style={thStyle}>{t.admin.columns.notes}</th>
+                      <th style={thStyle}>{t.admin.columns.status}</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {bookings.map((b) => (
+                      <tr key={b.id} style={trStyle}>
+                        <td style={tdStyle}>
+                          <div style={datePrimaryStyle}>{b.date}</div>
+                          <div style={dateSecondaryStyle}>{b.time}</div>
+                        </td>
+                        <td style={tdStyle}>
+                          <div style={datePrimaryStyle}>{b.clientName}</div>
+                          <div style={mutedTextStyle}>{b.clientPhone}</div>
+                        </td>
+                        <td style={tdStyle}>
+                          <div style={datePrimaryStyle}>{b.serviceName}</div>
+                          <div style={mutedTextStyle}>{b.masterName}</div>
+                        </td>
+                        <td style={{ ...tdStyle, fontWeight: 600 }}>
+                          {b.price} {t.services.unit.cost}
+                        </td>
+
+                        <td style={tdStyle}>
+                          <div
+                            style={{
+                              fontSize: "0.85rem",
+                              color: "#7A7A7A",
+                              maxWidth: "150px",
+                              overflowWrap: "break-word",
+                            }}
+                          >
+                            {b.notes || "—"}
+                          </div>
+                        </td>
+
+                        <td style={tdStyle}>
+                          <select
+                            value={b.status}
+                            onChange={(e) =>
+                              handleStatusChange(b.id, e.target.value)
+                            }
+                            style={selectStyle}
+                          >
+                            <option value="IN_PROGRESS">
+                              {t.admin.statusOptions.IN_PROGRESS}
+                            </option>
+                            <option value="CONFIRMED">
+                              {t.admin.statusOptions.CONFIRMED}
+                            </option>
+                            <option value="COMPLETED">
+                              {t.admin.statusOptions.COMPLETED}
+                            </option>
+                            <option value="CANCELLED">
+                              {t.admin.statusOptions.CANCELLED}
+                            </option>
+                          </select>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
 
           {/* PRODUCTS (STORE MANAGEMENT) */}
-          {activeTab === "products" && (
-            <div style={{ display: 'flex', gap: '30px', flexWrap: 'wrap', marginTop: '20px' }}>
-              
-              {/* Створюємо локальний стан для керування редагуванням */}
-              {(() => {
-                const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-                const [refreshTrigger, setRefreshTrigger] = useState(0);
-
-                const triggerRefresh = () => {
-                  setRefreshTrigger(prev => prev + 1);
-                  setEditingProduct(null); // Скидаємо режим редагування після збереження
-                };
-
-                return (
-                  <>
-                    {/* Left Column: Form to add or edit a product */}
-                    <div style={{ 
-                        flex: '1 1 300px', 
-                        backgroundColor: '#ffffff', 
-                        padding: '20px', 
-                        borderRadius: '12px',
-                        boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
-                    }}>
-                      <AddProductForm 
-                        editingProduct={editingProduct} 
-                        onSuccess={triggerRefresh} 
-                        onCancel={() => setEditingProduct(null)}
-                      />
-                    </div>
-
-                    {/* Right Column: List of existing products */}
-                    <div style={{ 
-                        flex: '2 1 600px',
-                        backgroundColor: '#ffffff', 
-                        padding: '20px', 
-                        borderRadius: '12px',
-                        boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
-                    }}>
-                      <AdminProductsList 
-                        onEdit={setEditingProduct} 
-                        refreshTrigger={refreshTrigger}
-                        onDeleteSuccess={triggerRefresh}
-                      />
-                    </div>
-                  </>
-                );
-              })()}
-
-            </div>
-          )}
+          {activeTab === "products" && <ProductTab />}
 
           {/* STORE ORDERS */}
-          {activeTab === "orders" && (
-              <div style={{ marginTop: '20px' }}>
-                  <AdminOrdersList />
-              </div>
-          )}
+          {activeTab === "orders" && <OrdersTab />}
 
           {/* USERS */}
           {activeTab === "users" && (
@@ -964,6 +938,19 @@ export function AdminDashboard() {
                           })
                         }
                       />
+                    </div>
+
+                    <div style={{ gridColumn: "span 2", display: "flex", alignItems: "center", gap: "10px", margin: "10px 0" }}>
+                      <input
+                        type="checkbox"
+                        id="isTrainingCheckbox"
+                        checked={newService.isTraining}
+                        onChange={(e) => setNewService({ ...newService, isTraining: e.target.checked })}
+                        style={{ width: "18px", height: "18px", cursor: "pointer" }}
+                      />
+                      <label htmlFor="isTrainingCheckbox" style={{ ...specLabelStyle, cursor: "pointer", margin: 0 }}>
+                        Це послуга навчання (тренінг / навчальний курс)
+                      </label>
                     </div>
 
                     <div style={{ gridColumn: "span 2" }}>

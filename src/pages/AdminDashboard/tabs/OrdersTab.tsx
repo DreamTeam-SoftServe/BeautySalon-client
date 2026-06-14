@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { api } from '../../shared/api/api';
-import type { OrderData } from '../../shared/api/api';
+import { api } from '../../../shared/api/api';
+import type { OrderData } from '../../../shared/api/api';
 
 // Назви статусів відповідно до вашого бекенд Enum (OrderStatus)
 const STATUS_LABELS: Record<number, string> = {
@@ -11,16 +11,22 @@ const STATUS_LABELS: Record<number, string> = {
     4: "Cancelled"
 };
 
-export const AdminOrdersList = () => {
+export const OrdersTab = () => {
     const [orders, setOrders] = useState<OrderData[]>([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null); // Додаємо стан помилки
 
-    const fetchOrders = () => {
-        setLoading(true);
-        api.getOrdersAdmin()
-            .then(res => setOrders(res))
-            .catch(console.error)
-            .finally(() => setLoading(false));
+    const fetchOrders = async () => { // Робимо асинхронною
+        try {
+            setLoading(true);
+            const res = await api.getOrdersAdmin();
+            setOrders(Array.isArray(res) ? res : []); // Перевіряємо, чи це масив
+        } catch (err) {
+            console.error(err);
+            setError("Failed to load orders");
+        } finally {
+            setLoading(false);
+        }
     };
 
     useEffect(() => {
@@ -37,8 +43,9 @@ export const AdminOrdersList = () => {
         }
     };
 
-    if (loading) return <div style={{ padding: '20px' }}>Loading orders...</div>;
-    if (orders.length === 0) return <div style={{ padding: '20px' }}>No orders found.</div>;
+    if (loading) return <div style={{ padding: '20px' }}>Loading...</div>;
+    if (error) return <div style={{ padding: '20px', color: 'red' }}>Error: {error}</div>;
+    if (!orders || orders.length === 0) return <div style={{ padding: '20px' }}>No orders found.</div>;
 
     // Сортуємо: найновіші замовлення зверху
     const sortedOrders = [...orders].sort((a, b) => 
@@ -46,6 +53,7 @@ export const AdminOrdersList = () => {
     );
 
     return (
+        <div style={{ marginTop: '20px' }}>
         <div style={{ backgroundColor: '#ffffff', padding: '20px', borderRadius: '12px', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}>
             <h3 style={{ margin: '0 0 20px 0' }}>Store Orders</h3>
             <div style={{ overflowX: 'auto' }}>
@@ -114,5 +122,7 @@ export const AdminOrdersList = () => {
                 </table>
             </div>
         </div>
+        </div>
+
     );
 };
