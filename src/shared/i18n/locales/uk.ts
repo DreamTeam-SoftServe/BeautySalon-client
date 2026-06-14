@@ -356,7 +356,7 @@ export const uk: Translations = {
   },
 
   admin: {
-    title: "Панель Адміністратора: Всі записи",
+    title: "Панель Адміністратора",
     columns: {
       dateTime: "Дата / Час",
       client: "Клієнт",
@@ -495,7 +495,7 @@ export const uk: Translations = {
     home: "Головна",
     services: "Послуги",
     masters: "Майстри",
-    store: "Store",
+    store: "Магазин",
     booking: "Записатись",
     contacts: "Контакти",
     login: "Увійти",
