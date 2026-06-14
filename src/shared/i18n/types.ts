@@ -200,7 +200,11 @@ export interface Translations {
     success: {
       title: string;
       again: string;
+      cancelled: string;
     },
+    errors:{
+      server: string;
+    }
     sending: string;
     submit: string;
   },

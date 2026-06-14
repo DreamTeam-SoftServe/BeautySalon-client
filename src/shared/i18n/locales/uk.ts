@@ -154,6 +154,10 @@ export const uk: Translations = {
     success: {
       title: "Запис успішно створено!",
       again: "Записатись ще раз",
+      cancelled: "Бронювання відмінили"
+    },
+    errors: {
+      server: "Сервер повернув помилку"
     },
     sending: "Надсилання...",
     submit: "Підтвердити запис",
