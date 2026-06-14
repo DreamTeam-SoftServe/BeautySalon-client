@@ -9,21 +9,21 @@ import {
   getActionsStyle, successStyle, errorStyle, submitBtnInnerStyle
 } from "./ProfileForm.styles";
 
-function useWindowWidth() {
-  const [width, setWidth] = useState(window.innerWidth);
-  useEffect(() => {
-    const handler = () => setWidth(window.innerWidth);
-    window.addEventListener("resize", handler);
-    return () => window.removeEventListener("resize", handler);
-  }, []);
-  return width;
-}
+// function useWindowWidth() {
+//   const [width, setWidth] = useState(window.innerWidth);
+//   useEffect(() => {
+//     const handler = () => setWidth(window.innerWidth);
+//     window.addEventListener("resize", handler);
+//     return () => window.removeEventListener("resize", handler);
+//   }, []);
+//   return width;
+// }
 
 export function ProfileForm() {
   const { t } = useI18n();
   const { user, refreshUser } = useAuth();
   const ac = t.account;
-  const w = useWindowWidth();
+  // const w = useWindowWidth();
 
   const [form, setForm] = useState({
     name: user?.name || "",
@@ -76,7 +76,7 @@ export function ProfileForm() {
         <Input label={ac.emailLabel} name="email" value={form.email} onChange={handleChange} error={errors.email} />
         <Input label={ac.phoneLabel} name="phone" type="tel" value={form.phone} onChange={handleChange} error={errors.phone} />
         <p style={memberStyle}>{ac.memberSince}: {memberDate}</p>
-        <div style={getActionsStyle(w)}>
+        <div style={getActionsStyle()}>
           <Button type="submit" disabled={saveStatus === "saving"} style={submitBtnInnerStyle}>
             {saveStatus === "saving" ? ac.profileSaving : ac.profileSave}
           </Button>

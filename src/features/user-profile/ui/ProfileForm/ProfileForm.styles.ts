@@ -24,7 +24,7 @@ export const memberStyle: CSSProperties = {
   margin: 0,
 };
 
-export const getActionsStyle = (w: number): CSSProperties => ({
+export const getActionsStyle = (): CSSProperties => ({
   display: "flex",
   flexDirection: "column",
   alignItems: "stretch", 
