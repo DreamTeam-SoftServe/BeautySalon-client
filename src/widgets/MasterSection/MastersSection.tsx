@@ -7,7 +7,7 @@ import type { PageName } from "../../shared/api/routes";
 import { useI18n } from "../../shared/i18n";
 import { useScrollAnimation } from "../../shared/hooks/useScrollAnimation";
 import {
-  sectionStyle, containerStyle, gridStyle, ctaWrapStyle, decor1, decor2, decor3,
+  sectionStyle, containerStyle, gridStyle, ctaWrapStyle, decor1, decor2,
 } from "./MastersSection.styles";
 
 interface MastersSectionProps {
@@ -34,7 +34,6 @@ export function MastersSection({ onNavigate }: MastersSectionProps) {
     <section style={sectionStyle}>
       <div style={decor1} />
       <div style={decor2} />
-      <div style={decor3} />
       <div style={containerStyle}>
         <div style={{ position: "relative", zIndex: 2 }}>
 

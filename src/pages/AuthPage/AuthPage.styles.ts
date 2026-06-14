@@ -11,10 +11,16 @@ export const containerStyle: CSSProperties = {
   maxWidth: "520px",
   margin: "0 auto",
   padding: "80px 5% 120px",
+
 };
 
 export const headerStyle: CSSProperties = {
   marginBottom: "48px",
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "center",
+  alignItems: "center",
+
 };
 
 export const eyebrowStyle: CSSProperties = {
