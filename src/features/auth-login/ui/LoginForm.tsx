@@ -8,7 +8,6 @@ import {
   formStyle, serverErrorStyle, forgotRowStyle, forgotBtnStyle,
   switchRowStyle, switchTextStyle, switchBtnStyle,
   dividerRowStyle, dividerLineStyle, dividerTextStyle,
-  getSubmitBtnStyle, getOutlineBtnStyle,
 } from "./LoginForm.styles";
 
 interface LoginFormProps {
