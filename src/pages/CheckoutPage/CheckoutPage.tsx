@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../shared/api/api';
 import { useCart } from '../../app/providers/CartProvider';
-import { useAuth } from '../../shared/auth/context'; // ДОДАНО: Для перевірки залогіненості
+import { useAuth } from '../../shared/auth/context'; 
 import { Input } from '../../shared/ui/Input/Input';
 import { Button } from '../../shared/ui/Button/Button';
 import { PageHeader } from '../../shared/ui/PageHeader';
@@ -14,8 +14,8 @@ import {
 } from './CheckoutPage.styles';
 
 export const CheckoutPage = () => {
-    const { cartItems, totalPrice, clearCart, removeFromCart } = useCart(); // ДОДАНО removeFromCart
-    const { user } = useAuth(); // Отримуємо користувача
+    const { cartItems, totalPrice, clearCart, removeFromCart, triggerToast } = useCart(); 
+    const { user } = useAuth(); 
     const navigate = useNavigate();
     const { t } = useI18n();
     
@@ -24,8 +24,8 @@ export const CheckoutPage = () => {
         lastName: '',
         phoneNumber: '',
         deliveryType: 'Pickup in Studio',
-        deliveryCity: '',     // НОВЕ
-        deliveryAddress: ''   // НОВЕ
+        deliveryCity: '',     
+        deliveryAddress: ''   
     });
 
     // Підтягуємо дані користувача, якщо він залогінений
@@ -44,7 +44,7 @@ export const CheckoutPage = () => {
         e.preventDefault();
         
         if (cartItems.length === 0) {
-            alert(t.store.checkoutPage.emptyError);
+            triggerToast(t.store.checkoutPage.emptyError);
             return;
         }
 
@@ -61,14 +61,17 @@ export const CheckoutPage = () => {
         try {
             await api.submitOrder(orderData);
             clearCart();
-            alert(t.store.checkoutPage.successMessage);
-            navigate('/store'); 
+            
+            triggerToast(t.store.checkoutPage.successMessage);
+            
+            setTimeout(() => {
+                navigate('/store'); 
+            }, 1500);
         } catch (error) {
             console.error('Error submitting order', error);
-            alert(t.store.checkoutPage.error);
+            triggerToast(t.store.checkoutPage.error);
         }
     };
-
     if (cartItems.length === 0) {
         return (
             <div style={pageWrapStyle}>
