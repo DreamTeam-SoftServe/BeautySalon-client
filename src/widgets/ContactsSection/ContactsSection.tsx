@@ -1,14 +1,14 @@
 import { SectionTitle } from "../../shared/ui/SectionTitle";
 import { useI18n } from "../../shared/i18n";
 import { useScrollAnimation } from "../../shared/hooks/useScrollAnimation";
-import {
-  sectionStyle, containerStyle, contactListStyle, contactItemStyle,
-  iconStyle, labelStyle, valueStyle, socialTitleStyle, socialLinkStyle,
-  mapWrapperStyle, decor1, decor2
-} from "./ContactsSection.styles";
+import { useMobile } from "../../shared/hooks/useMobile"; 
+import { getContactsStyles } from "./ContactsSection.styles"; 
 
 export function ContactsSection() {
   const { t } = useI18n();
+
+  const isMobile = useMobile();
+  const styles = getContactsStyles(isMobile);
 
   const [titleRef, titleVisible] = useScrollAnimation(0.2);
   const [listRef, listVisible] = useScrollAnimation(0.1);
@@ -23,10 +23,10 @@ export function ContactsSection() {
   ];
 
   return (
-    <section style={sectionStyle}>
-      <div style={containerStyle}>
-        <div style={decor1} />
-        <div style={decor2} />
+    <section style={styles.sectionStyle}>
+      <div style={styles.containerStyle}>
+        <div style={styles.decor1} />
+        <div style={styles.decor2} />
 
         <div style={{ position: "relative", zIndex: 2 }}>
 
@@ -47,13 +47,13 @@ export function ContactsSection() {
 
           <div
             ref={listRef as React.RefObject<HTMLDivElement>}
-            style={contactListStyle}
+            style={styles.contactListStyle}
           >
             {contacts.map((item, index) => (
               <div
                 key={item.label}
                 style={{
-                  ...contactItemStyle,
+                  ...styles.contactItemStyle,
                   opacity: listVisible ? 1 : 0,
                   transform: listVisible ? "translateX(0)" : "translateX(-20px)",
                   transition: "opacity 0.6s ease, transform 0.6s ease",
@@ -61,7 +61,7 @@ export function ContactsSection() {
                 }}
               >
                 <div style={{
-                  ...iconStyle,
+                  ...styles.iconStyle,
                   transform: listVisible ? "scale(1)" : "scale(0.6)",
                   transition: "transform 0.5s ease",
                   transitionDelay: listVisible ? `${index * 0.1}s` : "0s",
@@ -69,8 +69,8 @@ export function ContactsSection() {
                   {item.icon}
                 </div>
                 <div>
-                  <p style={labelStyle}>{item.label}</p>
-                  <p style={valueStyle}>{item.value}</p>
+                  <p style={styles.labelStyle}>{item.label}</p>
+                  <p style={styles.valueStyle}>{item.value}</p>
                 </div>
               </div>
             ))}
@@ -86,14 +86,14 @@ export function ContactsSection() {
               transition: "opacity 0.7s ease, transform 0.7s ease",
             }}
           >
-            <p style={socialTitleStyle}>{t.contacts.social}</p>
+            <p style={styles.socialTitleStyle}>{t.contacts.social}</p>
             <div style={{ display: "flex", gap: "16px" }}>
               {["Instagram", "Facebook", "Pinterest"].map((s, index) => (
                 <a
                   key={s}
                   href="#"
                   style={{
-                    ...socialLinkStyle,
+                    ...styles.socialLinkStyle,
                     opacity: socialVisible ? 1 : 0,
                     transform: socialVisible ? "translateY(0)" : "translateY(10px)",
                     transition: "opacity 0.5s ease, transform 0.5s ease, background 0.2s, color 0.2s",
@@ -118,7 +118,7 @@ export function ContactsSection() {
         <div
           ref={mapRef as React.RefObject<HTMLDivElement>}
           style={{
-            ...mapWrapperStyle,
+            ...styles.mapWrapperStyle,
             opacity: mapVisible ? 1 : 0,
             transform: mapVisible ? "translateX(0) scale(1)" : "translateX(40px) scale(0.98)",
             transition: "opacity 0.9s ease, transform 0.9s ease",
