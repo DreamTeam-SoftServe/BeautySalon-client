@@ -8,18 +8,8 @@ import { useI18n } from "../../shared/i18n";
 import { useNavigate } from "react-router-dom";
 import { serviceTypeMap } from "../../shared/lib/serviceTypeMap";
 import { useScrollAnimation } from "../../shared/hooks/useScrollAnimation";
-import {
-  sectionStyle,
-  containerStyle,
-  filterWrapStyle,
-  getFilterButtonStyle,
-  gridStyle,
-  ctaWrapStyle,
-  decor1,
-  decor2,
-  decor3,
-  decor4,
-} from "./ServicesSection.styles";
+import { useMobile } from "../../shared/hooks/useMobile";
+import { getServicesStyles } from "./ServicesSection.styles";
 
 export function ServicesSection() {
   const { t } = useI18n();
@@ -32,6 +22,9 @@ export function ServicesSection() {
   const [filterRef, filterVisible] = useScrollAnimation(0.2);
   const [gridRef, gridVisible] = useScrollAnimation(0.05);
   const [ctaRef, ctaVisible] = useScrollAnimation(0.5);
+
+  const isMobile = useMobile();
+  const styles = getServicesStyles(isMobile);
 
   useEffect(() => {
     api.getServices().then((data) => {
@@ -51,12 +44,12 @@ export function ServicesSection() {
       : services.filter((s) => s.serviceType === activeCategory);
 
   return (
-    <section style={sectionStyle}>
-      <div style={decor1} />
-      <div style={decor2} />
-      <div style={decor3} />
-      <div style={decor4} />
-      <div style={containerStyle}>
+    <section style={styles.sectionStyle}>
+      <div style={styles.decor1} />
+      <div style={styles.decor2} />
+      <div style={styles.decor3} />
+      <div style={styles.decor4} />
+      <div style={styles.containerStyle}>
         <div style={{ position: "relative", zIndex: 2 }}>
           <div
             ref={titleRef as React.RefObject<HTMLDivElement>}
@@ -74,14 +67,14 @@ export function ServicesSection() {
 
           <div
             ref={filterRef as React.RefObject<HTMLDivElement>}
-            style={filterWrapStyle}
+            style={styles.filterWrapStyle}
           >
             {categories.map((c, index) => (
               <button
                 key={String(c)}
                 onClick={() => setActiveCategory(c as "All" | number)}
                 style={{
-                  ...getFilterButtonStyle(activeCategory === c),
+                  ...styles.getFilterButtonStyle(activeCategory === c),
                   opacity: filterVisible ? 1 : 0,
                   transform: filterVisible
                     ? "translateY(0)"
@@ -98,7 +91,7 @@ export function ServicesSection() {
           <div
             ref={gridRef as React.RefObject<HTMLDivElement>}
             key={loaded ? "loaded" : "loading"}
-            style={gridStyle}
+            style={styles.gridStyle}
           >
             {filtered.map((s, index) => (
               <div
@@ -120,7 +113,7 @@ export function ServicesSection() {
           <div
             ref={ctaRef as React.RefObject<HTMLDivElement>}
             style={{
-              ...ctaWrapStyle,
+              ...styles.ctaWrapStyle,
               opacity: ctaVisible ? 1 : 0,
               transform: ctaVisible ? "translateY(0)" : "translateY(20px)",
               transition: "opacity 0.7s ease, transform 0.7s ease",
