@@ -4,48 +4,9 @@ import { useI18n } from "../../shared/i18n";
 import { autoCompleteBookings } from "../../shared/lib/autoCompleteBookings";
 import { OrdersTab } from './tabs/OrdersTab'
 import { ProductTab } from "./tabs/ProductTab";
-import {
-  pageStyle,
-  pageTitleStyle,
-  tabsRowStyle,
-  getTabBtnStyle,
-  loadingStyle,
-  tableWrapStyle,
-  tableStyle,
-  thStyle,
-  tdStyle,
-  trStyle,
-  datePrimaryStyle,
-  dateSecondaryStyle,
-  mutedTextStyle,
-  sectionHeaderStyle,
-  sectionTitleStyle,
-  goldBtnStyle,
-  formWrapStyle,
-  formGridStyle,
-  inputStyle,
-  photoLabelStyle,
-  photoHintStyle,
-  imagePreviewWrapStyle,
-  imageRemoveBtnStyle,
-  getSaveBtnStyle,
-  mastersGridStyle,
-  masterCardStyle,
-  deleteBtnStyle,
-  editBtnStyle,
-  masterImgWrapStyle,
-  masterNameStyle,
-  servicesGridStyle,
-  serviceCardStyle,
-  serviceImgWrapStyle,
-  servicePriceStyle,
-  deleteUserBtnStyle,
-  selectStyle,
-  masterSelectStyle,
-  uploadingStyle,
-  specLabelStyle,
-} from "./AdminDashboard.styles";
 
+import { useMobile } from "../../shared/hooks/useMobile";
+import { getAdminDashboardStyles } from "./AdminDashboard.styles";
 
 type TabType = "bookings" | "users" | "masters" | "services" | "products" | "orders";
 
@@ -89,6 +50,9 @@ export function AdminDashboard() {
   const [isAddingService, setIsAddingService] = useState(false);
   const [editingServiceId, setEditingServiceId] = useState<string | null>(null);
   const [newService, setNewService] = useState(EMPTY_SERVICE);
+
+  const isMobile = useMobile(); 
+  const styles = getAdminDashboardStyles(isMobile); 
 
   useEffect(() => {
     fetchData();
@@ -350,16 +314,16 @@ export function AdminDashboard() {
   }));
 
   return (
-    <div style={pageStyle}>
-      <h2 style={pageTitleStyle}>{t.admin.title}</h2>
+    <div style={styles.pageStyle}>
+      <h2 style={styles.pageTitleStyle}>{t.admin.title}</h2>
 
-      <div style={tabsRowStyle}>
+      <div style={styles.tabsRowStyle}>
         {(["bookings", "users", "masters", "services", "products", "orders"] as TabType[]).map(
           (tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              style={getTabBtnStyle(activeTab === tab)}
+              style={styles.getTabBtnStyle(activeTab === tab)}
             >
             {t.admin.tabs[tab === "services" ? "service" : tab as keyof typeof t.admin.tabs]}            </button>
           ),
@@ -367,7 +331,7 @@ export function AdminDashboard() {
       </div>
 
       {loading ? (
-        <div style={loadingStyle}>{t.admin.dashboard.status.loading}</div>
+        <div style={styles.loadingStyle}>{t.admin.dashboard.status.loading}</div>
       ) : (
         <>
           {/* BOOKINGS */}
@@ -375,27 +339,34 @@ export function AdminDashboard() {
             <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
     
               {/* НОВИЙ БЛОК: Сортування/Фільтрація по виду записів */}
-              <div style={{ display: "flex", gap: "10px", marginBottom: "5px" }}>
-                <button onClick={() => setBookingTypeFilter("ALL")} style={{...getTabBtnStyle(bookingTypeFilter === "ALL"), padding: "6px 14px", fontSize: "0.85rem"}}>
-                  {t.admin.dashboard.filters.all}
+              <div style={{ display: "flex", gap: "10px", marginBottom: "5px", flexDirection: isMobile ? "column" : "row" }}>
+                <button
+                  onClick={() => setBookingTypeFilter("ALL")}
+                  style={{ ...styles.getTabBtnStyle(bookingTypeFilter === "ALL"), padding: "6px 14px", fontSize: "0.85rem" }}
+                >                  
+                {t.admin.dashboard.filters.all}
                 </button>
-                <button onClick={() => setBookingTypeFilter("PROCEDURES")} style={{...getTabBtnStyle(bookingTypeFilter === "PROCEDURES"), padding: "6px 14px", fontSize: "0.85rem"}}>
+                <button 
+                  onClick={() => setBookingTypeFilter("PROCEDURES")} 
+                  style={{...styles.getTabBtnStyle(bookingTypeFilter === "PROCEDURES"), padding: "6px 14px", fontSize: "0.85rem"}}>
                   {t.admin.dashboard.filters.procedures}
                 </button>
-                <button onClick={() => setBookingTypeFilter("TRAININGS")} style={{...getTabBtnStyle(bookingTypeFilter === "TRAININGS"), padding: "6px 14px", fontSize: "0.85rem"}}>
+                <button 
+                  onClick={() => setBookingTypeFilter("TRAININGS")} 
+                  style={{...styles.getTabBtnStyle(bookingTypeFilter === "TRAININGS"), padding: "6px 14px", fontSize: "0.85rem"}}>
                   {t.admin.dashboard.filters.trainings}
                 </button>
               </div>
-              <div style={tableWrapStyle}>
-                <table style={tableStyle}>
+              <div style={styles.tableWrapStyle}>
+                <table style={styles.tableStyle}>
                   <thead>
                     <tr>
-                      <th style={thStyle}>{t.admin.columns.dateTime}</th>
-                      <th style={thStyle}>{t.admin.columns.client}</th>
-                      <th style={thStyle}>{t.admin.columns.service}</th>
-                      <th style={thStyle}>{t.admin.columns.price}</th>
-                      <th style={thStyle}>{t.admin.columns.notes}</th>
-                      <th style={thStyle}>{t.admin.columns.status}</th>
+                      <th style={styles.thStyle}>{t.admin.columns.dateTime}</th>
+                      <th style={styles.thStyle}>{t.admin.columns.client}</th>
+                      <th style={styles.thStyle}>{t.admin.columns.service}</th>
+                      <th style={styles.thStyle}>{t.admin.columns.price}</th>
+                      <th style={styles.thStyle}>{t.admin.columns.notes}</th>
+                      <th style={styles.thStyle}>{t.admin.columns.status}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -409,24 +380,24 @@ export function AdminDashboard() {
                                 return true;
                               })
                               .map((b) => (
-                        <tr key={b.id} style={trStyle}>
-                        <td style={tdStyle}>
-                          <div style={datePrimaryStyle}>{b.date}</div>
-                          <div style={dateSecondaryStyle}>{b.time}</div>
+                        <tr key={b.id} style={styles.trStyle}>
+                        <td style={styles.tdStyle}>
+                          <div style={styles.datePrimaryStyle}>{b.date}</div>
+                          <div style={styles.dateSecondaryStyle}>{b.time}</div>
                         </td>
-                        <td style={tdStyle}>
-                          <div style={datePrimaryStyle}>{b.clientName}</div>
-                          <div style={mutedTextStyle}>{b.clientPhone}</div>
+                        <td style={styles.tdStyle}>
+                          <div style={styles.datePrimaryStyle}>{b.clientName}</div>
+                          <div style={styles.mutedTextStyle}>{b.clientPhone}</div>
                         </td>
-                        <td style={tdStyle}>
-                          <div style={datePrimaryStyle}>{b.serviceName}</div>
-                          <div style={mutedTextStyle}>{b.masterName}</div>
+                        <td style={styles.tdStyle}>
+                          <div style={styles.datePrimaryStyle}>{b.serviceName}</div>
+                          <div style={styles.mutedTextStyle}>{b.masterName}</div>
                         </td>
-                        <td style={{ ...tdStyle, fontWeight: 600 }}>
+                        <td style={{ ...styles.tdStyle, fontWeight: 600 }}>
                           {b.price} {t.services.unit.cost}
                         </td>
 
-                        <td style={tdStyle}>
+                        <td style={styles.tdStyle}>
                           <div
                             style={{
                               fontSize: "0.85rem",
@@ -439,13 +410,13 @@ export function AdminDashboard() {
                           </div>
                         </td>
 
-                        <td style={tdStyle}>
+                        <td style={styles.tdStyle}>
                           <select
                             value={b.status}
                             onChange={(e) =>
                               handleStatusChange(b.id, e.target.value)
                             }
-                            style={selectStyle}
+                            style={styles.selectStyle}
                           >
                             <option value="IN_PROGRESS">
                               {t.admin.statusOptions.IN_PROGRESS}
@@ -477,29 +448,29 @@ export function AdminDashboard() {
 
           {/* USERS */}
           {activeTab === "users" && (
-            <div style={tableWrapStyle}>
-              <table style={tableStyle}>
+            <div style={styles.tableWrapStyle}>
+              <table style={styles.tableStyle}>
                 <thead>
                   <tr>
-                    <th style={thStyle}>{t.admin.usersColumns.name}</th>
-                    <th style={thStyle}>{t.admin.usersColumns.email}</th>
-                    <th style={thStyle}>{t.admin.usersColumns.registered}</th>
-                    <th style={thStyle}>{t.admin.usersColumns.role}</th>
-                    <th style={thStyle}>{t.admin.usersColumns.actions}</th>
+                    <th style={styles.thStyle}>{t.admin.usersColumns.name}</th>
+                    <th style={styles.thStyle}>{t.admin.usersColumns.email}</th>
+                    <th style={styles.thStyle}>{t.admin.usersColumns.registered}</th>
+                    <th style={styles.thStyle}>{t.admin.usersColumns.role}</th>
+                    <th style={styles.thStyle}>{t.admin.usersColumns.actions}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {users.map((u) => (
-                    <tr key={u.id} style={trStyle}>
-                      <td style={tdStyle}>
-                        <div style={datePrimaryStyle}>{u.name || "Гість"}</div>
-                        <div style={mutedTextStyle}>{u.phone || "-"}</div>
+                    <tr key={u.id} style={styles.trStyle}>
+                      <td style={styles.tdStyle}>
+                        <div style={styles.datePrimaryStyle}>{u.name || "Гість"}</div>
+                        <div style={styles.mutedTextStyle}>{u.phone || "-"}</div>
                       </td>
-                      <td style={tdStyle}>{u.email || "-"}</td>
-                      <td style={{ ...tdStyle, color: "var(--muted)" }}>
+                      <td style={styles.tdStyle}>{u.email || "-"}</td>
+                      <td style={{ ...styles.tdStyle, color: "var(--muted)" }}>
                         {new Date(u.registeredAt).toLocaleDateString()}
                       </td>
-                      <td style={tdStyle}>
+                      <td style={styles.tdStyle}>
                         <select
                           value={u.role}
                           onChange={(e) =>
@@ -510,7 +481,7 @@ export function AdminDashboard() {
                             )
                           }
                           style={{
-                            ...selectStyle,
+                            ...styles.selectStyle,
                             marginBottom: u.role === "Master" ? "8px" : "0",
                           }}
                         >
@@ -530,7 +501,7 @@ export function AdminDashboard() {
                             onChange={(e) =>
                               handleRoleChange(u.id, "Master", e.target.value)
                             }
-                            style={masterSelectStyle}
+                            style={styles.masterSelectStyle}
                           >
                             <option value="">
                               {t.admin.dashboard.selectProfile}
@@ -543,12 +514,12 @@ export function AdminDashboard() {
                           </select>
                         )}
                       </td>
-                      <td style={tdStyle}>
+                      <td style={styles.tdStyle}>
                         <button
                           onClick={() =>
                             handleDeleteUser(u.id, u.masterProfileId)
                           }
-                          style={deleteUserBtnStyle}
+                          style={styles.deleteUserBtnStyle}
                         >
                           {t.admin.dashboard.buttons.deleteButtons}
                         </button>
@@ -563,13 +534,13 @@ export function AdminDashboard() {
           {/* MASTERS */}
           {activeTab === "masters" && (
             <section>
-              <div style={sectionHeaderStyle}>
-                <h3 style={sectionTitleStyle}>{t.admin.tabs.masters}</h3>
+              <div style={styles.sectionHeaderStyle}>
+                <h3 style={styles.sectionTitleStyle}>{t.admin.tabs.masters}</h3>
                 <button
                   onClick={() =>
                     isAddingMaster ? closeMasterForm() : setIsAddingMaster(true)
                   }
-                  style={goldBtnStyle}
+                  style={styles.goldBtnStyle}
                 >
                   {isAddingMaster
                     ? t.admin.masters.closeBtn
@@ -578,12 +549,12 @@ export function AdminDashboard() {
               </div>
 
               {isAddingMaster && (
-                <div style={formWrapStyle}>
-                  <div style={formGridStyle}>
+                <div style={styles.formWrapStyle}>
+                  <div style={styles.formGridStyle}>
                     <input
                       placeholder={t.admin.masters.namePh}
                       value={newMaster.name}
-                      style={inputStyle}
+                      style={styles.inputStyle}
                       onChange={(e) =>
                         setNewMaster({ ...newMaster, name: e.target.value })
                       }
@@ -591,7 +562,7 @@ export function AdminDashboard() {
                     <input
                       placeholder={t.admin.masters.phonePh}
                       value={newMaster.phone}
-                      style={inputStyle}
+                      style={styles.inputStyle}
                       onChange={(e) =>
                         setNewMaster({ ...newMaster, phone: e.target.value })
                       }
@@ -600,7 +571,7 @@ export function AdminDashboard() {
                       placeholder={t.admin.masters.mailPh}
                       value={newMaster.email}
                       type="email"
-                      style={inputStyle}
+                      style={styles.inputStyle}
                       onChange={(e) =>
                         setNewMaster({ ...newMaster, email: e.target.value })
                       }
@@ -609,7 +580,7 @@ export function AdminDashboard() {
                       placeholder={editingMasterId ? t.admin.masters.newPasswPh : t.admin.masters.passwPh}
                       value={newMaster.password}
                       type="text"
-                      style={inputStyle}
+                      style={styles.inputStyle}
                       onChange={(e) =>
                         setNewMaster({ ...newMaster, password: e.target.value })
                       }
@@ -617,7 +588,7 @@ export function AdminDashboard() {
                     <input
                       placeholder={t.admin.masters.expPh}
                       value={newMaster.experience}
-                      style={inputStyle}
+                      style={styles.inputStyle}
                       onChange={(e) =>
                         setNewMaster({
                           ...newMaster,
@@ -627,7 +598,7 @@ export function AdminDashboard() {
                     />
 
                     <select
-                      style={inputStyle}
+                      style={styles.inputStyle}
                       value={newMaster.profLevel}
                       onChange={(e) =>
                         setNewMaster({
@@ -655,11 +626,11 @@ export function AdminDashboard() {
                         gap: "8px",
                       }}
                     >
-                      <label style={specLabelStyle}>
+                      <label style={styles.specLabelStyle}>
                         {t.admin.masters.specs}
                       </label>
                       <select
-                        style={inputStyle}
+                        style={styles.inputStyle}
                         value={newMaster.specialization}
                         onChange={(e) =>
                           setNewMaster({
@@ -677,7 +648,7 @@ export function AdminDashboard() {
                     </div>
 
                     <select
-                      style={inputStyle}
+                      style={styles.inputStyle}
                       value={newMaster.gender}
                       onChange={(e) =>
                         setNewMaster({
@@ -692,10 +663,10 @@ export function AdminDashboard() {
                     </select>
 
                     <div style={{ gridColumn: "span 2" }}>
-                      <label style={photoLabelStyle}>
+                      <label style={styles.photoLabelStyle}>
                         {t.admin.masters.photo}
                       </label>
-                      <p style={photoHintStyle}>{t.admin.masters.hintPhoto}</p>
+                      <p style={styles.photoHintStyle}>{t.admin.masters.hintPhoto}</p>
                       <input
                         type="file"
                         accept="image/*"
@@ -704,7 +675,7 @@ export function AdminDashboard() {
                       {newMaster.imageUrl && (
                         <div
                           style={{
-                            ...imagePreviewWrapStyle,
+                            ...styles.imagePreviewWrapStyle,
                             width: "120px",
                             height: "150px",
                           }}
@@ -713,7 +684,7 @@ export function AdminDashboard() {
                             onClick={() =>
                               setNewMaster((p) => ({ ...p, imageUrl: "" }))
                             }
-                            style={imageRemoveBtnStyle}
+                            style={styles.imageRemoveBtnStyle}
                           >
                             ✕
                           </button>
@@ -729,34 +700,34 @@ export function AdminDashboard() {
                         </div>
                       )}
                       {uploading && (
-                        <p style={uploadingStyle}>
+                        <p style={styles.uploadingStyle}>
                           {t.admin.dashboard.status.loadingS3}
                         </p>
                       )}
                     </div>
                   </div>
-              <button onClick={handleSaveMaster} disabled={uploading} style={getSaveBtnStyle(uploading)}>
+              <button onClick={handleSaveMaster} disabled={uploading} style={styles.getSaveBtnStyle(uploading)}>
                 {editingMasterId ? t.admin.dashboard.buttons.saveChanges : t.admin.masters.saveBtn}
               </button>
                 </div>
               )}
 
-              <div style={mastersGridStyle}>
+              <div style={styles.mastersGridStyle}>
                 {mastersList.map((m) => (
-                  <div key={m.id} style={masterCardStyle}>
+                  <div key={m.id} style={styles.masterCardStyle}>
                     <button
                       onClick={() => handleEditMasterClick(m)}
-                      style={editBtnStyle}
+                      style={styles.editBtnStyle}
                     >
                       ✎
                     </button>
                     <button
                       onClick={() => handleDeleteMaster(m.id)}
-                      style={deleteBtnStyle}
+                      style={styles.deleteBtnStyle}
                     >
                       ✕
                     </button>
-                    <div style={masterImgWrapStyle}>
+                    <div style={styles.masterImgWrapStyle}>
                       <img
                         src={
                           m.imageUrl ||
@@ -771,7 +742,7 @@ export function AdminDashboard() {
                       />
                     </div>
                     <div style={{ padding: "16px" }}>
-                      <h4 style={masterNameStyle}>{m.name}</h4>
+                      <h4 style={styles.masterNameStyle}>{m.name}</h4>
                     </div>
                   </div>
                 ))}
@@ -781,8 +752,8 @@ export function AdminDashboard() {
 
           {activeTab === "services" && (
             <section>
-              <div style={sectionHeaderStyle}>
-                <h3 style={sectionTitleStyle}>
+              <div style={styles.sectionHeaderStyle}>
+                <h3 style={styles.sectionTitleStyle}>
                   {t.admin.services.manageService}
                 </h3>
                 <button
@@ -791,7 +762,7 @@ export function AdminDashboard() {
                       ? closeServiceForm()
                       : setIsAddingService(true)
                   }
-                  style={goldBtnStyle}
+                  style={styles.goldBtnStyle}
                 >
                   {isAddingService
                     ? t.admin.services.closeBtn
@@ -800,8 +771,8 @@ export function AdminDashboard() {
               </div>
 
               {isAddingService && (
-                <div style={formWrapStyle}>
-                  <div style={formGridStyle}>
+                <div style={styles.formWrapStyle}>
+                  <div style={styles.formGridStyle}>
                     <div
                       style={{
                         display: "flex",
@@ -809,13 +780,13 @@ export function AdminDashboard() {
                         gap: "8px",
                       }}
                     >
-                      <label style={specLabelStyle}>
+                      <label style={styles.specLabelStyle}>
                         {t.admin.services.namePh}
                       </label>
                       <input
                         placeholder={t.admin.services.namePh}
                         value={newService.title}
-                        style={inputStyle}
+                        style={styles.inputStyle}
                         onChange={(e) =>
                           setNewService({
                             ...newService,
@@ -832,14 +803,14 @@ export function AdminDashboard() {
                         gap: "8px",
                       }}
                     >
-                      <label style={specLabelStyle}>
+                      <label style={styles.specLabelStyle}>
                         {t.admin.services.durationPh}
                       </label>
                       <input
                         placeholder={t.admin.services.durationPh}
                         value={newService.duration}
                         type="number"
-                        style={inputStyle}
+                        style={styles.inputStyle}
                         onChange={(e) =>
                           setNewService({
                             ...newService,
@@ -856,14 +827,14 @@ export function AdminDashboard() {
                         gap: "8px",
                       }}
                     >
-                      <label style={specLabelStyle}>
+                      <label style={styles.specLabelStyle}>
                         {t.admin.services.costPh}
                       </label>
                       <input
                         placeholder={t.admin.services.costPh}
                         value={newService.price}
                         type="number"
-                        style={inputStyle}
+                        style={styles.inputStyle}
                         onChange={(e) =>
                           setNewService({
                             ...newService,
@@ -880,11 +851,11 @@ export function AdminDashboard() {
                         gap: "8px",
                       }}
                     >
-                      <label style={specLabelStyle}>
+                      <label style={styles.specLabelStyle}>
                         {t.admin.services.category}
                       </label>
                       <select
-                        style={inputStyle}
+                        style={styles.inputStyle}
                         value={newService.serviceType}
                         onChange={(e) =>
                           setNewService({
@@ -909,14 +880,14 @@ export function AdminDashboard() {
                         gridColumn: "span 2",
                       }}
                     >
-                      <label style={specLabelStyle}>
+                      <label style={styles.specLabelStyle}>
                         {t.admin.services.description}
                       </label>
                       <textarea
                         placeholder={t.admin.services.descServicePh}
                         value={newService.description}
                         style={{
-                          ...inputStyle,
+                          ...styles.inputStyle,
                           resize: "vertical",
                           minHeight: "80px",
                         }}
@@ -937,16 +908,16 @@ export function AdminDashboard() {
                         onChange={(e) => setNewService({ ...newService, isTraining: e.target.checked })}
                         style={{ width: "18px", height: "18px", cursor: "pointer" }}
                       />
-                    <label htmlFor="isTrainingCheckbox" style={{ ...specLabelStyle, cursor: "pointer", margin: 0 }}>
+                    <label htmlFor="isTrainingCheckbox" style={{ ...styles.specLabelStyle, cursor: "pointer", margin: 0 }}>
                       {t.admin.services.isTraining}
                     </label>
                     </div>
 
                     <div style={{ gridColumn: "span 2" }}>
-                      <label style={photoLabelStyle}>
+                      <label style={styles.photoLabelStyle}>
                         {t.admin.services.photo}
                       </label>
-                      <p style={photoHintStyle}>{t.admin.services.hintPhoto}</p>
+                      <p style={styles.photoHintStyle}>{t.admin.services.hintPhoto}</p>
                       <input
                         type="file"
                         accept="image/*"
@@ -955,7 +926,7 @@ export function AdminDashboard() {
                       {newService.imageUrl && (
                         <div
                           style={{
-                            ...imagePreviewWrapStyle,
+                            ...styles.imagePreviewWrapStyle,
                             width: "200px",
                             height: "150px",
                           }}
@@ -964,7 +935,7 @@ export function AdminDashboard() {
                             onClick={() =>
                               setNewService((p) => ({ ...p, imageUrl: "" }))
                             }
-                            style={imageRemoveBtnStyle}
+                            style={styles.imageRemoveBtnStyle}
                           >
                             ✕
                           </button>
@@ -980,35 +951,35 @@ export function AdminDashboard() {
                         </div>
                       )}
                       {uploading && (
-                        <p style={uploadingStyle}>
+                        <p style={styles.uploadingStyle}>
                           {t.admin.dashboard.status.loadingS3}
                         </p>
                       )}
                     </div>
                   </div>
 
-                  <button onClick={handleSaveService} disabled={uploading} style={getSaveBtnStyle(uploading)}>
+                  <button onClick={handleSaveService} disabled={uploading} style={styles.getSaveBtnStyle(uploading)}>
                     {editingServiceId ? t.admin.dashboard.buttons.saveChanges : t.admin.services.saveBtn}
                   </button>
                 </div>
               )}
 
-              <div style={servicesGridStyle}>
+              <div style={styles.servicesGridStyle}>
                 {servicesList.map((s) => (
-                  <div key={s.id} style={serviceCardStyle}>
+                  <div key={s.id} style={styles.serviceCardStyle}>
                     <button
                       onClick={() => handleEditServiceClick(s)}
-                      style={editBtnStyle}
+                      style={styles.editBtnStyle}
                     >
                       ✎
                     </button>
                     <button
                       onClick={() => handleDeleteService(s.id)}
-                      style={deleteBtnStyle}
+                      style={styles.deleteBtnStyle}
                     >
                       ✕
                     </button>
-                    <div style={serviceImgWrapStyle}>
+                    <div style={styles.serviceImgWrapStyle}>
                       <img
                         src={
                           s.imageUrl ||
@@ -1023,8 +994,8 @@ export function AdminDashboard() {
                       />
                     </div>
                     <div style={{ padding: "16px" }}>
-                      <h4 style={masterNameStyle}>{s.title}</h4>
-                      <p style={servicePriceStyle}>
+                      <h4 style={styles.masterNameStyle}>{s.title}</h4>
+                      <p style={styles.servicePriceStyle}>
                         {s.duration} {t.services.unit.min} | {s.servicePrice}{" "}
                         {t.services.unit.cost} | {s.description}
                       </p>
