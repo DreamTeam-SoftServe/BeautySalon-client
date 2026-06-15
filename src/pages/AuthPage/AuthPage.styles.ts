@@ -39,6 +39,7 @@ export const titleStyle: CSSProperties = {
   color: THEME.colors.charcoal,
   lineHeight: 1.2,
   margin: "0 0 12px",
+  textAlign: "center"
 };
 
 export const subtitleStyle: CSSProperties = {
