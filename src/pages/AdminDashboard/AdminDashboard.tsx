@@ -387,7 +387,7 @@ export function AdminDashboard() {
                   onClick={() => setBookingTypeFilter("PROCEDURES")}
                   style={{ ...getTabBtnStyle(bookingTypeFilter === "PROCEDURES"), padding: "6px 14px", fontSize: "0.85rem" }}
                 >
-                  Самі процедури
+                  Процедури
                 </button>
                 <button
                   onClick={() => setBookingTypeFilter("TRAININGS")}

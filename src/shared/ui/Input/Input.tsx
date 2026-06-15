@@ -14,6 +14,7 @@ interface InputProps {
   readOnly?: boolean;
   min?: string;
   required?: boolean; // Added required property
+  maxLength?: number;
   as?: "input" | "textarea";
 }
 
@@ -28,6 +29,7 @@ export function Input({
   as: As = "input",
   rows,
   required, // Added to destructured props
+  maxLength
 }: InputProps) {
   const Tag = As;
 
@@ -42,6 +44,7 @@ export function Input({
         placeholder={placeholder}
         rows={rows}
         required={required} // Passed to the actual HTML element
+        maxLength={maxLength}
         style={getInputStyle(error, As === "textarea")}
         onFocus={(e: FocusEvent<HTMLInputElement | HTMLTextAreaElement>) =>
           (e.currentTarget.style.borderColor = THEME.colors.gold)

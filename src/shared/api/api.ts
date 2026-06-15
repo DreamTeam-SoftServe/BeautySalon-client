@@ -75,15 +75,21 @@ export interface OrderItemData {
 }
 
 export interface OrderData {
-  id: string;
-  firstName: string;
-  lastName: string;
-  phoneNumber: string;
-  deliveryType: string;
-  status: number;
-  totalPrice: number;
-  items: OrderItemData[];
-  createdAt: string;
+    id: string;
+    firstName: string;
+    lastName: string;
+    phoneNumber: string;
+    deliveryType: string;
+    status: number;
+    totalPrice: number;
+    items: any[];
+    createdAt: string;
+    
+    deliveryCity?: string;
+    deliveryAddress?: string;
+    guestFirstName?: string;
+    guestLastName?: string;
+    guestPhone?: string;
 }
 
 

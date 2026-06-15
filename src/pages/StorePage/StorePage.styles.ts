@@ -84,7 +84,8 @@ export const cardStyle: CSSProperties = {
   boxShadow: "0 4px 20px rgba(0,0,0,0.04)",
   display: "flex",
   flexDirection: "column",
-  transition: "transform 0.3s ease",
+  border: "1px solid #F0F0F0", 
+  transition: "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease", // ДОДАНО
 };
 
 export const imgWrapStyle: CSSProperties = {

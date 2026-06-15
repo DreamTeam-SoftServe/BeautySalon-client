@@ -21,7 +21,7 @@ export const uk: Translations = {
   },
 
   cta: {
-    eyebrow: "Обмежена Кількість Місць",
+    eyebrow: "",
     heading: "Забронюйте Місце в Ател'є",
     button: "Записатись — Це Безкоштовно",
   },
@@ -182,9 +182,9 @@ export const uk: Translations = {
       all: "Всі товари",
       shampoo: "Шампунь",
       conditioner: "Кондиціонер",
-      stylingOil: "Олійка для стайлінгу",
+      stylingOil: "Олія для стайлінгу",
       hairMask: "Маска для волосся",
-      hairOil: "Олійка для волосся",
+      hairOil: "Олія для волосся",
       hairSpray: "Лак для волосся",
       hairDye: "Фарба",
       treatment: "Догляд",
@@ -356,7 +356,7 @@ export const uk: Translations = {
   },
 
   admin: {
-    title: "Панель Адміністратора: Всі записи",
+    title: "Панель Адміністратора",
     columns: {
       dateTime: "Дата / Час",
       client: "Клієнт",
@@ -489,13 +489,40 @@ export const uk: Translations = {
         deleteButtons: "Видалити",
       },
     },
+
+    orders: {
+      title: "Замовлення магазину",
+      loading: "Завантаження...",
+      errorLoad: "Не вдалося завантажити замовлення",
+      noOrders: "Замовлень не знайдено.",
+      errorUpdate: "Не вдалося оновити статус",
+      table: {
+        date: "Дата",
+        customer: "Клієнт",
+        items: "Товари",
+        delivery: "Доставка",
+        total: "Сума",
+        status: "Статус"
+      },
+      delivery: {
+        address: "Адреса:",
+        receiver: "Одержувач:"
+      },
+      statuses: {
+        0: "В очікуванні",
+        1: "Підтверджено",
+        2: "Відправлено",
+        3: "Виконано",
+        4: "Скасовано"
+      }
+    }
   },
 
   nav: {
     home: "Головна",
     services: "Послуги",
     masters: "Майстри",
-    store: "Store",
+    store: "Магазин",
     booking: "Записатись",
     contacts: "Контакти",
     login: "Увійти",

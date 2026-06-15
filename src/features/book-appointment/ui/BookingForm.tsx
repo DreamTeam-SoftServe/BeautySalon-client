@@ -1,5 +1,5 @@
 import { api } from "../../../shared/api/api";
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useState, useRef, type FormEvent } from "react";
 import { Input } from "../../../shared/ui/Input";
 import { Select } from "../../../shared/ui/Select";
 import { Button } from "../../../shared/ui/Button";
@@ -10,13 +10,26 @@ import { useAuth } from "../../../shared/auth/context";
 import { useLocation } from "react-router-dom";
 import DatePicker, { registerLocale } from "react-datepicker";
 import { THEME } from "../../../shared/config/theme";
+import { uk, enUS } from "date-fns/locale";
+
 import {
   successWrapStyle,
   successIconStyle,
   successTitleStyle,
   datePickerLabelStyle,
+  successContainerStyle,
+  mainContainerStyle,
+  progressBarWrapStyle,
+  getProgressBarFillStyle,
+  formStyle,
+  stepContainerStyle,
+  stepSimpleContainerStyle,
+  modeButtonStyle,
+  dateRowStyle,
+  flexColStyle,
+  navRowStyle,
+  backButtonStyle,
 } from "./BookingForm.styles";
-import { uk, enUS } from "date-fns/locale";
 
 interface BookingFormProps {
   services: Service[];
@@ -34,10 +47,29 @@ registerLocale("en", enUS);
 type FormStatus = "idle" | "loading" | "success" | "error";
 type BookingMode = "PROCEDURE" | "TRAINING";
 
+// --- АНІМАЦІЯ ТРЯСІННЯ ПРИ ПОМИЛЦІ ---
+function shakeElement(el: HTMLElement) {
+  el.animate(
+    [
+      { transform: "translateX(0)" },
+      { transform: "translateX(-8px)" },
+      { transform: "translateX(8px)" },
+      { transform: "translateX(-6px)" },
+      { transform: "translateX(6px)" },
+      { transform: "translateX(-3px)" },
+      { transform: "translateX(3px)" },
+      { transform: "translateX(0)" },
+    ],
+    { duration: 450, easing: "ease-in-out" },
+  );
+}
+
 export function BookingForm({ services, masters }: BookingFormProps) {
   const location = useLocation();
   const { t } = useI18n();
   const { user } = useAuth();
+  
+  const formRef = useRef<HTMLFormElement>(null); // РЕФ ДЛЯ АНІМАЦІЇ ФОРМИ
 
   const now = new Date();
   const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
@@ -50,6 +82,16 @@ export function BookingForm({ services, masters }: BookingFormProps) {
   const [step, setStep] = useState<number>(1);
   const [bookingMode, setBookingMode] = useState<BookingMode>("PROCEDURE");
 
+  // --- СТАН ДЛЯ АНІМАЦІЇ ПОЯВИ ЕЛЕМЕНТІВ ---
+  const [stepMounted, setStepMounted] = useState(false);
+
+  // Перезапускаємо анімацію при кожній зміні кроку
+  useEffect(() => {
+    setStepMounted(false);
+    const timer = setTimeout(() => setStepMounted(true), 60);
+    return () => clearTimeout(timer);
+  }, [step]);
+
   const [formData, setFormData] = useState<BookingData>({
     name: "",
     email: "",
@@ -60,8 +102,9 @@ export function BookingForm({ services, masters }: BookingFormProps) {
     time: "",
     notes: "",
   });
+  
   const [busySlots, setBusySlots] = useState<string[]>([]);
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errors, setErrors] = useState<Record<string, string | undefined>>({});
   const [status, setStatus] = useState<FormStatus>("idle");
 
   useEffect(() => {
@@ -118,46 +161,117 @@ export function BookingForm({ services, masters }: BookingFormProps) {
 
   const handleChange = (e: any) => {
     const name = e?.target?.name ?? e?.name;
-    const value = e?.target?.value ?? e?.value;
+    let value = e?.target?.value ?? e?.value;
     if (!name) return;
+
+    if (name === "phone") {
+      value = value.replace(/[^\d+]/g, ""); 
+      if (value.length > 13) {
+        value = value.slice(0, 13); 
+      }
+    }
+
     if (name === "date" && value && value < today) return;
+    
     setFormData((prev) => ({ ...prev, [name]: value }));
-    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
+    
+    // Очищаємо помилку при введенні
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: undefined }));
+    }
   };
 
-const handleModeSelect = (mode: BookingMode) => {
+  const handleModeSelect = (mode: BookingMode) => {
     setBookingMode(mode);
     setFormData((prev) => ({ 
       ...prev, 
       serviceId: "", 
       masterId: mode === "TRAINING" ? "" : prev.masterId 
     }));
+    setErrors({});
     setStep(2); 
   };
 
-  const nextStep = () => setStep((prev) => prev + 1);
-  const prevStep = () => setStep((prev) => prev - 1);
+  const prevStep = () => {
+    setErrors({});
+    setStep((prev) => prev - 1);
+  };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setStatus("loading");
     try {
-      await api.submitBooking(
-        {
-          ...formData,
-          start_date: `${formData.date}T${formData.time}:00`,
-        } as any,
-        user?.id,
-      );
+      const payload: any = {
+        ...formData,
+        start_date: `${formData.date}T${formData.time}:00`,
+      };
+
+      if (!payload.masterId) {
+        payload.masterId = null;
+      }
+
+      await api.submitBooking(payload, user?.id);
       setStatus("success");
     } catch {
       setStatus("error");
+      if (formRef.current) shakeElement(formRef.current); // Трясемо форму при помилці сервера
     }
+  };
+
+  const isValidEmail = (email: string) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
+
+  const isValidPhone = (phone: string) => {
+    const digitsOnly = phone.replace(/\D/g, ""); 
+    return digitsOnly.length >= 10; 
+  };
+
+  // --- ВАЛІДАЦІЯ ТА ТРЯСІННЯ ПРИ ПОМИЛЦІ ---
+  const handleNextStepClick = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (step === 2) {
+      if (formData.name.trim().length < 2) {
+        newErrors.name = t.lang === "en" ? "Please enter a valid name" : "Введіть коректне ім'я";
+      }
+      if (!isValidPhone(formData.phone)) {
+        newErrors.phone = t.lang === "en" ? "Please enter a valid phone number" : "Введіть коректний номер телефону";
+      }
+      if (!isValidEmail(formData.email)) {
+        newErrors.email = t.lang === "en" ? "Please enter a valid email address" : "Введіть коректний email";
+      }
+    }
+
+    if (step === 3) {
+      if (!formData.serviceId) {
+        newErrors.serviceId = t.lang === "en" ? "Please select a service" : "Будь ласка, оберіть послугу";
+      }
+      if (bookingMode === "PROCEDURE" && !formData.masterId) {
+        newErrors.masterId = t.lang === "en" ? "Please select a master" : "Будь ласка, оберіть майстра";
+      }
+      if (!formData.date || formData.date < today) {
+        newErrors.date = t.lang === "en" ? "Please select a date" : "Будь ласка, оберіть дату";
+      }
+      if (!formData.time) {
+        newErrors.time = t.lang === "en" ? "Please select time" : "Будь ласка, оберіть час";
+      }
+    }
+
+    // Якщо є помилки — зберігаємо їх і ТРЯСЕМО форму
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      if (formRef.current) shakeElement(formRef.current);
+      return;
+    }
+
+    setErrors({});
+    setStep((prev) => prev + 1);
   };
 
   if (status === "success") {
     return (
-      <div style={{ display: "flex", justifyContent: "center", width: "100%", padding: "40px 0" }}>
+      <div style={successContainerStyle}>
         <div style={successWrapStyle}>
           <div style={successIconStyle}>✓</div>
           <h3 style={successTitleStyle}>{t.booking.success.title}</h3>
@@ -170,175 +284,149 @@ const handleModeSelect = (mode: BookingMode) => {
   }
 
   const isTimeDisabled = !formData.date || (formData.date !== "" && availableSlots.length === 0);
-  const isStep2Valid = formData.name.trim() !== "" && formData.phone.trim() !== "";
-  const isStep3Valid = formData.serviceId !== "" && formData.date >= today && formData.time !== "";
+
+  // --- ФУНКЦІЯ АНІМАЦІЇ ДЛЯ КОЖНОГО ПОЛЯ ---
+  const fieldAnim = (index: number): React.CSSProperties => {
+    return {
+      opacity: stepMounted ? 1 : 0,
+      transform: stepMounted ? "translateY(0)" : "translateY(22px)",
+      transition: "opacity 0.5s ease, transform 0.5s ease",
+      transitionDelay: `${index * 0.07}s`,
+    };
+  };
 
   return (
-    <div style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center" }}>
+    <div style={mainContainerStyle}>
       
-      {/* 1. ПРОГРЕС-БАР - Звичайна полоска вгорі екрана (під хедером) */}
-      <div style={{ 
-        position: "fixed", 
-        top: "80px", // Відступ для хедера (за потреби можна скоригувати)
-        left: 0, 
-        width: "100%", 
-        height: "3px", 
-        backgroundColor: "rgba(0,0,0,0.05)", 
-        zIndex: 999 
-      }}>
-        <div style={{ 
-          width: `${(step / 4) * 100}%`, 
-          height: "100%", 
-          backgroundColor: THEME.colors.gold, 
-          transition: "width 0.4s ease-in-out" 
-        }} />
+      {/* ПРОГРЕС-ВАР */}
+      <div style={progressBarWrapStyle}>
+        <div style={getProgressBarFillStyle(step)} />
       </div>
 
-      {/* ФОРМА (без білого фону, щоб зливалася з кремовим фоном сторінки як у AuthPage) */}
-      <form 
-        onSubmit={handleSubmit} 
-        style={{ 
-          width: "100%", 
-          display: "flex", 
-          flexDirection: "column", 
-          justifyContent: "center",
-          minHeight: "300px"
-        }}
-      >
+      {/* ФОРМА З REF ДЛЯ АНІМАЦІЇ */}
+      <form ref={formRef} onSubmit={handleSubmit} style={formStyle}>
+        
         {/* КРОК 1: Вибір типу */}
         {step === 1 && (
-          <div style={{ 
-            display: "flex", 
-            flexDirection: "column", 
-            gap: "16px", 
-            width: "100%",
-            animation: "fadeIn 0.2s ease"
-          }}>
-            <button
-              type="button"
-              onClick={() => handleModeSelect("PROCEDURE")}
-              style={{
-                width: "100%",
-                padding: "18px 24px",
-                border: `1px solid ${THEME.colors.gold}`,
-                borderRadius: "4px",
-                backgroundColor: "transparent",
-                color: THEME.colors.charcoal,
-                fontSize: "0.95rem",
-                fontFamily: THEME.fonts.sans,
-                fontWeight: 500,
-                letterSpacing: "0.5px",
-                cursor: "pointer",
-                transition: "all 0.2s ease",
-                textTransform: "uppercase"
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = THEME.colors.gold;
-                e.currentTarget.style.color = "#FFFFFF";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = "transparent";
-                e.currentTarget.style.color = THEME.colors.charcoal;
-              }}
-            >
-              {t.lang === "en" ? "Book a Procedure" : "Запис на процедуру"}
-            </button>
+          <div style={{ ...stepContainerStyle, gap: "16px" }}>
+            <div style={fieldAnim(0)}>
+              <button
+                type="button"
+                onClick={() => handleModeSelect("PROCEDURE")}
+                style={modeButtonStyle}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = THEME.colors.gold;
+                  e.currentTarget.style.color = "#FFFFFF";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "transparent";
+                  e.currentTarget.style.color = THEME.colors.charcoal;
+                }}
+              >
+                {t.lang === "en" ? "Book a Procedure" : "Запис на процедуру"}
+              </button>
+            </div>
 
-            <button
-              type="button"
-              onClick={() => handleModeSelect("TRAINING")}
-              style={{
-                width: "100%",
-                padding: "18px 24px",
-                border: `1px solid ${THEME.colors.gold}`,
-                borderRadius: "4px",
-                backgroundColor: "transparent",
-                color: THEME.colors.charcoal,
-                fontSize: "0.95rem",
-                fontFamily: THEME.fonts.sans,
-                fontWeight: 500,
-                letterSpacing: "0.5px",
-                cursor: "pointer",
-                transition: "all 0.2s ease",
-                textTransform: "uppercase"
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = THEME.colors.gold;
-                e.currentTarget.style.color = "#FFFFFF";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = "transparent";
-                e.currentTarget.style.color = THEME.colors.charcoal;
-              }}
-            >
-              {t.lang === "en" ? "Book a Training" : "Запис на навчання"}
-            </button>
+            <div style={fieldAnim(1)}>
+              <button
+                type="button"
+                onClick={() => handleModeSelect("TRAINING")}
+                style={modeButtonStyle}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = THEME.colors.gold;
+                  e.currentTarget.style.color = "#FFFFFF";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "transparent";
+                  e.currentTarget.style.color = THEME.colors.charcoal;
+                }}
+              >
+                {t.lang === "en" ? "Book a Training" : "Запис на навчання"}
+              </button>
+            </div>
           </div>
         )}
 
         {/* КРОК 2: Контактні дані */}
         {step === 2 && (
-          <div style={{ animation: "fadeIn 0.2s ease", display: "flex", flexDirection: "column", gap: "20px" }}>
-            <Input
-              label={t.booking.fields.name}
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              placeholder={t.booking.fields.namePh}
-            />
-            <Input
-              label={t.booking.fields.phone}
-              name="phone"
-              type="tel"
-              value={formData.phone}
-              onChange={handleChange}
-              placeholder={t.booking.fields.phonePh}
-            />
-            <Input
-              label={t.booking.fields.email}
-              name="email"
-              type="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder={t.booking.fields.emailPh}
-            />
+          <div style={stepContainerStyle}>
+            <div style={fieldAnim(0)}>
+              <Input
+                label={t.booking.fields.name}
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder={t.booking.fields.namePh}
+                error={errors.name} 
+              />
+            </div>
+            <div style={fieldAnim(1)}>
+              <Input
+                label={t.booking.fields.phone}
+                name="phone"
+                type="tel"
+                value={formData.phone}
+                onChange={handleChange}
+                placeholder="+380"
+                maxLength={13}
+                error={errors.phone} 
+              />
+            </div>
+            <div style={fieldAnim(2)}>
+              <Input
+                label={t.booking.fields.email}
+                name="email"
+                type="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder={t.booking.fields.emailPh}
+                error={errors.email} 
+              />
+            </div>
           </div>
         )}
 
         {/* КРОК 3: Послуга, Майстер, Час */}
         {step === 3 && (
-          <div style={{ animation: "fadeIn 0.2s ease", display: "flex", flexDirection: "column", gap: "20px" }}>
-            <Select
-              label={t.booking.fields.service}
-              name="serviceId"
-              value={formData.serviceId}
-              onChange={handleChange}
-              options={[
-                { value: "", label: t.booking.fields.selectPh },
-                ...availableServices.map((s) => ({
-                  value: String(s.id),
-                  label: `${s.title} — ${s.servicePrice}`,
-                })),
-              ]}
-            />
-            {bookingMode === "PROCEDURE" && (
+          <div style={stepContainerStyle}>
+            <div style={fieldAnim(0)}>
               <Select
-                label={t.booking.fields.master}
-                name="masterId"
-                value={formData.masterId || ""}
+                label={t.booking.fields.service}
+                name="serviceId"
+                value={formData.serviceId}
                 onChange={handleChange}
                 options={[
-                  { value: "", label: t.booking.fields.masterPh },
-                  ...(masters || []).map((m) => ({
-                    value: String(m.id || (m as any)._id),
-                    label: m.name,
+                  { value: "", label: t.booking.fields.selectPh },
+                  ...availableServices.map((s) => ({
+                    value: String(s.id),
+                    label: `${s.title} — ${s.servicePrice}`,
                   })),
                 ]}
+                error={errors.serviceId} 
               />
+            </div>
+            
+            {bookingMode === "PROCEDURE" && (
+              <div style={fieldAnim(1)}>
+                <Select
+                  label={t.booking.fields.master}
+                  name="masterId"
+                  value={formData.masterId || ""}
+                  onChange={handleChange}
+                  options={[
+                    { value: "", label: t.booking.fields.masterPh },
+                    ...(masters || []).map((m) => ({
+                      value: String(m.id || (m as any)._id),
+                      label: m.name,
+                    })),
+                  ]}
+                  error={errors.masterId} 
+                />
+              </div>
             )}
             
-            <div style={{ display: "flex", gap: "20px" }}>
-              <div style={{ flex: 1 }}>
+            <div style={dateRowStyle}>
+              <div style={{ ...flexColStyle, ...fieldAnim(bookingMode === "PROCEDURE" ? 2 : 1) }}>
                 <label style={datePickerLabelStyle}>{t.booking.fields.date}</label>
                 <DatePicker
                   locale={t.lang === "en" ? "en" : "uk"}
@@ -358,9 +446,14 @@ const handleModeSelect = (mode: BookingMode) => {
                   placeholderText={t.booking.fields.datePh}
                   autoComplete="off"
                 />
+                {errors.date && (
+                  <span style={{ color: "#E74C3C", fontSize: "12px", marginTop: "6px", display: "block" }}>
+                    {errors.date}
+                  </span>
+                )}
               </div>
 
-              <div style={{ flex: 1 }}>
+              <div style={{ ...flexColStyle, ...fieldAnim(bookingMode === "PROCEDURE" ? 3 : 2) }}>
                 <label style={datePickerLabelStyle}>{t.booking.fields.time}</label>
                 <DatePicker
                   locale={t.lang === "en" ? "en" : "uk"}
@@ -400,6 +493,11 @@ const handleModeSelect = (mode: BookingMode) => {
                   }}
                   autoComplete="off"
                 />
+                {errors.time && (
+                  <span style={{ color: "#E74C3C", fontSize: "12px", marginTop: "6px", display: "block" }}>
+                    {errors.time}
+                  </span>
+                )}
               </div>
             </div>
           </div>
@@ -407,39 +505,27 @@ const handleModeSelect = (mode: BookingMode) => {
 
         {/* КРОК 4: Нотатки */}
         {step === 4 && (
-          <div style={{ animation: "fadeIn 0.2s ease" }}>
-            <Input
-              label={t.booking.fields.notes}
-              name="notes"
-              as="textarea"
-              value={formData.notes || ""}
-              onChange={handleChange}
-              placeholder={t.lang === "en" ? "Any special preferences?" : "Чи є у вас особливі побажання до запису?"}
-            />
+          <div style={stepSimpleContainerStyle}>
+            <div style={fieldAnim(0)}>
+              <Input
+                label={t.booking.fields.notes}
+                name="notes"
+                as="textarea"
+                value={formData.notes || ""}
+                onChange={handleChange}
+                placeholder={t.lang === "en" ? "Any special preferences?" : "Чи є у вас особливі побажання до запису?"}
+              />
+            </div>
           </div>
         )}
 
         {/* НАВІГАЦІЯ ФОРМИ */}
-        <div style={{ display: "flex", justifyContent: "space-between", marginTop: "50px", gap: "16px" }}>
+        <div style={{ ...navRowStyle, ...fieldAnim(4) }}>
           {step > 1 ? (
             <button 
               type="button" 
               onClick={prevStep} 
-              style={{ 
-                flex: 1, 
-                padding: "12px 24px", 
-                backgroundColor: "transparent", 
-                border: `1px solid ${THEME.colors.gold}`, 
-                color: THEME.colors.gold, 
-                borderRadius: "4px", 
-                cursor: "pointer",
-                fontFamily: THEME.fonts.sans,
-                fontWeight: 500,
-                fontSize: "0.9rem",
-                textTransform: "uppercase",
-                letterSpacing: "0.5px",
-                transition: "all 0.2s ease"
-              }}
+              style={backButtonStyle}
               onMouseEnter={(e) => {
                 e.currentTarget.style.backgroundColor = THEME.colors.gold;
                 e.currentTarget.style.color = "#FFFFFF";
@@ -452,24 +538,27 @@ const handleModeSelect = (mode: BookingMode) => {
               {t.lang === "en" ? "Back" : "Назад"}
             </button>
           ) : (
-            <div style={{ flex: 1 }} />
+            <div style={flexColStyle} />
           )}
 
           {step > 1 && step < 4 && (
-            <Button 
-              type="button" 
-              onClick={nextStep} 
-              disabled={(step === 2 && !isStep2Valid) || (step === 3 && !isStep3Valid)}
-              style={{ flex: 1 }}
-            >
-              {t.lang === "en" ? "Next" : "Далі"}
-            </Button>
+            <div style={flexColStyle}>
+              <Button 
+                type="button" 
+                onClick={handleNextStepClick} 
+                style={{ width: "100%" }}
+              >
+                {t.lang === "en" ? "Next" : "Далі"}
+              </Button>
+            </div>
           )}
 
           {step === 4 && (
-            <Button type="submit" disabled={status === "loading"} style={{ flex: 1 }}>
-              {status === "loading" ? t.booking.sending : t.booking.submit}
-            </Button>
+            <div style={flexColStyle}>
+              <Button type="submit" disabled={status === "loading"} style={{ width: "100%" }}>
+                {status === "loading" ? t.booking.sending : t.booking.submit}
+              </Button>
+            </div>
           )}
         </div>
       </form>

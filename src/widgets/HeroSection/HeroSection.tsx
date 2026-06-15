@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import {
   sectionStyle, getImageWrapStyle, imageFrameStyle,
   contentStyle, getEyebrowStyle, getHeadingStyle, accentStyle,
-  getBodyStyle, getCtaRowStyle, getStatsRowStyle,
+  getCtaRowStyle, getStatsRowStyle,
   statNumberStyle, statLabelStyle, heroDecor1, heroDecor2,
   dotsWrapStyle, getDotStyle, arrowBtnStyle, imageCounterStyle,
 } from "./HeroSection.styles";
@@ -118,7 +118,7 @@ export function HeroSection() {
           {t.hero.line2}<br />
           <em style={accentStyle}>{t.hero.line3}</em>
         </h1>
-        <p style={getBodyStyle(visible)}>{t.hero.body}</p>
+        {/* <p style={getBodyStyle(visible)}>{t.hero.body}</p> */}
         <div style={getCtaRowStyle(visible)}>
           <Button onClick={() => navigate("/booking")}>{t.hero.ctaPrimary}</Button>
           <Button variant="outline" onClick={() => navigate("/services")}>{t.hero.ctaSecondary}</Button>

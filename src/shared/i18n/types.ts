@@ -481,6 +481,33 @@ export interface Translations {
         deleteButtons: string;
       };
     };
+  
+   orders: {
+      title: string;
+      loading: string;
+      errorLoad: string;
+      noOrders: string;
+      errorUpdate: string;
+      table: {
+        date: string;
+        customer: string;
+        items: string;
+        delivery: string;
+        total: string;
+        status: string;
+      },
+      delivery: {
+        address: string;
+        receiver: string;
+      },
+      statuses: {
+        0: string;
+        1: string;
+        2: string;
+        3: string;
+        4: string;
+      }
+    }
   };
 
   nav: {

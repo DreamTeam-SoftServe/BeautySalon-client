@@ -1,11 +1,9 @@
 import { useState } from 'react';
 import { AddProductForm } from '../AddProductForm';
 import { AdminProductsList } from '../AdminProductsList';
-import {type Product} from "../../../shared/api/api"
-
+import { type Product } from "../../../shared/api/api"
 
 export const ProductTab = () => {
-    // Тепер хуки знаходяться на верхньому рівні компонента
     const [editingProduct, setEditingProduct] = useState<Product | null>(null);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
 
