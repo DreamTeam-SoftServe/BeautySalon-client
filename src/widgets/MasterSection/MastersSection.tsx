@@ -6,9 +6,8 @@ import { MasterCard } from "../../entities/service/ui/MasterCard/MasterCard";
 import type { PageName } from "../../shared/api/routes";
 import { useI18n } from "../../shared/i18n";
 import { useScrollAnimation } from "../../shared/hooks/useScrollAnimation";
-import {
-  sectionStyle, containerStyle, gridStyle, ctaWrapStyle, decor1, decor2,
-} from "./MastersSection.styles";
+import { useMobile } from "../../shared/hooks/useMobile";
+import { getMastersStyles } from "./MastersSection.styles";
 
 interface MastersSectionProps {
   onNavigate: (page: PageName) => void;
@@ -23,6 +22,9 @@ export function MastersSection({ onNavigate }: MastersSectionProps) {
   const [gridRef, gridVisible] = useScrollAnimation(0.05);
   const [ctaRef, ctaVisible] = useScrollAnimation(0.5);
 
+  const isMobile = useMobile();
+  const styles = getMastersStyles(isMobile);
+
   useEffect(() => {
     api.getMasters().then((data) => {
       setMasters(data);
@@ -31,10 +33,10 @@ export function MastersSection({ onNavigate }: MastersSectionProps) {
   }, []);
 
   return (
-    <section style={sectionStyle}>
-      <div style={decor1} />
-      <div style={decor2} />
-      <div style={containerStyle}>
+    <section style={styles.sectionStyle}>
+      <div style={styles.decor1} />
+      <div style={styles.decor2} />
+      <div style={styles.containerStyle}>
         <div style={{ position: "relative", zIndex: 2 }}>
 
           <div
@@ -54,7 +56,7 @@ export function MastersSection({ onNavigate }: MastersSectionProps) {
           <div
             ref={gridRef as React.RefObject<HTMLDivElement>}
             key={loaded ? "loaded" : "loading"}
-            style={gridStyle}
+            style={styles.gridStyle}
           >
             {masters.map((m, index) => (
               <div
@@ -74,7 +76,7 @@ export function MastersSection({ onNavigate }: MastersSectionProps) {
           <div
             ref={ctaRef as React.RefObject<HTMLDivElement>}
             style={{
-              ...ctaWrapStyle,
+              ...styles.ctaWrapStyle,
               opacity: ctaVisible ? 1 : 0,
               transform: ctaVisible ? "translateY(0)" : "translateY(20px)",
               transition: "opacity 0.7s ease, transform 0.7s ease",
