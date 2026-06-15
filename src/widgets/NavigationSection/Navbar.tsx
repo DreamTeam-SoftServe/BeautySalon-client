@@ -2,10 +2,8 @@ import { useState, useEffect } from "react";
 import { Button } from "../../shared/ui/Button/Button";
 import { useI18n } from "../../shared/i18n";
 import { useNavigate } from "react-router-dom";
-import {
-  getNavStyle, logoWrapStyle, logoNameStyle, logoSubStyle,
-  linksWrapStyle, getLinkStyle,
-} from "./Navbar.styles";
+import { useMobile } from "../../shared/hooks/useMobile";
+import { getNavbarStyles } from "./Navbar.styles";
 import { useCart } from "../../app/providers/CartProvider";
 
 interface NavbarProps {
@@ -20,6 +18,10 @@ export function Navbar({ activePage }: NavbarProps) {
   const { cartItems } = useCart();
   const cartItemsCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
   
+  const isMobile = useMobile();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const styles = getNavbarStyles(isMobile, scrolled, menuOpen);
+
   useEffect(() => {
     const h = () => setScrolled(window.scrollY > 40);
     window.addEventListener("scroll", h);
@@ -37,20 +39,26 @@ export function Navbar({ activePage }: NavbarProps) {
   ];
 
   return (
-    <nav style={getNavStyle(scrolled)}>
-      <div onClick={() => navigate("/")} style={logoWrapStyle}>
-        <p style={logoNameStyle}>Prestige Studio</p>
-        <p style={logoSubStyle}>Hair Atelier</p>
+    <nav style={styles.navStyle}>
+        <div onClick={() => navigate("/")} style={styles.logoWrapStyle}>
+        <p style={styles.logoNameStyle}>Prestige Studio</p>
+        <p style={styles.logoSubStyle}>Hair Atelier</p>
       </div>
 
-      <div style={linksWrapStyle}>
+      {isMobile && (
+        <button onClick={() => setMenuOpen(!menuOpen)} style={styles.burgerBtnStyle}>
+          {menuOpen ? "✕" : "☰"}
+        </button>
+      )}
+
+      <div style={styles.linksWrapStyle}>
         {links
           .filter((l) => l.id !== "booking")
           .map((l) => (
           <button
               key={l.id}
-              onClick={() => navigate(l.path)}
-              style={getLinkStyle(activePage === l.id)}
+              onClick={() => { navigate(l.path); setMenuOpen(false); }}
+              style={styles.getLinkStyle(activePage === l.id)}
             >
               {l.label}
               {l.id === "store" && cartItemsCount > 0 && (

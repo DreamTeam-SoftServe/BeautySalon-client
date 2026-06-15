@@ -8,16 +8,17 @@ import { Button } from '../../shared/ui/Button/Button';
 import { PageHeader } from '../../shared/ui/PageHeader';
 import { useI18n } from '../../shared/i18n';
 
-import {
-    pageWrapStyle, containerStyle, formSectionStyle, 
-    summarySectionStyle, sectionTitleStyle, summaryItemStyle, totalStyle
-} from './CheckoutPage.styles';
+import { useMobile } from '../../shared/hooks/useMobile'; // 1
+import { getCheckoutStyles } from './CheckoutPage.styles';
 
 export const CheckoutPage = () => {
     const { cartItems, totalPrice, clearCart, removeFromCart, triggerToast } = useCart(); 
     const { user } = useAuth(); 
     const navigate = useNavigate();
     const { t } = useI18n();
+
+    const isMobile = useMobile(); // 3
+    const styles = getCheckoutStyles(isMobile); // 4
     
     const [formData, setFormData] = useState({
         firstName: '',
@@ -74,7 +75,7 @@ export const CheckoutPage = () => {
     };
     if (cartItems.length === 0) {
         return (
-            <div style={pageWrapStyle}>
+            <div style={styles.pageWrapStyle}>
                 <PageHeader 
                 title={t.store.checkoutPage.title} 
                 subtitle={t.store.checkoutPage.eyebrow} 
@@ -88,16 +89,16 @@ export const CheckoutPage = () => {
     }
 
     return (
-        <div style={pageWrapStyle}>
+        <div style={styles.pageWrapStyle}>
             <PageHeader 
                 title={t.store.checkoutPage.title} 
                 subtitle={t.store.checkoutPage.eyebrow} 
                 body={t.store.checkoutPage.body}/>
 
-            <div style={containerStyle}>
+            <div style={styles.containerStyle}>
                 {/* Колонки: Доставка */}
-                <div style={formSectionStyle}>
-                    <h2 style={sectionTitleStyle}>{t.store.checkoutPage.deliveryDetails}</h2>
+                <div style={styles.formSectionStyle}>
+                    <h2 style={styles.sectionTitleStyle}>{t.store.checkoutPage.deliveryDetails}</h2>
                     
                     <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                         
@@ -188,12 +189,12 @@ export const CheckoutPage = () => {
                 </div>
 
                 {/* Колонки: Кошик */}
-                <div style={summarySectionStyle}>
-                    <h2 style={sectionTitleStyle}>{t.store.checkoutPage.orderSummary}</h2>
+                <div style={styles.summarySectionStyle}>
+                    <h2 style={styles.sectionTitleStyle}>{t.store.checkoutPage.orderSummary}</h2>
                     
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                         {cartItems.map(item => (
-                            <div key={item.id} style={summaryItemStyle}>
+                            <div key={item.id} style={styles.summaryItemStyle}>
                                 <div style={{ flex: 1, paddingRight: '15px' }}>
                                     <div style={{ fontWeight: 500, color: '#1A1A1A' }}>{item.name}</div>
                                     <div style={{ fontSize: '13px', color: '#A0A0A0' }}>x{item.quantity}</div>
@@ -212,7 +213,7 @@ export const CheckoutPage = () => {
                         ))}
                     </div>
 
-                    <div style={totalStyle}>
+                    <div style={styles.totalStyle}>
                         <span>{t.store.checkoutPage.total}</span>
                         <span style={{ color: '#D4C5A0' }}>{totalPrice.toFixed(2)} UAH</span>
                     </div>

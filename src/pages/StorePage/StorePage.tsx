@@ -7,13 +7,8 @@ import { PageHeader } from '../../shared/ui/PageHeader';
 import { useCart } from '../../app/providers/CartProvider';
 import { useI18n } from '../../shared/i18n';
 
-// Імпортуємо стилі
-import {
-    pageWrapStyle, decor1, decor2, containerStyle, topActionsStyle, tabsWrapStyle, 
-    getTabStyle, gridStyle, cardStyle, imgWrapStyle, imgStyle, 
-    contentWrapStyle, brandStyle, nameStyle, priceRowStyle, 
-    priceStyle, stockStyle, buttonsRowStyle
-} from './StorePage.styles';
+import { useMobile } from '../../shared/hooks/useMobile'; 
+import { getStoreStyles } from './StorePage.styles'; 
 
 export const StorePage = () => {
     const [products, setProducts] = useState<Product[]>([]);
@@ -21,6 +16,9 @@ export const StorePage = () => {
     const { addToCart, cartItems } = useCart();
     const navigate = useNavigate();
     const { t } = useI18n(); 
+
+    const isMobile = useMobile(); 
+    const styles = getStoreStyles(isMobile); 
 
 // Категорії для фільтрів (маппінг з вашого enum)
     const PRODUCT_CATEGORIES = [
@@ -47,19 +45,19 @@ export const StorePage = () => {
         : products.filter(p => p.category === activeCategory);
 
     return (
-        <div style={pageWrapStyle}>
+        <div style={styles.pageWrapStyle}>
             <PageHeader 
                 subtitle={t.store.eyebrow}
                 title={t.store.title} 
                 body={t.store.body} 
             />
-                  <div style={decor1} />
-                  <div style={decor2} />
+                  <div style={styles.decor1} />
+                  <div style={styles.decor2} />
 
-            <div style={containerStyle}>
+            <div style={styles.containerStyle}>
                 
                 {/* Кнопка кошика */}
-                <div style={topActionsStyle}>
+                <div style={styles.topActionsStyle}>
                     {cartItemsCount > 0 && (
                 <Button variant="primary" onClick={() => navigate('/checkout')}>
                     {t.store.checkout} ({cartItemsCount})
@@ -68,11 +66,11 @@ export const StorePage = () => {
                 </div>
 
                 {/* Фільтри (Tabs) як на сторінці послуг */}
-                <div style={tabsWrapStyle}>
+                <div style={styles.tabsWrapStyle}>
                     {PRODUCT_CATEGORIES.map(cat => (
                         <button 
                             key={cat.id}
-                            style={getTabStyle(activeCategory === cat.id)}
+                            style={styles.getTabStyle(activeCategory === cat.id)}
                             onClick={() => setActiveCategory(cat.id)}
                         >
                             {cat.label}
@@ -81,9 +79,9 @@ export const StorePage = () => {
                 </div>
 
                 {/* Сітка товарів */}
-                <div style={gridStyle}>
+                <div style={styles.gridStyle}>
                     {filteredProducts.map(product => (
-                        <div key={product.id} style={cardStyle}
+                        <div key={product.id} style={styles.cardStyle}
                             onMouseEnter={(e) => {
                                 e.currentTarget.style.transform = "translateY(-8px)";
                                 e.currentTarget.style.boxShadow = "0 12px 32px rgba(26, 26, 26, 0.08)";
@@ -95,22 +93,22 @@ export const StorePage = () => {
                                 e.currentTarget.style.borderColor = "#F0F0F0";
                             }}>
                             
-                            <div style={imgWrapStyle} onClick={() => navigate(`/store/${product.id}`)}>
-                                <img src={product.imgUrl} alt={product.name} style={imgStyle} />
+                            <div style={styles.imgWrapStyle} onClick={() => navigate(`/store/${product.id}`)}>
+                                <img src={product.imgUrl} alt={product.name} style={styles.imgStyle} />
                             </div>
                             
-                            <div style={contentWrapStyle}>
-                                <div style={brandStyle}>{product.brand}</div>
-                                <div style={nameStyle} onClick={() => navigate(`/store/${product.id}`)}>
+                            <div style={styles.contentWrapStyle}>
+                                <div style={styles.brandStyle}>{product.brand}</div>
+                                <div style={styles.nameStyle} onClick={() => navigate(`/store/${product.id}`)}>
                                     {product.name}
                                 </div>
                                 
-                                <div style={priceRowStyle}>
-                                    <span style={priceStyle}>{product.price.toFixed(2)} UAH</span>
-                                    <span style={stockStyle}>{product.volume} ml</span>
+                                <div style={styles.priceRowStyle}>
+                                    <span style={styles.priceStyle}>{product.price.toFixed(2)} UAH</span>
+                                    <span style={styles.stockStyle}>{product.volume} ml</span>
                                 </div>
                                 
-                                <div style={buttonsRowStyle}>
+                                <div style={styles.buttonsRowStyle}>
                                     <Button variant="outline" style={{ flex: 1 }} onClick={() => navigate(`/store/${product.id}`)}>
                                           {t.store.details}
                                     </Button>
