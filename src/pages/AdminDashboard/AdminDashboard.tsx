@@ -987,9 +987,9 @@ export function AdminDashboard() {
                     </div>
                   </div>
 
-<button onClick={handleSaveService} disabled={uploading} style={getSaveBtnStyle(uploading)}>
-  {editingServiceId ? t.admin.dashboard.buttons.saveChanges : t.admin.services.saveBtn}
-</button>
+                  <button onClick={handleSaveService} disabled={uploading} style={getSaveBtnStyle(uploading)}>
+                    {editingServiceId ? t.admin.dashboard.buttons.saveChanges : t.admin.services.saveBtn}
+                  </button>
                 </div>
               )}
 
