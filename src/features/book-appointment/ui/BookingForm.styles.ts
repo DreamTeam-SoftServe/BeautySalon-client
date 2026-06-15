@@ -1,83 +1,6 @@
 import { THEME } from "../../../shared/config/theme";
 import type { CSSProperties } from "react";
 
-export const bookingSectionStyle: CSSProperties = {
-  height: "calc(100vh - 85px)",
-  display: "flex",
-  backgroundColor: THEME.colors.charcoal,
-  position: "relative",
-  overflow: "hidden",
-  boxSizing: "border-box",
-};
-
-export const formSideStyle: CSSProperties = {
-  width: "45%",
-  padding: "0 6%",
-  display: "flex",
-  flexDirection: "column",
-  justifyContent: "flex-start",
-  paddingTop: "8vh",
-  zIndex: 2,
-};
-
-export const formTitleStyle: CSSProperties = {
-  fontFamily: THEME.fonts.display,
-  fontSize: "clamp(2.5rem, 4vw, 3.5rem)",
-  color: THEME.colors.cream,
-  marginBottom: "32px",
-  fontWeight: 400,
-  lineHeight: "1.1",
-};
-
-export const formGridStyle: CSSProperties = {
-  display: "grid",
-  gridTemplateColumns: "1fr 1fr",
-  gap: "20px",
-};
-
-export const fullWidthStyle: CSSProperties = {
-  gridColumn: "span 2",
-};
-
-export const imageSideStyle: CSSProperties = {
-  width: "55%",
-  position: "relative",
-  height: "100%",
-  display: "flex",
-  alignItems: "flex-start",
-  justifyContent: "center",
-  paddingTop: "8vh",
-  background: "#121212",
-};
-
-export const floatingFrameStyle: CSSProperties = {
-  width: "85%",
-  height: "75vh",
-  position: "relative",
-  borderRadius: "4px",
-  boxShadow: "0 40px 100px rgba(0,0,0,0.6)",
-};
-
-export const goldBorderStyle: CSSProperties = {
-  position: "absolute",
-  inset: "20px",
-  border: "1px solid rgba(201,168,76,0.25)",
-  borderRadius: "2px",
-  pointerEvents: "none",
-  zIndex: 3,
-};
-
-export const carouselImgStyle = (active: boolean): CSSProperties => ({
-  position: "absolute",
-  top: 0,
-  left: 0,
-  width: "100%",
-  height: "100%",
-  objectFit: "cover",
-  opacity: active ? 1 : 0,
-  transition: "opacity 1.8s ease-in-out",
-  zIndex: active ? 1 : 0,
-});
 
 export const datePickerLabelStyle: CSSProperties = {
   display: "block",
@@ -116,4 +39,103 @@ export const successTitleStyle: CSSProperties = {
 export const dateLabelWrapStyle: CSSProperties = {
   display: "flex",
   flexDirection: "column",
+};
+
+export const successContainerStyle: CSSProperties = {
+  display: "flex",
+  justifyContent: "center",
+  width: "100%",
+  padding: "40px 0",
+};
+
+export const mainContainerStyle: CSSProperties = {
+  width: "100%",
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+};
+
+export const progressBarWrapStyle: CSSProperties = {
+  position: "fixed",
+  top: "80px", 
+  left: 0,
+  width: "100%",
+  height: "3px",
+  backgroundColor: "rgba(0,0,0,0.05)",
+  zIndex: 999,
+};
+
+export const getProgressBarFillStyle = (step: number): CSSProperties => ({
+  width: `${(step / 4) * 100}%`,
+  height: "100%",
+  backgroundColor: THEME.colors.gold,
+  transition: "width 0.4s ease-in-out",
+});
+
+export const formStyle: CSSProperties = {
+  width: "100%",
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "center",
+  minHeight: "300px",
+};
+
+export const stepContainerStyle: CSSProperties = {
+  display: "flex",
+  flexDirection: "column",
+  gap: "20px", 
+  width: "100%",
+  animation: "fadeIn 0.2s ease",
+};
+
+export const stepSimpleContainerStyle: CSSProperties = {
+  animation: "fadeIn 0.2s ease",
+};
+
+export const modeButtonStyle: CSSProperties = {
+  width: "100%",
+  padding: "18px 24px",
+  border: `1px solid ${THEME.colors.gold}`,
+  borderRadius: "4px",
+  backgroundColor: "transparent",
+  color: THEME.colors.charcoal,
+  fontSize: "0.95rem",
+  fontFamily: THEME.fonts.sans,
+  fontWeight: 500,
+  letterSpacing: "0.5px",
+  cursor: "pointer",
+  transition: "all 0.2s ease",
+  textTransform: "uppercase",
+};
+
+export const dateRowStyle: CSSProperties = {
+  display: "flex",
+  gap: "20px",
+};
+
+export const flexColStyle: CSSProperties = {
+  flex: 1,
+};
+
+export const navRowStyle: CSSProperties = {
+  display: "flex",
+  justifyContent: "space-between",
+  marginTop: "50px",
+  gap: "16px",
+};
+
+export const backButtonStyle: CSSProperties = {
+  flex: 1,
+  padding: "12px 24px",
+  backgroundColor: "transparent",
+  border: `1px solid ${THEME.colors.gold}`,
+  color: THEME.colors.gold,
+  borderRadius: "4px",
+  cursor: "pointer",
+  fontFamily: THEME.fonts.sans,
+  fontWeight: 500,
+  fontSize: "0.9rem",
+  textTransform: "uppercase",
+  letterSpacing: "0.5px",
+  transition: "all 0.2s ease",
 };
