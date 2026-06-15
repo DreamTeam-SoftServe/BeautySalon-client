@@ -3,13 +3,8 @@ import { Button } from "../../shared/ui/Button/Button";
 import { api } from "../../shared/api/api";
 import { useI18n } from "../../shared/i18n";
 import { useNavigate } from "react-router-dom";
-import {
-  sectionStyle, getImageWrapStyle, imageFrameStyle,
-  contentStyle, getEyebrowStyle, getHeadingStyle, accentStyle,
-  getCtaRowStyle, getStatsRowStyle,
-  statNumberStyle, statLabelStyle, heroDecor1, heroDecor2,
-  dotsWrapStyle, getDotStyle, arrowBtnStyle, imageCounterStyle,
-} from "./HeroSection.styles";
+import { useMobile } from "../../shared/hooks/useMobile";
+import { getHeroStyles } from "./HeroSection.styles";
 
 const S3_URL = "https://beautysalon-dreamteam.s3.eu-north-1.amazonaws.com";
 
@@ -28,6 +23,8 @@ export function HeroSection() {
   const [current, setCurrent] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [visible, setVisible] = useState(false);
+  const isMobile = useMobile();
+  const styles = getHeroStyles(isMobile, visible);
 
   useEffect(() => {
     const timer = setTimeout(() => setVisible(true), 80);
@@ -66,15 +63,11 @@ export function HeroSection() {
   ];
 
   return (
-    <section style={sectionStyle}>
-      <div style={heroDecor1} />
-      <div style={heroDecor2} />
+    <section style={styles.sectionStyle}>
+      <div style={styles.heroDecor1} />
+      <div style={styles.heroDecor2} />
 
-      <div
-        style={getImageWrapStyle(visible)}
-        onMouseEnter={() => setIsPaused(true)}
-        onMouseLeave={() => setIsPaused(false)}
-      >
+      <div style={styles.imageWrapStyle} onMouseEnter={() => setIsPaused(true)} onMouseLeave={() => setIsPaused(false)}>
         {HERO_IMAGES.map((img, index) => {
           const isActive = index === current;
           return (
@@ -98,36 +91,36 @@ export function HeroSection() {
           );
         })}
 
-        <div style={imageFrameStyle} />
-        <div style={imageCounterStyle}>
+        <div style={styles.imageFrameStyle} />
+        <div style={styles.imageCounterStyle}>
           {current + 1} / {HERO_IMAGES.length}
         </div>
-        <button style={arrowBtnStyle("left")} onClick={goPrev}>‹</button>
-        <button style={arrowBtnStyle("right")} onClick={goNext}>›</button>
-        <div style={dotsWrapStyle}>
+        <button style={styles.arrowBtnStyle("left")} onClick={goPrev}>‹</button>
+        <button style={styles.arrowBtnStyle("right")} onClick={goNext}>›</button>
+        <div style={styles.dotsWrapStyle}>
           {HERO_IMAGES.map((_, i) => (
-            <button key={i} style={getDotStyle(i === current)} onClick={() => goTo(i)} />
+            <button key={i} style={styles.getDotStyle(i === current)} onClick={() => goTo(i)} />
           ))}
         </div>
       </div>
 
-      <div style={contentStyle}>
-        <p style={getEyebrowStyle(visible)}>{t.cta.eyebrow}</p>
-        <h1 style={getHeadingStyle(visible)}>
+      <div style={styles.contentStyle}>
+        <p style={styles.eyebrowStyle}>{t.cta.eyebrow}</p>
+        <h1 style={styles.headingStyle}>
           {t.hero.line1}<br />
           {t.hero.line2}<br />
-          <em style={accentStyle}>{t.hero.line3}</em>
+          <em style={styles.contentStyle}>{t.hero.line3}</em>
         </h1>
         {/* <p style={getBodyStyle(visible)}>{t.hero.body}</p> */}
-        <div style={getCtaRowStyle(visible)}>
+        <div style={styles.ctaRowStyle}>
           <Button onClick={() => navigate("/booking")}>{t.hero.ctaPrimary}</Button>
           <Button variant="outline" onClick={() => navigate("/services")}>{t.hero.ctaSecondary}</Button>
         </div>
-        <div style={getStatsRowStyle(visible)}>
+        <div style={styles.statsRowStyle}>
           {stats.map(([n, l]) => (
             <div key={l}>
-              <p style={statNumberStyle}>{n}</p>
-              <p style={statLabelStyle}>{l}</p>
+              <p style={styles.statNumberStyle}>{n}</p>
+              <p style={styles.statLabelStyle}>{l}</p>
             </div>
           ))}
         </div>
