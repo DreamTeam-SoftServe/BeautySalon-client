@@ -18,7 +18,9 @@ export const StorePage = () => {
     const { t } = useI18n(); 
 
     const isMobile = useMobile(); 
-    const styles = getStoreStyles(isMobile); 
+    const styles = getStoreStyles(isMobile);
+
+    const [sortBy, setSortBy] = useState<string>('default');  
 
 // Категорії для фільтрів (маппінг з вашого enum)
     const PRODUCT_CATEGORIES = [
@@ -43,6 +45,13 @@ export const StorePage = () => {
     const filteredProducts = activeCategory === -1 
         ? products 
         : products.filter(p => p.category === activeCategory);
+    
+    const sortedProducts = [...filteredProducts].sort((a, b) => {
+        if (sortBy === 'price-asc') return a.price - b.price;
+        if (sortBy === 'price-desc') return b.price - a.price;
+        if (sortBy === 'name') return a.name.localeCompare(b.name);
+        return 0;
+    });
 
     return (
         <div style={styles.pageWrapStyle}>
@@ -80,7 +89,7 @@ export const StorePage = () => {
 
                 {/* Сітка товарів */}
                 <div style={styles.gridStyle}>
-                    {filteredProducts.map(product => (
+                    {sortedProducts.map(product => (
                         <div key={product.id} style={styles.cardStyle}
                             onMouseEnter={(e) => {
                                 e.currentTarget.style.transform = "translateY(-8px)";
@@ -123,7 +132,7 @@ export const StorePage = () => {
                 </div>
                 
                 {/* Якщо в категорії немає товарів */}
-                {filteredProducts.length === 0 && (
+                {sortedProducts.length === 0 && (
                     <div style={{ textAlign: 'center', color: '#7A7A7A', marginTop: '60px', fontSize: '16px' }}>
                         {t.store.outOfProductCategory}
                     </div>
