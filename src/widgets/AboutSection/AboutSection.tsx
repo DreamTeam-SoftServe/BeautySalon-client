@@ -3,24 +3,8 @@ import { SectionTitle } from "../../shared/ui/SectionTitle";
 import { Button } from "../../shared/ui/Button";
 import { useNavigate } from "react-router-dom";
 import { useScrollAnimation } from "../../shared/hooks/useScrollAnimation";
-import {
-  sectionStyle,
-  containerStyle,
-  imageBlockStyle,
-  mainImgStyle,
-  accentCardStyle,
-  accentNumberStyle,
-  accentLabelStyle,
-  contentStyle,
-  bodyStyle,
-  featuresGridStyle,
-  featureItemStyle,
-  featureIconStyle,
-  featureTitleStyle,
-  featureDescStyle,
-  aboutDecor1,
-  aboutDecor2,
-} from "./AboutSection.styles";
+import { useMobile } from "../../shared/hooks/useMobile";
+import { getAboutStyles } from "./AboutSection.styles";
 
 const S3_URL = "https://beautysalon-dreamteam.s3.eu-north-1.amazonaws.com";
 const aboutImg = `${S3_URL}/about/about1.png`;
@@ -50,6 +34,9 @@ export function AboutSection() {
   const [imgRef, imgVisible] = useScrollAnimation(0.1);
   const [contentRef, contentVisible] = useScrollAnimation(0.1);
 
+  const isMobile = useMobile();
+  const styles = getAboutStyles(isMobile);
+
   const FEATURES = [
     { icon: "✦", title: t.about.features.f1title, desc: t.about.features.f1desc },
     { icon: "✦", title: t.about.features.f2title, desc: t.about.features.f2desc },
@@ -58,25 +45,25 @@ export function AboutSection() {
   ];
 
   return (
-    <section style={sectionStyle}>
-      <div style={aboutDecor1} />
-      <div style={aboutDecor2} />
-      <div style={containerStyle}>
+    <section style={styles.sectionStyle}>
+      <div style={styles.aboutDecor1} />
+      <div style={styles.aboutDecor2} />
+      <div style={styles.containerStyle}>
 
         <div
           ref={imgRef as React.RefObject<HTMLDivElement>}
-          style={{ ...imageBlockStyle, ...anim(imgVisible, "left", "0s") }}
+          style={{ ...styles.imageBlockStyle, ...anim(imgVisible, "left", "0s") }}
         >
-          <img src={aboutImg} alt="About Prestige Studio" style={mainImgStyle} />
-          <div style={{ ...accentCardStyle, ...anim(imgVisible, "up", "0.4s") }}>
-            <p style={accentNumberStyle}>12+</p>
-            <p style={accentLabelStyle}>років{"\n"}досвіду</p>
+          <img src={aboutImg} alt="About Prestige Studio" style={styles.mainImgStyle} />
+          <div style={{ ...styles.accentCardStyle, ...anim(imgVisible, "up", "0.4s") }}>
+            <p style={styles.accentNumberStyle}>12+</p>
+            <p style={styles.accentLabelStyle}>років{"\n"}досвіду</p>
           </div>
         </div>
 
         <div
           ref={contentRef as React.RefObject<HTMLDivElement>}
-          style={contentStyle}
+          style={styles.contentStyle}
         >
           <div style={anim(contentVisible, "right", "0s")}>
             <SectionTitle
@@ -86,17 +73,17 @@ export function AboutSection() {
             />
           </div>
 
-          <p style={{ ...bodyStyle, ...anim(contentVisible, "up", "0.15s") }}>
+          <p style={{ ...styles.bodyStyle, ...anim(contentVisible, "up", "0.15s") }}>
             {t.about?.body ??
               "Ми — команда закоханих у свою справу майстрів. Кожна деталь у нашій студії продумана для того, щоб ви відчували себе особливими."}
           </p>
 
-          <div style={{ ...featuresGridStyle, ...anim(contentVisible, "up", "0.3s") }}>
+          <div style={{ ...styles.featuresGridStyle, ...anim(contentVisible, "up", "0.3s") }}>
             {FEATURES.map((f) => (
-              <div key={f.title} style={featureItemStyle}>
-                <span style={featureIconStyle}>{f.icon}</span>
-                <p style={featureTitleStyle}>{f.title}</p>
-                <p style={featureDescStyle}>{f.desc}</p>
+              <div key={f.title} style={styles.featureItemStyle}>
+                <span style={styles.featureIconStyle}>{f.icon}</span>
+                <p style={styles.featureTitleStyle}>{f.title}</p>
+                <p style={styles.featureDescStyle}>{f.desc}</p>
               </div>
             ))}
           </div>
