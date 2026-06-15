@@ -1,16 +1,10 @@
 import { useEffect, useState } from 'react';
 import { api } from '../../../shared/api/api';
 import type { OrderData } from '../../../shared/api/api';
-
-const STATUS_LABELS: Record<number, string> = {
-    0: "Pending",
-    1: "Confirmed",
-    2: "Shipped",
-    3: "Completed",
-    4: "Cancelled"
-};
+import { useI18n } from '../../../shared/i18n'; // ДОДАНО: Імпорт хука локалізації
 
 export const OrdersTab = () => {
+    const { t } = useI18n(); // ДОДАНО: Отримуємо об'єкт з перекладами
     const [orders, setOrders] = useState<OrderData[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -22,7 +16,7 @@ export const OrdersTab = () => {
             setOrders(Array.isArray(res) ? res : []); 
         } catch (err) {
             console.error(err);
-            setError("Failed to load orders");
+            setError(t.admin.orders.errorLoad); // Переклад помилки
         } finally {
             setLoading(false);
         }
@@ -38,13 +32,13 @@ export const OrdersTab = () => {
             fetchOrders(); 
         } catch (error) {
             console.error("Failed to update status", error);
-            alert("Failed to update status");
+            alert(t.admin.orders.errorUpdate); // Переклад алерта
         }
     };
 
-    if (loading) return <div style={{ padding: '20px' }}>Loading...</div>;
+    if (loading) return <div style={{ padding: '20px' }}>{t.admin.orders.loading}</div>;
     if (error) return <div style={{ padding: '20px', color: 'red' }}>Error: {error}</div>;
-    if (!orders || orders.length === 0) return <div style={{ padding: '20px' }}>No orders found.</div>;
+    if (!orders || orders.length === 0) return <div style={{ padding: '20px' }}>{t.admin.orders.noOrders}</div>;
 
     const sortedOrders = [...orders].sort((a, b) => 
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
@@ -53,17 +47,17 @@ export const OrdersTab = () => {
     return (
         <div style={{ marginTop: '20px' }}>
             <div style={{ backgroundColor: '#ffffff', padding: '20px', borderRadius: '12px', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}>
-                <h3 style={{ margin: '0 0 20px 0' }}>Store Orders</h3>
+                <h3 style={{ margin: '0 0 20px 0' }}>{t.admin.orders.title}</h3>
                 <div style={{ overflowX: 'auto' }}>
                     <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px' }}>
                         <thead>
                             <tr style={{ borderBottom: '2px solid #eee', textAlign: 'left', color: '#7A7A7A' }}>
-                                <th style={{ padding: '12px' }}>Date</th>
-                                <th style={{ padding: '12px' }}>Customer</th>
-                                <th style={{ padding: '12px' }}>Items</th>
-                                <th style={{ padding: '12px' }}>Delivery</th>
-                                <th style={{ padding: '12px' }}>Total</th>
-                                <th style={{ padding: '12px' }}>Status</th>
+                                <th style={{ padding: '12px' }}>{t.admin.orders.table.date}</th>
+                                <th style={{ padding: '12px' }}>{t.admin.orders.table.customer}</th>
+                                <th style={{ padding: '12px' }}>{t.admin.orders.table.items}</th>
+                                <th style={{ padding: '12px' }}>{t.admin.orders.table.delivery}</th>
+                                <th style={{ padding: '12px' }}>{t.admin.orders.table.total}</th>
+                                <th style={{ padding: '12px' }}>{t.admin.orders.table.status}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -90,7 +84,6 @@ export const OrdersTab = () => {
                                         </ul>
                                     </td>
                                     
-                                    {/* ОНОВЛЕНА КОЛОНКА ДОСТАВКИ */}
                                     <td style={{ padding: '12px', verticalAlign: 'top' }}>
                                         <div style={{ marginBottom: '6px' }}>
                                             <span style={{ padding: '4px 8px', backgroundColor: '#F9F9F9', borderRadius: '4px', border: '1px solid #EEE' }}>
@@ -98,18 +91,18 @@ export const OrdersTab = () => {
                                             </span>
                                         </div>
                                         
-                                        {/* Відображення міста та адреси Нової Пошти */}
+                                        {/* Відображення міста та адреси */}
                                         {order.deliveryType === "Nova Poshta Delivery" && order.deliveryCity && (
                                             <div style={{ fontSize: '13px', color: '#555', marginTop: '6px' }}>
-                                                <strong style={{ color: '#1A1A1A', fontWeight: 500 }}>Адреса:</strong> <br/>
+                                                <strong style={{ color: '#1A1A1A', fontWeight: 500 }}>{t.admin.orders.delivery.address}</strong> <br/>
                                                 {order.deliveryCity}, {order.deliveryAddress}
                                             </div>
                                         )}
 
-                                        {/* Відображення даних отримувача, якщо це гість */}
+                                        {/* Відображення даних отримувача */}
                                         {order.guestFirstName && (
                                             <div style={{ fontSize: '12px', color: '#7A7A7A', marginTop: '6px', borderTop: '1px solid #eee', paddingTop: '4px' }}>
-                                                <strong style={{ color: '#1A1A1A', fontWeight: 500 }}>Одержувач:</strong> <br/>
+                                                <strong style={{ color: '#1A1A1A', fontWeight: 500 }}>{t.admin.orders.delivery.receiver}</strong> <br/>
                                                 {order.guestFirstName} {order.guestLastName} <br/>
                                                 {order.guestPhone}
                                             </div>
@@ -131,8 +124,9 @@ export const OrdersTab = () => {
                                                 cursor: 'pointer'
                                             }}
                                         >
-                                            {Object.entries(STATUS_LABELS).map(([val, label]) => (
-                                                <option key={val} value={val}>{label}</option>
+                                            {/* Динамічний рендер статусів з файлу перекладів */}
+                                            {Object.entries(t.admin.orders.statuses).map(([val, label]) => (
+                                                <option key={val} value={val}>{label as string}</option>
                                             ))}
                                         </select>
                                     </td>

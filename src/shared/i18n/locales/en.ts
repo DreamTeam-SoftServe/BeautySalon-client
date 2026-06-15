@@ -438,6 +438,33 @@ export const en: Translations = {
       },
     },
 
+    orders: {
+      title: "Store Orders",
+      loading: "Loading...",
+      errorLoad: "Failed to load orders",
+      noOrders: "No orders found.",
+      errorUpdate: "Failed to update status",
+      table: {
+        date: "Date",
+        customer: "Customer",
+        items: "Items",
+        delivery: "Delivery",
+        total: "Total",
+        status: "Status"
+      },
+      delivery: {
+        address: "Address:",
+        receiver: "Receiver:"
+      },
+      statuses: {
+        0: "Pending",
+        1: "Confirmed",
+        2: "Shipped",
+        3: "Completed",
+        4: "Cancelled"
+      }
+    },
+
     dashboard: {
       imageUploadError: "AWS S3 error",
       confirmMessageDeleteMaster:

@@ -489,6 +489,33 @@ export const uk: Translations = {
         deleteButtons: "Видалити",
       },
     },
+
+    orders: {
+      title: "Замовлення магазину",
+      loading: "Завантаження...",
+      errorLoad: "Не вдалося завантажити замовлення",
+      noOrders: "Замовлень не знайдено.",
+      errorUpdate: "Не вдалося оновити статус",
+      table: {
+        date: "Дата",
+        customer: "Клієнт",
+        items: "Товари",
+        delivery: "Доставка",
+        total: "Сума",
+        status: "Статус"
+      },
+      delivery: {
+        address: "Адреса:",
+        receiver: "Одержувач:"
+      },
+      statuses: {
+        0: "В очікуванні",
+        1: "Підтверджено",
+        2: "Відправлено",
+        3: "Виконано",
+        4: "Скасовано"
+      }
+    }
   },
 
   nav: {

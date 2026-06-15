@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import {
   sectionStyle, getImageWrapStyle, imageFrameStyle,
   contentStyle, getEyebrowStyle, getHeadingStyle, accentStyle,
-  getBodyStyle, getCtaRowStyle, getStatsRowStyle,
+  getCtaRowStyle, getStatsRowStyle,
   statNumberStyle, statLabelStyle, heroDecor1, heroDecor2,
   dotsWrapStyle, getDotStyle, arrowBtnStyle, imageCounterStyle,
 } from "./HeroSection.styles";
