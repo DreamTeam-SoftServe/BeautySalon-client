@@ -378,6 +378,9 @@ export const uk: Translations = {
       users: "Користувачі",
       masters: "Майстри",
       service: "Послуги",
+      products: "Товари", 
+      orders: "Замовлення", 
+      
     },
     usersColumns: {
       name: "Ім'я / Телефон",
@@ -407,6 +410,7 @@ export const uk: Translations = {
       expPh: "Досвід",
       specs: "Спеціалізація",
       photo: "ФОТО МАЙСТРА",
+      newPasswPh: "Новий пароль (залиште порожнім, якщо не змінюєте)",
 
       hintPhoto:
         "Рекомендований розмір: 600x800 пікселів (співвідношення сторін 3:4), формат JPG або PNG",
@@ -438,7 +442,8 @@ export const uk: Translations = {
       descServicePh: "",
       photo: "ФОТО ПОСЛУГИ",
       hintPhoto: "Рекомендований розмір: 800x600 px (4:3), формат JPG або PNG",
-
+      isTraining: "Це послуга навчання (тренінг / навчальний курс)",
+      
       type: {
         option1: "Фарбування ",
         option2: "Стрижка",
@@ -485,8 +490,15 @@ export const uk: Translations = {
         loadingS3: "Завантаження на S3...",
       },
 
+      filters: {
+        all: "Всі записи",
+        procedures: "Процедури",
+        trainings: "Тренінги / Навчання"
+      },
+      
       buttons: {
         deleteButtons: "Видалити",
+        saveChanges: "Зберегти зміни"
       },
     },
 
@@ -515,7 +527,35 @@ export const uk: Translations = {
         3: "Виконано",
         4: "Скасовано"
       }
-    }
+    },
+    products: {
+      title: "Керування товарами",
+      deleteConfirm: "Ви впевнені, що хочете видалити цей товар?",
+      table: {
+        image: "Зображення",
+        name: "Назва",
+        price: "Ціна",
+        stock: "Залишок",
+        actions: "Дії"
+      },
+      pcs: "шт",
+      edit: "Редагувати",
+      delete: "Видалити",
+      formTitleAdd: "Додати новий товар",
+      formTitleEdit: "Редагувати товар:",
+      namePh: "Назва товару",
+      brandPh: "Бренд",
+      pricePh: "Ціна (UAH)",
+      stockPh: "Кількість на складі",
+      volumePh: "Об'єм (мл)",
+      descPh: "Опис",
+      imgHint: "Залиште порожнім, щоб зберегти поточне фото:",
+      saveProduct: "Зберегти товар",
+      cancel: "Скасувати",
+      successAdd: "Товар успішно додано!",
+      successEdit: "Товар успішно оновлено!",
+      errorSave: "Не вдалося зберегти товар."
+    },
   },
 
   nav: {

@@ -361,8 +361,7 @@ export function AdminDashboard() {
               onClick={() => setActiveTab(tab)}
               style={getTabBtnStyle(activeTab === tab)}
             >
-              {tab === "products" ? "Products" : tab === "orders" ? "Store Orders" : t.admin.tabs[tab === "services" ? "service" : tab]}
-            </button>
+            {t.admin.tabs[tab === "services" ? "service" : tab as keyof typeof t.admin.tabs]}            </button>
           ),
         )}
       </div>
@@ -377,23 +376,14 @@ export function AdminDashboard() {
     
               {/* НОВИЙ БЛОК: Сортування/Фільтрація по виду записів */}
               <div style={{ display: "flex", gap: "10px", marginBottom: "5px" }}>
-                <button
-                  onClick={() => setBookingTypeFilter("ALL")}
-                  style={{ ...getTabBtnStyle(bookingTypeFilter === "ALL"), padding: "6px 14px", fontSize: "0.85rem" }}
-                >
-                  Всі записи
+                <button onClick={() => setBookingTypeFilter("ALL")} style={{...getTabBtnStyle(bookingTypeFilter === "ALL"), padding: "6px 14px", fontSize: "0.85rem"}}>
+                  {t.admin.dashboard.filters.all}
                 </button>
-                <button
-                  onClick={() => setBookingTypeFilter("PROCEDURES")}
-                  style={{ ...getTabBtnStyle(bookingTypeFilter === "PROCEDURES"), padding: "6px 14px", fontSize: "0.85rem" }}
-                >
-                  Процедури
+                <button onClick={() => setBookingTypeFilter("PROCEDURES")} style={{...getTabBtnStyle(bookingTypeFilter === "PROCEDURES"), padding: "6px 14px", fontSize: "0.85rem"}}>
+                  {t.admin.dashboard.filters.procedures}
                 </button>
-                <button
-                  onClick={() => setBookingTypeFilter("TRAININGS")}
-                  style={{ ...getTabBtnStyle(bookingTypeFilter === "TRAININGS"), padding: "6px 14px", fontSize: "0.85rem" }}
-                >
-                  Тренінги / Навчання
+                <button onClick={() => setBookingTypeFilter("TRAININGS")} style={{...getTabBtnStyle(bookingTypeFilter === "TRAININGS"), padding: "6px 14px", fontSize: "0.85rem"}}>
+                  {t.admin.dashboard.filters.trainings}
                 </button>
               </div>
               <div style={tableWrapStyle}>
@@ -616,11 +606,7 @@ export function AdminDashboard() {
                       }
                     />
                     <input
-                      placeholder={
-                        editingMasterId
-                          ? "Новий пароль (залиште порожнім, якщо не змінюєте)"
-                          : t.admin.masters.passwPh
-                      }
+                      placeholder={editingMasterId ? t.admin.masters.newPasswPh : t.admin.masters.passwPh}
                       value={newMaster.password}
                       type="text"
                       style={inputStyle}
@@ -749,15 +735,9 @@ export function AdminDashboard() {
                       )}
                     </div>
                   </div>
-                  <button
-                    onClick={handleSaveMaster}
-                    disabled={uploading}
-                    style={getSaveBtnStyle(uploading)}
-                  >
-                    {editingMasterId
-                      ? "Зберегти зміни"
-                      : t.admin.masters.saveBtn}
-                  </button>
+              <button onClick={handleSaveMaster} disabled={uploading} style={getSaveBtnStyle(uploading)}>
+                {editingMasterId ? t.admin.dashboard.buttons.saveChanges : t.admin.masters.saveBtn}
+              </button>
                 </div>
               )}
 
@@ -957,9 +937,9 @@ export function AdminDashboard() {
                         onChange={(e) => setNewService({ ...newService, isTraining: e.target.checked })}
                         style={{ width: "18px", height: "18px", cursor: "pointer" }}
                       />
-                      <label htmlFor="isTrainingCheckbox" style={{ ...specLabelStyle, cursor: "pointer", margin: 0 }}>
-                        Це послуга навчання (тренінг / навчальний курс)
-                      </label>
+                    <label htmlFor="isTrainingCheckbox" style={{ ...specLabelStyle, cursor: "pointer", margin: 0 }}>
+                      {t.admin.services.isTraining}
+                    </label>
                     </div>
 
                     <div style={{ gridColumn: "span 2" }}>
@@ -1007,15 +987,9 @@ export function AdminDashboard() {
                     </div>
                   </div>
 
-                  <button
-                    onClick={handleSaveService}
-                    disabled={uploading}
-                    style={getSaveBtnStyle(uploading)}
-                  >
-                    {editingServiceId
-                      ? "Зберегти зміни"
-                      : t.admin.services.saveBtn}
-                  </button>
+<button onClick={handleSaveService} disabled={uploading} style={getSaveBtnStyle(uploading)}>
+  {editingServiceId ? t.admin.dashboard.buttons.saveChanges : t.admin.services.saveBtn}
+</button>
                 </div>
               )}
 

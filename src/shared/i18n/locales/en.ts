@@ -391,6 +391,8 @@ export const en: Translations = {
       users: "User Access",
       masters: "Our Team",
       service: "Services",
+      products: "Products", 
+      orders: "Store Orders",
     },
     usersColumns: {
       name: "Name",
@@ -420,6 +422,7 @@ export const en: Translations = {
       expPh: "Experience",
       specs: "Specialization",
       photo: "MASTER'S PHOTO",
+      newPasswPh: "New password (leave empty if not changing)",
 
       hintPhoto:
         "Recommended size: 600x800 pixels (aspect ratio 3:4), JPG or PNG format",
@@ -499,8 +502,15 @@ export const en: Translations = {
         loadingS3: "Uploading to S3...",
       },
 
+      filters: {
+        all: "All bookings",
+        procedures: "Procedures",
+        trainings: "Trainings / Courses"
+      },
+
       buttons: {
         deleteButtons: "Delete",
+        saveChanges: "Save Changes"
       },
     },
     services: {
@@ -516,6 +526,8 @@ export const en: Translations = {
       descServicePh: "",
       photo: "PHOTO SERVICES",
       hintPhoto: "Recommended size: 800x600 px (4:3), JPG or PNG format",
+      isTraining: "This is a training service (course)",
+
       type: {
         option1: "Dying",
         option2: "Haircut",
@@ -525,6 +537,35 @@ export const en: Translations = {
         option6: "Care",
         option7: "Coloring",
       },
+    },
+
+    products: {
+      title: "Manage Products",
+      deleteConfirm: "Are you sure you want to delete this product?",
+      table: {
+        image: "Image",
+        name: "Name",
+        price: "Price",
+        stock: "Stock",
+        actions: "Actions"
+      },
+      pcs: "pcs",
+      edit: "Edit",
+      delete: "Delete",
+      formTitleAdd: "Add New Product",
+      formTitleEdit: "Edit Product:",
+      namePh: "Product Name",
+      brandPh: "Brand",
+      pricePh: "Price ($)",
+      stockPh: "Stock Amount",
+      volumePh: "Volume (ml)",
+      descPh: "Description",
+      imgHint: "Leave empty to keep current image:",
+      saveProduct: "Save Product",
+      cancel: "Cancel",
+      successAdd: "Product added successfully!",
+      successEdit: "Product updated successfully!",
+      errorSave: "Failed to save product."
     },
   },
 };

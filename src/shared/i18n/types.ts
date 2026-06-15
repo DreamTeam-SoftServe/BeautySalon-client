@@ -373,6 +373,8 @@ export interface Translations {
       users: string;
       masters: string;
       service: string;
+      products: string; 
+      orders: string;   
     };
 
     usersColumns: {
@@ -406,6 +408,8 @@ export interface Translations {
       specs: string;
       photo: string;
       hintPhoto: string;
+      newPasswPh: string;
+
 
       gender: {
         woman: string;
@@ -434,6 +438,7 @@ export interface Translations {
       descServicePh: string;
       photo: string;
       hintPhoto: string;
+      isTraining: string;
 
       type: {
         option1: string;
@@ -477,8 +482,14 @@ export interface Translations {
         loadingS3: string;
       };
 
+      filters: {
+        all: string;
+        procedures: string;
+        trainings: string;
+      };
       buttons: {
         deleteButtons: string;
+        saveChanges: string; 
       };
     };
   
@@ -508,6 +519,34 @@ export interface Translations {
         4: string;
       }
     }
+    products: {
+      title: string;
+      deleteConfirm: string;
+      table: {
+        image: string;
+        name: string;
+        price: string;
+        stock: string;
+        actions: string;
+      };
+      pcs: string;
+      edit: string;
+      delete: string;
+      formTitleAdd: string;
+      formTitleEdit: string;
+      namePh: string;
+      brandPh: string;
+      pricePh: string;
+      stockPh: string;
+      volumePh: string;
+      descPh: string;
+      imgHint: string;
+      saveProduct: string;
+      cancel: string;
+      successAdd: string;
+      successEdit: string;
+      errorSave: string;
+    };
   };
 
   nav: {

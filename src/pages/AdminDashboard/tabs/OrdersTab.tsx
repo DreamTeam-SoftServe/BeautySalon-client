@@ -1,22 +1,38 @@
 import { useEffect, useState } from 'react';
 import { api } from '../../../shared/api/api';
 import type { OrderData } from '../../../shared/api/api';
-import { useI18n } from '../../../shared/i18n'; // ДОДАНО: Імпорт хука локалізації
+import { useI18n } from '../../../shared/i18n';
 
 export const OrdersTab = () => {
-    const { t } = useI18n(); // ДОДАНО: Отримуємо об'єкт з перекладами
+    const { t } = useI18n(); 
     const [orders, setOrders] = useState<OrderData[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    const fetchOrders = async () => {
+    // ДОДАНО: функція для динамічного перекладу способів доставки
+    const getDeliveryTranslation = (type: string) => {
+        if (!type) return "";
+        const lowerType = type.toLowerCase();
+        if (lowerType.includes("nova poshta") || lowerType.includes("нова пошта") || lowerType.includes("новою поштою")) {
+            return t.store.checkoutPage.novaPoshta;
+        }
+        if (lowerType.includes("pickup") || lowerType.includes("самовивіз")) {
+            return t.store.checkoutPage.pickup;
+        }
+        if (lowerType.includes("courier") || lowerType.includes("кур'єр")) {
+            return t.store.checkoutPage.courier;
+        }
+        return type;
+    };
+
+    const fetchOrders = async () => { /* ... (без змін) */
         try {
             setLoading(true);
             const res = await api.getOrdersAdmin();
             setOrders(Array.isArray(res) ? res : []); 
         } catch (err) {
             console.error(err);
-            setError(t.admin.orders.errorLoad); // Переклад помилки
+            setError(t.admin.orders.errorLoad); 
         } finally {
             setLoading(false);
         }
@@ -26,13 +42,13 @@ export const OrdersTab = () => {
         fetchOrders();
     }, []);
 
-    const handleStatusChange = async (orderId: string, newStatus: number) => {
+    const handleStatusChange = async (orderId: string, newStatus: number) => { /* ... (без змін) */
         try {
             await api.updateOrderStatus(orderId, newStatus);
             fetchOrders(); 
         } catch (error) {
             console.error("Failed to update status", error);
-            alert(t.admin.orders.errorUpdate); // Переклад алерта
+            alert(t.admin.orders.errorUpdate);
         }
     };
 
@@ -50,6 +66,7 @@ export const OrdersTab = () => {
                 <h3 style={{ margin: '0 0 20px 0' }}>{t.admin.orders.title}</h3>
                 <div style={{ overflowX: 'auto' }}>
                     <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px' }}>
+                        {/* thead залишається без змін */}
                         <thead>
                             <tr style={{ borderBottom: '2px solid #eee', textAlign: 'left', color: '#7A7A7A' }}>
                                 <th style={{ padding: '12px' }}>{t.admin.orders.table.date}</th>
@@ -63,6 +80,7 @@ export const OrdersTab = () => {
                         <tbody>
                             {sortedOrders.map(order => (
                                 <tr key={order.id} style={{ borderBottom: '1px solid #eee' }}>
+                                    {/* td date, customer, items залишаються без змін ... */}
                                     <td style={{ padding: '12px', verticalAlign: 'top' }}>
                                         {new Date(order.createdAt).toLocaleDateString()}
                                         <div style={{ fontSize: '12px', color: '#A0A0A0' }}>
@@ -87,12 +105,13 @@ export const OrdersTab = () => {
                                     <td style={{ padding: '12px', verticalAlign: 'top' }}>
                                         <div style={{ marginBottom: '6px' }}>
                                             <span style={{ padding: '4px 8px', backgroundColor: '#F9F9F9', borderRadius: '4px', border: '1px solid #EEE' }}>
-                                                {order.deliveryType}
+                                                {/* ЗАМІНЕНО НА ВИКЛИК ФУНКЦІЇ */}
+                                                {getDeliveryTranslation(order.deliveryType)}
                                             </span>
                                         </div>
                                         
                                         {/* Відображення міста та адреси */}
-                                        {order.deliveryType === "Nova Poshta Delivery" && order.deliveryCity && (
+                                        {(order.deliveryType.includes("Nova Poshta") || order.deliveryType.includes("Нова Пошта")) && order.deliveryCity && (
                                             <div style={{ fontSize: '13px', color: '#555', marginTop: '6px' }}>
                                                 <strong style={{ color: '#1A1A1A', fontWeight: 500 }}>{t.admin.orders.delivery.address}</strong> <br/>
                                                 {order.deliveryCity}, {order.deliveryAddress}
@@ -116,15 +135,8 @@ export const OrdersTab = () => {
                                         <select 
                                             value={order.status}
                                             onChange={(e) => handleStatusChange(order.id, parseInt(e.target.value))}
-                                            style={{ 
-                                                padding: '6px', 
-                                                borderRadius: '4px', 
-                                                border: '1px solid #D4C5A0',
-                                                outline: 'none',
-                                                cursor: 'pointer'
-                                            }}
+                                            style={{ padding: '6px', borderRadius: '4px', border: '1px solid #D4C5A0', outline: 'none', cursor: 'pointer' }}
                                         >
-                                            {/* Динамічний рендер статусів з файлу перекладів */}
                                             {Object.entries(t.admin.orders.statuses).map(([val, label]) => (
                                                 <option key={val} value={val}>{label as string}</option>
                                             ))}
